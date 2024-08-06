@@ -37,10 +37,20 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
     {
+        int dimensioneSeparatore = 2;
+        char separatore[dimensioneSeparatore];
+        strcpy(separatore, ", ");
+        int dimensioneFineRecord = 1;
+        char fineRecord[dimensioneFineRecord];
+        strcpy(fineRecord, "\n");
         fwrite(&rubrica[i].nome, sizeof(&rubrica[i].nome), 1, RubricaDB);
+        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
         fwrite(&rubrica[i].cognome, sizeof(&rubrica[i].cognome), 1, RubricaDB);
+        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
         fwrite(&rubrica[i].telefono, sizeof(&rubrica[i].telefono), 1, RubricaDB);
+        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
         fwrite(&rubrica[i].indirizzo, sizeof(&rubrica[i].indirizzo), 1, RubricaDB);
+        fwrite(fineRecord, dimensioneFineRecord, 1, RubricaDB);
     }
     fclose(RubricaDB);
 
