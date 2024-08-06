@@ -8,36 +8,40 @@
 
 #include "funzioniClient.h"
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
 
     int clientFd, dimServer, risultato;
 
     struct sockaddr_in indirizzoINETServer;
-    struct sockaddr* indirizzoINETServerPtr;
+    struct sockaddr *indirizzoINETServerPtr;
 
     // Creazione Socket del Client
     clientFd = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-    if(clientFd < 0){
+    if (clientFd < 0)
+    {
         generazioneErrore("Creazione Socket del Client Fallita \n");
     }
 
-    indirizzoINETServerPtr = (struct sockaddr*) &indirizzoINETServer;
+    indirizzoINETServerPtr = (struct sockaddr *)&indirizzoINETServer;
     dimServer = sizeof(indirizzoINETServer);
 
     indirizzoINETServer.sin_family = AF_INET;
     indirizzoINETServer.sin_port = htons(PORTA);
-    indirizzoINETServer.sin_addr.s_addr =  htonl(INADDR_LOOPBACK);
+    indirizzoINETServer.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
     // Connessione con il Server
     printf("Tentata Connesione con Server \n");
 
-    do{
-        risultato = connect(clientFd,indirizzoINETServerPtr,dimServer);
-        if(risultato == -1){
+    do
+    {
+        risultato = connect(clientFd, indirizzoINETServerPtr, dimServer);
+        if (risultato == -1)
+        {
             printf("Connessione con Server Fallita \n");
             sleep(1);
         }
-    }while(risultato == -1);
+    } while (risultato == -1);
 
     printf("Connessione con Server andata a buon fine \n");
 
@@ -54,18 +58,18 @@ int main(int argc, char *argv[]){
     printf("7) Modifica Indirizzo \n");
 
     scanf("Inserire numero operazione richiesta: %d", &richiesta);
-    if(richiesta < 1 || richiesta >7){
+    if (richiesta < 1 || richiesta > 7)
+    {
         generazioneErrore("Codice richiesta non valido \n");
     }
 
     // Fase in cui il client inoltra, tramite socket, il codice della richiesta al server
 
-    int scritto = send(clientFd,&richiesta,sizeof(richiesta), 0);
-    if(scritto < 0){
+    int scritto = send(clientFd, &richiesta, sizeof(richiesta), 0);
+    if (scritto < 0)
+    {
         generazioneErrore("Scrittura su socket fallita \n");
     }
-
-
 
     // Chiusura della connessione con il Server
     close(clientFd);

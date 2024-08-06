@@ -11,22 +11,22 @@
 #include "definizioniComuni.h"
 
 #define PASSWORD "PROGETTOSO"
-// #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite
-// socket
+// #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite socket
 
 int loginUtente(int clientSocket);
 void logoutUtente(int clientSocket);
 void richiestaPassword(int clientSocket);
 
+void stampaRubrica(int clientSocket);
+void ricercaRecordConCognome(int clientSocket);
+void ricercaRecordConCognomeNome(int clientSocket);
+
+void aggiungiRecord(int clientSocket);
+void rimuoviRecord(int clientSocket);
+void modificaTelefono(int clientSocket);
+void aggiungiIndirizzo(int clientSocket);
+
 /*
-void user_loop(int clientSocket);
-
-void search_record_procedure(int clientSocket, recordRub entries[],
-intentriesCount); void add_new_record_procedure(int clientSocket, recordRub
-entries[], int* entriesCount); void delete_record_procedure(int
-clientSocket,recordRub entries[], int entriesCount); void
-edit_record_procedure(int clientSocket, recordRub entries[], int entriesCount);
-
 int search_records(recordRub entries[], int entriesCount, recordRub query,
 recordRub queryResults[]); int add_new_record(recordRub entries[], int*
 entriesCount, recordRub newDataEntry); int delete_record(recordRub entries[],
@@ -45,7 +45,8 @@ void handle_death_signal_from_user(int sig);
 void handle_errno(int errorCode, char* errorMessage);
 */
 
-int main() {
+int main()
+{
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -59,7 +60,8 @@ int main() {
 
   // Creazione del socket
   serverSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-  if (serverSocket < 0) {
+  if (serverSocket < 0)
+  {
     generazioneErrore("Creazione socket fallita \n");
   }
 
@@ -70,7 +72,8 @@ int main() {
 
   // Binding del socket alla porta specificata in "indirizzo"
   if (bind(serverSocket, (struct sockaddr *)&indirizzo, lunghezzaIndirizzo) <
-      0) {
+      0)
+  {
     generazioneErrore("Errore durante il binding \n");
   }
   listen(serverSocket, 10);
@@ -84,13 +87,15 @@ int main() {
          "6) Modifica Numero di Telefono \n"
          "7) Modifica Indirizzo \n");
 
-  while (1) {
+  while (1)
+  {
 
     printf("Server in ascolto sulla porta %d\n", PORTA);
 
     // Accetta una connessione in entrata
     if ((clientSocket = accept(serverSocket, (struct sockaddr *)&indirizzo,
-                               (socklen_t *)&lunghezzaIndirizzo)) < 0) {
+                               (socklen_t *)&lunghezzaIndirizzo)) < 0)
+    {
       generazioneErrore("Errore durante l'accettazione di una richiesta \n");
     }
 
@@ -107,7 +112,8 @@ int main() {
     // Gestione richiesta tramite fork
     int pid = fork();
 
-    if (pid == 0) {
+    if (pid == 0)
+    {
       printf(
           "Sono un figlio generato per gestire la richiesta appena arrivata\n");
 
@@ -115,44 +121,53 @@ int main() {
       int richiesta = 0;
       // si leggono 4 byte = dimensione intero
       int risultato = recv(clientSocket, &richiesta, sizeof(richiesta), 0);
-      if (risultato < 1) {
+      if (risultato < 1)
+      {
         generazioneErrore("Lettura fallita\n");
       }
 
       printf("Lettura effettuata: %d\n", richiesta);
 
-      switch (richiesta) {
+      switch (richiesta)
+      {
 
       case VISUALIZZA_OGNI_RECORD:
         printf("Richiesta 1\n");
+
         break;
 
       case RICERCA_RECORD_CON_COGNOME:
         printf("Richiesta 2\n");
+
         break;
 
       case RICERCA_RECORD_CON_NOME_COGNOME:
         printf("Richiesta 3\n");
+
         break;
 
       case AGGIUGI_RECORD:
         printf("Richiesta 4\n");
         richiestaPassword(clientSocket);
+
         break;
 
       case RIMUOVI_RECORD:
         printf("Richiesta 5\n");
         richiestaPassword(clientSocket);
+
         break;
 
       case MODIFICA_TELEFONO:
         printf("Richiesta 6\n");
         richiestaPassword(clientSocket);
+
         break;
 
       case MODIFICA_INDIRIZZO:
         printf("Richiesta 7\n");
         richiestaPassword(clientSocket);
+
         break;
 
       default:
@@ -165,7 +180,9 @@ int main() {
       // printf("Risposta inviata: %s\n", output);
 
       exit(0);
-    } else {
+    }
+    else
+    {
       printf("Sono il processo che continua ad accettare richieste\n");
     }
 
@@ -182,14 +199,15 @@ int loginUtente(int clientSocket) { return 0; }
 
 void logoutUtente(int clientSocket) {}
 
-void richiestaPassword(int clientSocket) {
-	char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
-	send(clientSocket, richiesta, sizeof(richiesta), 0);
-	char passwordRicevuta[sizeof(PASSWORD)];
-	recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
-  
+void richiestaPassword(int clientSocket)
+{
+  char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
+  send(clientSocket, richiesta, sizeof(richiesta), 0);
+  char passwordRicevuta[sizeof(PASSWORD)];
+  recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
+
   // strcpy(passwordRicevuta, "PROGETTOSO");
 
-  if(strcmp(passwordRicevuta, PASSWORD) != 0) generazioneErrore("Password errata: l'operazione non può essere eseguita");
-
+  if (strcmp(passwordRicevuta, PASSWORD) != 0)
+    generazioneErrore("Password errata: l'operazione non può essere eseguita");
 }
