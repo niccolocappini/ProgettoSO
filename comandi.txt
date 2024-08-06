@@ -1,0 +1,7 @@
+// Per socket AF_INET
+#include <sys/types.h>
+#include <sys/socket.h> 
+int fd = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
+
+// Comando terminale per errore 'Bind failed: Address already in use'
+netstat -tulpn
