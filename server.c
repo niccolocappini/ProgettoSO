@@ -17,16 +17,6 @@
 static recordRub *rubrica = NULL;
 
 /*
-int search_records(recordRub entries[], int entriesCount, recordRub query,
-recordRub queryResults[]); int add_new_record(recordRub entries[], int*
-entriesCount, recordRub newDataEntry); int delete_record(recordRub entries[],
-int entriesCount, recordRub entryToDelete); int edit_record(recordRub entries[],
-int entriesCount, recordRub entryToEdit, recordRub editedEntry);
-
-int search_record_position(recordRub entries[], int entriesCount, recordRub
-query); void send_entries(int clientSocket, recordRub entries[], int
-entriesCount); void update_runtime_database(recordRub newRuntimeDatabase[], int*
-newRuntimeEntriesCount);
 
 void handle_sigint(int sig);
 void handle_death_signal_from_admin(int sig);
@@ -110,7 +100,8 @@ int main()
 
       printf("Lettura effettuata: %d\n", richiesta);
 
-      int outputFunzioneServer = -1;
+      risultato = -1;
+      char * output; // stringa che contterrà ciò che verrà inviato al client
       switch (richiesta)
       {
 
@@ -121,46 +112,46 @@ int main()
         break;
 
         case RICERCA_RECORD_CON_COGNOME:
-          printf("Richiesta 2\n");
+          printf("Gestione Richiesta 2\n");
           ricercaRecordConCognome(clientSocket);
 
         break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
-          printf("Richiesta 3\n");
+          printf("Gestione Richiesta 3\n");
           ricercaRecordConCognomeNome(clientSocket);
 
         break;
 
         case AGGIUGI_RECORD:
-          printf("Richiesta 4\n");
+          printf("Gestione Richiesta 4\n");
           richiestaPassword(clientSocket);
-          outputFunzioneServer = aggiungiRecord(clientSocket);
-          controlloOutput(outputFunzioneServer,"Aggiunta Record in Rubrica Fallita \n");
+          risultato = aggiungiRecord(clientSocket);
+          controlloOutput(risultato,"Aggiunta Record in Rubrica Fallita \n");
 
         break;
 
         case RIMUOVI_RECORD:
-          printf("Richiesta 5\n");
+          printf("Gestione Richiesta 5\n");
           richiestaPassword(clientSocket);
-          outputFunzioneServer = rimuoviRecord(clientSocket);
-          controlloOutput(outputFunzioneServer,"Rimozione Record in Rubrica Fallita \n");
+          risultato = rimuoviRecord(clientSocket);
+          controlloOutput(risultato,"Rimozione Record in Rubrica Fallita \n");
 
         break;
 
         case MODIFICA_TELEFONO:
-          printf("Richiesta 6\n");
+          printf("Gestione Richiesta 6\n");
           richiestaPassword(clientSocket);
-          outputFunzioneServer = modificaTelefono(clientSocket);
-          controlloOutput(outputFunzioneServer,"Modifica Telefono Fallita \n");
+          risultato = modificaTelefono(clientSocket);
+          controlloOutput(risultato,"Modifica Telefono Fallita \n");
 
         break;
 
         case MODIFICA_INDIRIZZO:
-          printf("Richiesta 7\n");
+          printf("Gestione Richiesta 7\n");
           richiestaPassword(clientSocket);
-          outputFunzioneServer = modificaIndirizzo(clientSocket);
-          controlloOutput(outputFunzioneServer,"Modifica Indirizzo Fallita \n");
+          risultato = modificaIndirizzo(clientSocket);
+          controlloOutput(risultato,"Modifica Indirizzo Fallita \n");
 
         break;
 
@@ -171,8 +162,8 @@ int main()
       }
 
       // Invio della risposta al client
-      // send(clientSocket, output, strlen(output), 0);
-      // printf("Risposta inviata: %s\n", output);
+      send(clientSocket, output, strlen(output), 0);
+      printf("Risposta inviata: %s\n", output);
       close(clientSocket);
       exit(EXIT_SUCCESS);
     }
@@ -185,10 +176,8 @@ int main()
     // Chiudi la connessione con il client
     // logoutUtente(clientSocket);
 
-    //printf("La connessione si è conclusa\n");
+    printf("La connessione si è conclusa\n");
   }
-
-  printf("La connessione si è conclusa\n");
 
   return 0;
 }

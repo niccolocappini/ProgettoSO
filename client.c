@@ -76,50 +76,86 @@ int main(int argc, char *argv[])
     {
 
         case VISUALIZZA_OGNI_RECORD:
-            printf("Richiesta 1\n");
+            visualizzaRubrica();
 
         break;
 
         case RICERCA_RECORD_CON_COGNOME:
-            printf("Richiesta 2\n");
+            ricercaRecordCognome();
 
         break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
-            printf("Richiesta 3\n");
+            ricercaRecordNomeCognome();
 
         break;
 
         case AGGIUGI_RECORD:
-            printf("Richiesta 4\n");
+            aggiungiRecord();
 
         break;
 
         case RIMUOVI_RECORD:
-            printf("Richiesta 5\n");
+            rimuoviRecord();
         
         break;
 
         case MODIFICA_TELEFONO:
-            printf("Richiesta 6\n");
+            modificaTelefono();
         
         break;
 
         case MODIFICA_INDIRIZZO:
-            printf("Richiesta 7\n");
+            modificaIndirizzo();
         
         break;
 
         default:
             generazioneErrore("Richiesta non valida\n");
-            
+
         break;
     }
 
     // Fase attesa risultati da Server
 
+    char * output;
+    recv(clientSocket, output, sizeof(output), 0);
+
+    // Fase di stampa dei risultati
+    printf(output);
+    printf("\n");
+
     // Chiusura della connessione con il Server
     close(clientSocket);
 
     return 0;
+}
+
+/* I parametri li facciamo inserire dagli utenti tramite tastiera ??????? */
+void visualizzaRubrica(){
+
+}
+
+void ricercaRecordCognome(){
+    char * cognome;
+}
+
+void ricercaRecordNomeCognome(){
+    char * nome, cognome;
+}
+
+void aggiungiRecord(){
+    recordRub record;
+}
+
+void rimuoviRecord(){
+    recordRub record;
+}
+
+void modificaTelefono(){
+    char * vecchioTelefono, nuovoTelefono;
+}
+
+void modificaIndirizzo(){
+    char * vecchioIndirizzo, nuovoIndirizzo;
 }
