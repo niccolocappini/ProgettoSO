@@ -26,6 +26,8 @@ void rimuoviRecord(int clientSocket);
 void modificaTelefono(int clientSocket);
 void aggiungiIndirizzo(int clientSocket);
 
+static recordRub *rubrica = NULL;
+
 /*
 int search_records(recordRub entries[], int entriesCount, recordRub query,
 recordRub queryResults[]); int add_new_record(recordRub entries[], int*
@@ -47,6 +49,9 @@ void handle_errno(int errorCode, char* errorMessage);
 
 int main()
 {
+  /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
+  e di conseguenza posizionandosi alla fine del file stesso */
+  rubrica = (recordRub *)fopen("RubricaDB", "a+");
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -71,8 +76,7 @@ int main()
   indirizzo.sin_port = htons(PORTA);
 
   // Binding del socket alla porta specificata in "indirizzo"
-  if (bind(serverSocket, (struct sockaddr *)&indirizzo, lunghezzaIndirizzo) <
-      0)
+  if (bind(serverSocket, (struct sockaddr *)&indirizzo, lunghezzaIndirizzo) < 0)
   {
     generazioneErrore("Errore durante il binding \n");
   }
