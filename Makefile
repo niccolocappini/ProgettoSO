@@ -6,7 +6,7 @@ generatoreRubrica: generatoreRubrica.o
 server: server.o
 		gcc server.o -o server
 
-client: client.o
+client: client.o funzioniClient.o
 		gcc client.o -o client
 
 generatoreRubrica.o : generatoreRubrica.c definizioniComuni.h
@@ -17,6 +17,9 @@ server.o : server.c definizioniComuni.h
 
 client.o : client.c funzioniClient.h definizioniComuni.h
 		gcc -c client.c
+
+funzioniClient.o: funzioniClient.c funzioniClient.h
+		gcc -c funzioniClient.c
 
 # rm -f : rimozione forzata senza considerare eventuali errori
 clean:

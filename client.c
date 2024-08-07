@@ -11,14 +11,14 @@
 int main(int argc, char *argv[])
 {
 
-    int clientFd, dimServer, risultato;
+    int clientSocket, dimServer, risultato;
 
     struct sockaddr_in indirizzoINETServer;
     struct sockaddr *indirizzoINETServerPtr;
 
     // Creazione Socket del Client
-    clientFd = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-    if (clientFd < 0)
+    clientSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
+    if (clientSocket < 0)
     {
         generazioneErrore("Creazione Socket del Client Fallita \n");
     }
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     do
     {
-        risultato = connect(clientFd, indirizzoINETServerPtr, dimServer);
+        risultato = connect(clientSocket, indirizzoINETServerPtr, dimServer);
         if (risultato == -1)
         {
             printf("Connessione con Server Fallita \n");
@@ -54,15 +54,26 @@ int main(int argc, char *argv[])
 
     // Fase in cui il client inoltra, tramite socket, il codice della richiesta al server
 
-    int scritto = send(clientFd,&richiesta,sizeof(richiesta),0);
+    int scritto = send(clientSocket,&richiesta,sizeof(richiesta),0);
     if(scritto < 0){
         generazioneErrore("Scrittura su socket fallita \n");
     }
 
     // Fase in cui il client riceve l'eventuale richiesta di password
+    if(richiesta >= 4 && richiesta <= 7){
+        char richiesta[72];
+        char password[100];
+        recv(clientSocket, richiesta, sizeof(richiesta), 0);
+        printf(richiesta);
+        printf("Inserisci Password: \n");
+        scanf("%s",password);
+        printf("Password Inserita: %s",password);
+        printf("\n");
+        send(clientSocket,password,sizeof(password),0);
+    }
 
     // Chiusura della connessione con il Server
-    close(clientFd);
+    close(clientSocket);
 
     return 0;
 }

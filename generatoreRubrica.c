@@ -31,27 +31,41 @@ int main(int argc, char *argv[])
     FILE *RubricaDB = fopen("RubricaDB", "w+");
     if (RubricaDB == NULL)
     {
-        perror("Il file RubricaDB non è stato aperto");
-        exit(EXIT_FAILURE);
+        generazioneErrore("Il file RubricaDB non è stato aperto \n");
     }
 
-    for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+    char separatore[] = {", "};
+    char fineRecord[] = {"\n"};
+    char prova[100];
+
+    /*for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
     {
-        int dimensioneSeparatore = 2;
-        char separatore[dimensioneSeparatore];
-        strcpy(separatore, ", ");
-        int dimensioneFineRecord = 1;
-        char fineRecord[dimensioneFineRecord];
-        strcpy(fineRecord, "\n");
         fwrite(&rubrica[i].nome, sizeof(&rubrica[i].nome), 1, RubricaDB);
-        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
+        // fwrite(separatore, sizeof(separatore), 1, RubricaDB);
         fwrite(&rubrica[i].cognome, sizeof(&rubrica[i].cognome), 1, RubricaDB);
-        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
+        // fwrite(separatore, sizeof(separatore), 1, RubricaDB);
         fwrite(&rubrica[i].telefono, sizeof(&rubrica[i].telefono), 1, RubricaDB);
-        fwrite(separatore, dimensioneSeparatore, 1, RubricaDB);
+        // fwrite(separatore, sizeof(separatore), 1, RubricaDB);
         fwrite(&rubrica[i].indirizzo, sizeof(&rubrica[i].indirizzo), 1, RubricaDB);
-        fwrite(fineRecord, dimensioneFineRecord, 1, RubricaDB);
+        // fwrite(fineRecord, sizeof(fineRecord), 1, RubricaDB);
     }
+    fclose(RubricaDB);*/
+
+    for (int i = 0; i < NUM_RECORD_RUBRICA; i++){
+        fwrite(&rubrica[i],sizeof(recordRub),1,RubricaDB);
+    }
+
+    /*for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+    {
+        fputs(rubrica[i].nome,RubricaDB);
+        fputs(separatore,RubricaDB);
+        fputs(rubrica[i].cognome,RubricaDB);
+        fputs(separatore,RubricaDB);
+        fputs(rubrica[i].telefono,RubricaDB);
+        fputs(separatore,RubricaDB);
+        fputs(rubrica[i].indirizzo,RubricaDB);
+        fputs(fineRecord,RubricaDB);
+    }*/
     fclose(RubricaDB);
 
     printf("Rubrica Telefonica: \n");

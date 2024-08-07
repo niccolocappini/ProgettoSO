@@ -5,3 +5,15 @@ int fd = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
 
 // Comando terminale per errore 'Bind failed: Address already in use'
 netstat -tulpn
+
+// Esempio gestione per Rubrica.txt
+int ip1 = ftell(RubricaDB);
+char prova1[100];
+sprintf(prova1,"%d",ip1);
+printf(prova1);
+printf("\n");
+fseek(RubricaDB,18*MAX_LUNG_CAMPO,SEEK_SET);
+fgets(prova,MAX_LUNG_CAMPO,RubricaDB);
+strcat(prova,"\0");
+printf(prova);
+printf("\n");

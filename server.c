@@ -178,16 +178,17 @@ int main()
       // Invio della risposta al client
       // send(clientSocket, output, strlen(output), 0);
       // printf("Risposta inviata: %s\n", output);
-
-      exit(0);
+      close(clientSocket);
+      exit(EXIT_SUCCESS);
     }
     else
     {
       printf("Sono il processo che continua ad accettare richieste\n");
+      close(clientSocket);
     }
 
     // Chiudi la connessione con il client
-    logoutUtente(clientSocket);
+    // logoutUtente(clientSocket);
 
     printf("La connessione si è conclusa\n");
   }
@@ -205,9 +206,13 @@ void richiestaPassword(int clientSocket)
   send(clientSocket, richiesta, sizeof(richiesta), 0);
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
+  printf("Password Ricevuta: %s",passwordRicevuta);
+  printf("\n");
 
-  // strcpy(passwordRicevuta, "PROGETTOSO");
-
-  if (strcmp(passwordRicevuta, PASSWORD) != 0)
-    generazioneErrore("Password errata: l'operazione non può essere eseguita");
+  if (strcmp(passwordRicevuta, PASSWORD) != 0){
+    generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
+  }
+  else{
+    printf("Password Accettata \n");
+  }
 }
