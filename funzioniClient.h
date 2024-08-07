@@ -1,11 +1,12 @@
-#ifndef FUNZIONI_CLIENTI_H
-#define FUNZIONI_CLIENTI_H
+#ifndef FUNZIONI_CLIENT_H
+#define FUNZIONI_CLIENT_H
 
 #include "definizioniComuni.h"
 
-void visualizzazioneRubrica();
+void visualizzaRubrica();
 void ricercaRecordCognome(char cognome[]);
 void ricercaRecordNomeCognome(char nome[], char cognome[]);
+
 void aggiungiRecord(recordRub record);
 void rimuoviRecord(recordRub record);
 void modificaTelefono(char vecchioTelefono[], char nuovoTelefono[]);

@@ -17,7 +17,7 @@ Numero Telefono
 Indirizzo (via, civico random, città, provincia)
 
 Modalità Autenticazione Client:
-password uguale per tutti (Definizioni Comuni)
+password richiesta al client la cui correttezza è verificata dal server, in caso si genera un errore
 
 Operazioni Richieste da Client:
 Modifica Numero Telefono
@@ -81,7 +81,7 @@ Gestione richiesta da parte del server:
 Invio risultati (solo per lettura)
 Invio messaggio di fine (?)
 
-Relazione Client-Server
+Relazione Client-Server (fatto)
 Server mandato in exe, rimane in ascolto dei client e quindi è sospeso
 Client effettuano la richiesta inviando 4 byte (un int), ad identificare il tipo di richiesta e il client si sospende
 Il Server legge il tipo della richiesta e se di scrittura si sospende di nuovo attendendo l’invio della password

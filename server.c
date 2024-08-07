@@ -98,66 +98,76 @@ int main()
 
     if (pid == 0)
     {
-      printf(
-          "Sono un figlio generato per gestire la richiesta appena arrivata\n");
+      printf("Sono un figlio generato per gestire la richiesta appena arrivata\n");
 
       // Login utente
       int richiesta = 0;
       // si leggono 4 byte = dimensione intero
       int risultato = recv(clientSocket, &richiesta, sizeof(richiesta), 0);
-      if (risultato < 1)
-      {
+      if (risultato < 1){
         generazioneErrore("Lettura fallita\n");
       }
 
       printf("Lettura effettuata: %d\n", richiesta);
 
+      int outputFunzioneServer = -1;
       switch (richiesta)
       {
 
         case VISUALIZZA_OGNI_RECORD:
-          printf("Richiesta 1\n");
+          printf("Gestione Richiesta 1: \n");
+          visualizzaRubrica(clientSocket);
 
-          break;
+        break;
 
         case RICERCA_RECORD_CON_COGNOME:
           printf("Richiesta 2\n");
+          ricercaRecordConCognome(clientSocket);
 
-          break;
+        break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
           printf("Richiesta 3\n");
+          ricercaRecordConCognomeNome(clientSocket);
 
-          break;
+        break;
 
         case AGGIUGI_RECORD:
           printf("Richiesta 4\n");
           richiestaPassword(clientSocket);
+          outputFunzioneServer = aggiungiRecord(clientSocket);
+          controlloOutput(outputFunzioneServer,"Aggiunta Record in Rubrica Fallita \n");
 
-          break;
+        break;
 
         case RIMUOVI_RECORD:
           printf("Richiesta 5\n");
           richiestaPassword(clientSocket);
+          outputFunzioneServer = rimuoviRecord(clientSocket);
+          controlloOutput(outputFunzioneServer,"Rimozione Record in Rubrica Fallita \n");
 
-          break;
+        break;
 
         case MODIFICA_TELEFONO:
           printf("Richiesta 6\n");
           richiestaPassword(clientSocket);
+          outputFunzioneServer = modificaTelefono(clientSocket);
+          controlloOutput(outputFunzioneServer,"Modifica Telefono Fallita \n");
 
-          break;
+        break;
 
         case MODIFICA_INDIRIZZO:
           printf("Richiesta 7\n");
           richiestaPassword(clientSocket);
+          outputFunzioneServer = modificaIndirizzo(clientSocket);
+          controlloOutput(outputFunzioneServer,"Modifica Indirizzo Fallita \n");
 
-          break;
+        break;
 
         default:
           generazioneErrore("Richiesta non valida\n");
           
-          break;
+        break;
       }
 
       // Invio della risposta al client
@@ -202,4 +212,38 @@ void richiestaPassword(int clientSocket)
   else{
     printf("Password Accettata \n");
   }
+}
+
+void controlloOutput(int risultato, char * messaggio){
+  if(risultato == 0){
+    generazioneErrore(messaggio);
+  }
+}
+
+char * visualizzaRubrica(int clientSocket){
+  return NULL;
+}
+
+char * ricercaRecordConCognome(int clientSocket){
+  return NULL;
+}
+
+char * ricercaRecordConCognomeNome(int clientSocket){
+  return NULL;
+}
+
+int aggiungiRecord(int clientSocket){
+  return 0;
+}
+
+int rimuoviRecord(int clientSocket){
+  return 0;
+}
+
+int modificaTelefono(int clientSocket){
+  return 0;
+}
+
+int modificaIndirizzo(int clientSocket){
+  return 0;
 }

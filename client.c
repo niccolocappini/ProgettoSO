@@ -5,12 +5,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 #include "funzioniClient.h"
 
 int main(int argc, char *argv[])
 {
-
     int clientSocket, dimServer, risultato;
 
     struct sockaddr_in indirizzoINETServer;
@@ -18,8 +18,7 @@ int main(int argc, char *argv[])
 
     // Creazione Socket del Client
     clientSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-    if (clientSocket < 0)
-    {
+    if (clientSocket < 0){
         generazioneErrore("Creazione Socket del Client Fallita \n");
     }
 
@@ -79,17 +78,17 @@ int main(int argc, char *argv[])
         case VISUALIZZA_OGNI_RECORD:
             printf("Richiesta 1\n");
 
-            break;
+        break;
 
         case RICERCA_RECORD_CON_COGNOME:
             printf("Richiesta 2\n");
 
-            break;
+        break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
             printf("Richiesta 3\n");
 
-            break;
+        break;
 
         case AGGIUGI_RECORD:
             printf("Richiesta 4\n");
@@ -113,6 +112,7 @@ int main(int argc, char *argv[])
 
         default:
             generazioneErrore("Richiesta non valida\n");
+            
         break;
     }
 
