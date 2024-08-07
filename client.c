@@ -67,10 +67,56 @@ int main(int argc, char *argv[])
         printf(richiesta);
         printf("Inserisci Password: \n");
         scanf("%s",password);
-        printf("Password Inserita: %s",password);
-        printf("\n");
+        printf("Password Inserita: %s \n",password);
         send(clientSocket,password,sizeof(password),0);
     }
+
+    // Fase Passaggio Dati per soddisfare la Richiesta
+
+    switch (richiesta)
+    {
+
+        case VISUALIZZA_OGNI_RECORD:
+            printf("Richiesta 1\n");
+
+            break;
+
+        case RICERCA_RECORD_CON_COGNOME:
+            printf("Richiesta 2\n");
+
+            break;
+
+        case RICERCA_RECORD_CON_NOME_COGNOME:
+            printf("Richiesta 3\n");
+
+            break;
+
+        case AGGIUGI_RECORD:
+            printf("Richiesta 4\n");
+
+        break;
+
+        case RIMUOVI_RECORD:
+            printf("Richiesta 5\n");
+        
+        break;
+
+        case MODIFICA_TELEFONO:
+            printf("Richiesta 6\n");
+        
+        break;
+
+        case MODIFICA_INDIRIZZO:
+            printf("Richiesta 7\n");
+        
+        break;
+
+        default:
+            generazioneErrore("Richiesta non valida\n");
+        break;
+    }
+
+    // Fase attesa risultati da Server
 
     // Chiusura della connessione con il Server
     close(clientSocket);

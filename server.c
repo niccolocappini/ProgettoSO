@@ -9,22 +9,10 @@
 #include <unistd.h>
 
 #include "definizioniComuni.h"
+#include "funzioniServer.h"
 
 #define PASSWORD "PROGETTOSO"
 // #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite socket
-
-int loginUtente(int clientSocket);
-void logoutUtente(int clientSocket);
-void richiestaPassword(int clientSocket);
-
-void stampaRubrica(int clientSocket);
-void ricercaRecordConCognome(int clientSocket);
-void ricercaRecordConCognomeNome(int clientSocket);
-
-void aggiungiRecord(int clientSocket);
-void rimuoviRecord(int clientSocket);
-void modificaTelefono(int clientSocket);
-void aggiungiIndirizzo(int clientSocket);
 
 static recordRub *rubrica = NULL;
 
@@ -105,14 +93,6 @@ int main()
 
     printf("Accettata connessione da un client\n");
 
-    // Fase di Sospensione fino a segnale mandato dal client
-
-    /*if(kill(getpid(),SIGSTOP) < 0){
-      generazioneErrore("Errore durante la sospensione del server \n");
-    }
-    sleep(10);
-    kill(getpid(),SIGCONT);*/
-
     // Gestione richiesta tramite fork
     int pid = fork();
 
@@ -135,48 +115,49 @@ int main()
       switch (richiesta)
       {
 
-      case VISUALIZZA_OGNI_RECORD:
-        printf("Richiesta 1\n");
+        case VISUALIZZA_OGNI_RECORD:
+          printf("Richiesta 1\n");
 
-        break;
+          break;
 
-      case RICERCA_RECORD_CON_COGNOME:
-        printf("Richiesta 2\n");
+        case RICERCA_RECORD_CON_COGNOME:
+          printf("Richiesta 2\n");
 
-        break;
+          break;
 
-      case RICERCA_RECORD_CON_NOME_COGNOME:
-        printf("Richiesta 3\n");
+        case RICERCA_RECORD_CON_NOME_COGNOME:
+          printf("Richiesta 3\n");
 
-        break;
+          break;
 
-      case AGGIUGI_RECORD:
-        printf("Richiesta 4\n");
-        richiestaPassword(clientSocket);
+        case AGGIUGI_RECORD:
+          printf("Richiesta 4\n");
+          richiestaPassword(clientSocket);
 
-        break;
+          break;
 
-      case RIMUOVI_RECORD:
-        printf("Richiesta 5\n");
-        richiestaPassword(clientSocket);
+        case RIMUOVI_RECORD:
+          printf("Richiesta 5\n");
+          richiestaPassword(clientSocket);
 
-        break;
+          break;
 
-      case MODIFICA_TELEFONO:
-        printf("Richiesta 6\n");
-        richiestaPassword(clientSocket);
+        case MODIFICA_TELEFONO:
+          printf("Richiesta 6\n");
+          richiestaPassword(clientSocket);
 
-        break;
+          break;
 
-      case MODIFICA_INDIRIZZO:
-        printf("Richiesta 7\n");
-        richiestaPassword(clientSocket);
+        case MODIFICA_INDIRIZZO:
+          printf("Richiesta 7\n");
+          richiestaPassword(clientSocket);
 
-        break;
+          break;
 
-      default:
-        generazioneErrore("Richiesta non valida\n");
-        break;
+        default:
+          generazioneErrore("Richiesta non valida\n");
+          
+          break;
       }
 
       // Invio della risposta al client
@@ -194,8 +175,10 @@ int main()
     // Chiudi la connessione con il client
     // logoutUtente(clientSocket);
 
-    printf("La connessione si è conclusa\n");
+    //printf("La connessione si è conclusa\n");
   }
+
+  printf("La connessione si è conclusa\n");
 
   return 0;
 }
@@ -208,10 +191,10 @@ void richiestaPassword(int clientSocket)
 {
   char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
   send(clientSocket, richiesta, sizeof(richiesta), 0);
+
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
-  printf("Password Ricevuta: %s",passwordRicevuta);
-  printf("\n");
+  printf("Password Ricevuta: %s \n",passwordRicevuta);
 
   if (strcmp(passwordRicevuta, PASSWORD) != 0){
     generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
