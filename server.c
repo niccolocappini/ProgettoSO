@@ -31,10 +31,10 @@ int main()
   /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
   e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "a+");
-  long int k = sizeof(rubrica);
+  /*long int k = sizeof(rubrica);
   char * stringa;
   sprintf(stringa,"%d",k);
-  printf("%s",stringa);
+  printf("%s",stringa);*/
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;

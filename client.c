@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
 
     switch (richiesta)
     {
-
         case VISUALIZZA_OGNI_RECORD:
             visualizzaRubrica();
 
@@ -116,7 +115,6 @@ int main(int argc, char *argv[])
     }
 
     // Fase attesa risultati da Server
-
     char * output;
     recv(clientSocket, output, sizeof(output), 0);
 

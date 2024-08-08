@@ -29,8 +29,7 @@ int main(int argc, char *argv[])
     }
 
     FILE *RubricaDB = fopen("RubricaDB", "w+");
-    if (RubricaDB == NULL)
-    {
+    if (RubricaDB == NULL){
         generazioneErrore("Il file RubricaDB non è stato aperto \n");
     }
 
