@@ -34,11 +34,11 @@ int main(int argc, char *argv[])
         generazioneErrore("Il file RubricaDB non è stato aperto \n");
     }
 
-    char separatore[] = {", "};
+    /*char separatore[] = {", "};
     char fineRecord[] = {"\n"};
     char prova[100];
 
-    /*for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+    for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
     {
         fwrite(&rubrica[i].nome, sizeof(&rubrica[i].nome), 1, RubricaDB);
         // fwrite(separatore, sizeof(separatore), 1, RubricaDB);

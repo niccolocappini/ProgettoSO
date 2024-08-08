@@ -14,7 +14,8 @@
 #define PASSWORD "PROGETTOSO"
 // #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite socket
 
-static recordRub *rubrica = NULL;
+static FILE *rubrica = NULL;
+// static int recordContenuti = 0;
 
 /*
 
@@ -29,7 +30,11 @@ int main()
 {
   /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
   e di conseguenza posizionandosi alla fine del file stesso */
-  rubrica = (recordRub *)fopen("RubricaDB", "a+");
+  rubrica = fopen("RubricaDB", "a+");
+  long int k = sizeof(rubrica);
+  char * stringa;
+  sprintf(stringa,"%d",k);
+  printf("%s",stringa);
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -109,19 +114,19 @@ int main()
           printf("Gestione Richiesta 1: \n");
           output = visualizzaRubrica();
           
-        break;
+          break;
 
         case RICERCA_RECORD_CON_COGNOME:
           printf("Gestione Richiesta 2\n");
           output = ricercaRecordConCognome(clientSocket);
 
-        break;
+          break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
           printf("Gestione Richiesta 3\n");
           output = ricercaRecordConCognomeNome(clientSocket);
 
-        break;
+          break;
 
         case AGGIUGI_RECORD:
           printf("Gestione Richiesta 4\n");
@@ -129,7 +134,7 @@ int main()
           risultato = aggiungiRecord(clientSocket);
           controlloOutput(risultato,"Aggiunta Record in Rubrica Fallita \n");
 
-        break;
+          break;
 
         case RIMUOVI_RECORD:
           printf("Gestione Richiesta 5\n");
@@ -137,7 +142,7 @@ int main()
           risultato = rimuoviRecord(clientSocket);
           controlloOutput(risultato,"Rimozione Record in Rubrica Fallita \n");
 
-        break;
+          break;
 
         case MODIFICA_TELEFONO:
           printf("Gestione Richiesta 6\n");
@@ -145,7 +150,7 @@ int main()
           risultato = modificaTelefono(clientSocket);
           controlloOutput(risultato,"Modifica Telefono Fallita \n");
 
-        break;
+          break;
 
         case MODIFICA_INDIRIZZO:
           printf("Gestione Richiesta 7\n");
@@ -153,12 +158,11 @@ int main()
           risultato = modificaIndirizzo(clientSocket);
           controlloOutput(risultato,"Modifica Indirizzo Fallita \n");
 
-        break;
+          break;
 
         default:
           generazioneErrore("Richiesta non valida\n");
           
-        break;
       }
 
       // Invio della risposta al client
@@ -211,30 +215,33 @@ void controlloOutput(int risultato, char * messaggio){
 
 char * visualizzaRubrica(){
 
-  char * output;
+  char output[1000];
 
   // Caso in cui venga eseguito prima server di generatoreRubrica (la Rubrica è vuota)
   if(sizeof(rubrica) == 0) {
-    printf("ciao \n");
-    output = "La rubrica è vuota \n";
+    strcat(output,"La rubrica è vuota \n");
   }
 
-  
-  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+  printf("ciao \n");
+
+  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
+  for (int i = 0; i < 4*NUM_RECORD_RUBRICA; i++)
   {
+    if(i%4 == 0){
       strcat(output,"Nome: ");
-      strcat(output,rubrica[i].nome);
-      strcat(output,"\n");
+    }
+    if(i%4 == 1){
       strcat(output,"Cognome: ");
-      strcat(output,rubrica[i].cognome);
-      strcat(output,"\n");
+    }
+    if(i%4 == 2){
       strcat(output,"Indirizzo: ");
-      strcat(output,rubrica[i].indirizzo);
-      strcat(output,"\n");
+    }
+    if(i%4 == 3){
       strcat(output,"Telefono: ");
-      strcat(output,rubrica[i].telefono);
-      strcat(output,"\n");
-      strcat(output,"------------------------------------------------------------- \n");
+    }
+    fgets(output,i*MAX_LUNG_CAMPO,rubrica);
+    // strcat(output,"\0");
+    strcat(output,"------------------------------------------------------------- \n");
   }
 
   return output;

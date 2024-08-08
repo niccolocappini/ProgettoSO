@@ -70,8 +70,7 @@ DOPO:
 
 Idee:
 - Il client non ha accesso alla rubrica, solo il server può accedervi
-- Nel cliet, all'interno delle funzioni avviene: invio parametri al server, ricezione risultato
-    Da decidere se fare la stampa del risultato nelle funzioni stesse o nel case dello switch ???
+- Nel cliet, all'interno delle funzioni avviene: invio parametri al server, ricezione risultato, la stampa del risultato  nelle funzioni stesse
 
 
 PROTOCOLLO DI COMUNICAZIONE CLIENT-SERVER
