@@ -98,3 +98,6 @@ Gestione Richiesta di Scrittura (supponendo una previa autenticazione):
     - Il server si sospende in attesa dei parametri per la modifica della rubrica
     - Il client invoca un metodo per la richiesta all'utente di questi parametri e, se corretti, li passa al server;altrimenti solleva un errore
     - Il server riceve i parametri per la modifica della rubrica e, attraverso il riferimento al file, invoca un metodo per effettuare il cambiamento. Alla fine il server invierà un messaggio di avvenuta modifica o meno, a seconda del successo dell'operazione.
+
+
+Dentro visualizzaRubrica() (lato server): forse è meglio usare uno switch al posto della catena di if
