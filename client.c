@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
         default:
             generazioneErrore("Richiesta non valida\n");
-
+            break;
     }
 
     // Fase attesa risultati da Server

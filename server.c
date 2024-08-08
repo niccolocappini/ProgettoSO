@@ -12,10 +12,9 @@
 #include "funzioniServer.h"
 
 #define PASSWORD "PROGETTOSO"
-// #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite socket
 
 static FILE *rubrica = NULL;
-// static int recordContenuti = 0;
+static int recordContenuti = NUM_RECORD_RUBRICA; // da aggiornare ad ogni aggiunta ed eliminazione
 
 /*
 
@@ -31,20 +30,10 @@ int main()
   /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
   e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "a+");
-  /*long int k = sizeof(rubrica);
-  char * stringa;
-  sprintf(stringa,"%d",k);
-  printf("%s",stringa);*/
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
   int lunghezzaIndirizzo = sizeof(indirizzo);
-
-  /*
-    char input[dimBuffer] = {0};  // buffer utilizzato per le richieste dei
-    client char output[dimBuffer] = {0}; // buffer utilizzato per le risposte
-    del server
-  */
 
   // Creazione del socket
   serverSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
@@ -162,7 +151,7 @@ int main()
 
         default:
           generazioneErrore("Richiesta non valida\n");
-          
+          break;
       }
 
       // Invio della risposta al client
@@ -216,31 +205,37 @@ void controlloOutput(int risultato, char * messaggio){
 char * visualizzaRubrica(){
 
   char output[1000]=" ";
-
-  // Caso in cui venga eseguito prima server di generatoreRubrica (la Rubrica è vuota)
-  if(sizeof(rubrica) == 0) {
-    strcat(output,"La rubrica è vuota \n");
-  }
+  char supporto[MAX_LUNG_CAMPO];
 
   printf("ciao \n");
 
   fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
-  for (int i = 0; i < 4*NUM_RECORD_RUBRICA; i++)
+  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
   { 
-    if(i%4 == 0){
-      strcat(output,"Nome: ");
+    switch (i%4)
+    {
+      case 0:
+        strcat(output,"Nome: ");
+        break;
+      
+      case 1:
+        strcat(output,"Cognome: ");
+        break;
+      
+      case 2:
+        strcat(output,"Indirizzo: ");
+        break;
+      
+      case 3:
+        strcat(output,"Telefono: ");
+        break;
+      
+      default:
+        break;
     }
-    if(i%4 == 1){
-      strcat(output,"Cognome: ");
-    }
-    if(i%4 == 2){
-      strcat(output,"Indirizzo: ");
-    }
-    if(i%4 == 3){
-      strcat(output,"Telefono: ");
-    }
-    fread(output,i*MAX_LUNG_CAMPO,rubrica);
-    // strcat(output,"\0");
+
+    fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
+    strcat(output,supporto);
     strcat(output,"------------------------------------------------------------- \n");
   }
 

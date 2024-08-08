@@ -101,6 +101,6 @@ Gestione Richiesta di Scrittura (supponendo una previa autenticazione):
 
 
 Dentro visualizzaRubrica() (lato server): 
-    - Forse è meglio usare uno switch al posto della catena di if
+    - Forse è meglio usare uno switch al posto della catena di if (fatto)
     - Decidere se impostare un limite di record nella rubrica e scegliere di conseguenza la dimensione di output oppure usare una stringa sempre più grande ad ogni ciclo
-    - Rimuovere la parte che considera il lancio del server prima del generatore rubrica
+    - Rimuovere la parte che considera il lancio del server prima del generatore rubrica (fatto)
