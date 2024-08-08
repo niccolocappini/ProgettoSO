@@ -3,7 +3,7 @@
 
 #include "definizioniComuni.h"
 
-void visualizzaRubrica();
+int visualizzaRubrica(int clientSocket);
 /*void ricercaRecordCognome(char cognome[]);
 void ricercaRecordNomeCognome(char nome[], char cognome[]);
 

@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta
-
+    long dimensioneOutput = 0;
     switch (richiesta)
     {
         case VISUALIZZA_OGNI_RECORD:
-            visualizzaRubrica();
+            dimensioneOutput = visualizzaRubrica(clientSocket);
 
             break;
 
@@ -117,8 +117,8 @@ int main(int argc, char *argv[])
     }
 
     // Fase attesa risultati da Server
-    char * output;
-    recv(clientSocket, output, sizeof(output), 0);
+    char output[dimensioneOutput];
+    recv(clientSocket, output, dimensioneOutput, 0);
 
 
     // Fase di stampa dei risultati
@@ -132,9 +132,12 @@ int main(int argc, char *argv[])
 }
 
 /* I parametri li facciamo inserire dagli utenti tramite tastiera ??????? */
-void visualizzaRubrica(){
-    char * rubrica;
+int visualizzaRubrica(int clientSocket){
+    char dimStr[5];
+    recv(clientSocket,dimStr,sizeof(dimStr),0);
+    printf("%s\n",dimStr);
     printf("Stampa della Rubrica Attuale: \n");
+    return atoi(dimStr);
 }
 
 void ricercaRecordCognome(){

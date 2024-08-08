@@ -101,7 +101,13 @@ int main()
 
         case VISUALIZZA_OGNI_RECORD:
           printf("Gestione Richiesta 1: \n");
-          output = visualizzaRubrica();
+          int dimensione = recordContenuti*4*MAX_LUNG_CAMPO + 4*recordContenuti*2 + recordContenuti*2;
+          output = (char *) malloc(dimensione);
+          visualizzaRubrica(&output);
+          char dimStr[10];
+          sprintf(dimStr,"%d",dimensione);
+          printf("%s\n",dimStr);
+          send(clientSocket,dimStr,strlen(dimStr),0);
           
           break;
 
@@ -155,8 +161,8 @@ int main()
       }
 
       // Invio della risposta al client
-      send(clientSocket, output, strlen(output), 0);
-      printf("Risposta inviata: %s\n", output);
+      send(clientSocket, output, sizeof(output), 0);
+      printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
       close(clientSocket);
       exit(EXIT_SUCCESS);
     }
@@ -202,44 +208,49 @@ void controlloOutput(int risultato, char * messaggio){
   }
 }
 
-char * visualizzaRubrica(){
+void visualizzaRubrica(char **output){
 
-  char output[1000]=" ";
   char supporto[MAX_LUNG_CAMPO];
-
-  printf("ciao \n");
+  int i=0;
+  int contatore=0;
 
   fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
-  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
-  { 
-    switch (i%4)
-    {
+  while(1) {
+
+    /*switch (contatore%4){
       case 0:
-        strcat(output,"Nome: ");
+        strcat(*output,"Nome: ");
         break;
       
       case 1:
-        strcat(output,"Cognome: ");
+        strcat(*output,"Cognome: ");
         break;
       
       case 2:
-        strcat(output,"Indirizzo: ");
+        strcat(*output,"Indirizzo: ");
         break;
       
       case 3:
-        strcat(output,"Telefono: ");
+        strcat(*output,"Telefono: ");
         break;
       
       default:
         break;
+    }*/
+
+    i = fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
+    if(i <= 0){
+      break;
     }
 
-    fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
-    strcat(output,supporto);
-    strcat(output,"------------------------------------------------------------- \n");
-  }
+    strcat(*output,supporto);
+    strcat(*output," ");
+    if(contatore%4 == 3){
+      strcat(*output,"\n");
+    }
 
-  return output;
+    contatore++;
+  }
 }
 
 char * ricercaRecordConCognome(int clientSocket){
