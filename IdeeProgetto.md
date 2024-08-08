@@ -104,3 +104,5 @@ Dentro visualizzaRubrica() (lato server):
     - Forse è meglio usare uno switch al posto della catena di if (fatto)
     - Decidere se impostare un limite di record nella rubrica e scegliere di conseguenza la dimensione di output oppure usare una stringa sempre più grande ad ogni ciclo
     - Rimuovere la parte che considera il lancio del server prima del generatore rubrica (fatto)
+
+Nelle comunicazioni con send e receive non si dovrebbe utilizzare la dimensione esatta del messaggio inviato dalla controparte: per esempio lato client si definisce char * richiesta[72], ma se la dimensione della richiesta aumenta si stampa una stringa sbagliata.
