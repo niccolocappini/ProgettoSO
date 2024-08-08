@@ -156,7 +156,7 @@ void ricercaRecordCognome(int clientSocket)
 
 void ricercaRecordNomeCognome(int clientSocket)
 {
-    char *nome, cognome;
+    char * nome, cognome;
 }
 
 void aggiungiRecord(int clientSocket)
