@@ -107,19 +107,19 @@ int main()
 
         case VISUALIZZA_OGNI_RECORD:
           printf("Gestione Richiesta 1: \n");
-          visualizzaRubrica(clientSocket);
-
+          output = visualizzaRubrica();
+          
         break;
 
         case RICERCA_RECORD_CON_COGNOME:
           printf("Gestione Richiesta 2\n");
-          ricercaRecordConCognome(clientSocket);
+          output = ricercaRecordConCognome(clientSocket);
 
         break;
 
         case RICERCA_RECORD_CON_NOME_COGNOME:
           printf("Gestione Richiesta 3\n");
-          ricercaRecordConCognomeNome(clientSocket);
+          output = ricercaRecordConCognomeNome(clientSocket);
 
         break;
 
@@ -209,8 +209,35 @@ void controlloOutput(int risultato, char * messaggio){
   }
 }
 
-char * visualizzaRubrica(int clientSocket){
-  return NULL;
+char * visualizzaRubrica(){
+
+  char * output;
+
+  // Caso in cui venga eseguito prima server di generatoreRubrica (la Rubrica è vuota)
+  if(sizeof(rubrica) == 0) {
+    printf("ciao \n");
+    output = "La rubrica è vuota \n";
+  }
+
+  
+  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+  {
+      strcat(output,"Nome: ");
+      strcat(output,rubrica[i].nome);
+      strcat(output,"\n");
+      strcat(output,"Cognome: ");
+      strcat(output,rubrica[i].cognome);
+      strcat(output,"\n");
+      strcat(output,"Indirizzo: ");
+      strcat(output,rubrica[i].indirizzo);
+      strcat(output,"\n");
+      strcat(output,"Telefono: ");
+      strcat(output,rubrica[i].telefono);
+      strcat(output,"\n");
+      strcat(output,"------------------------------------------------------------- \n");
+  }
+
+  return output;
 }
 
 char * ricercaRecordConCognome(int clientSocket){

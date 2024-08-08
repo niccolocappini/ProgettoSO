@@ -133,7 +133,8 @@ int main(int argc, char *argv[])
 
 /* I parametri li facciamo inserire dagli utenti tramite tastiera ??????? */
 void visualizzaRubrica(){
-
+    char * rubrica;
+    printf("Stampa della Rubrica Attuale: \n");
 }
 
 void ricercaRecordCognome(){
