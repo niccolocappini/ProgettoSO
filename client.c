@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
     {
         case VISUALIZZA_OGNI_RECORD:
             visualizzaRubrica();
+            printf("1");
 
             break;
 
@@ -120,6 +121,7 @@ int main(int argc, char *argv[])
     char * output;
     recv(clientSocket, output, sizeof(output), 0);
 
+
     // Fase di stampa dei risultati
     printf("%s",output);
     printf("\n");
@@ -134,6 +136,7 @@ int main(int argc, char *argv[])
 void visualizzaRubrica(){
     char * rubrica;
     printf("Stampa della Rubrica Attuale: \n");
+    return;
 }
 
 void ricercaRecordCognome(){
