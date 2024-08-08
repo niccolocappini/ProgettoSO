@@ -100,4 +100,6 @@ Gestione Richiesta di Scrittura (supponendo una previa autenticazione):
     - Il server riceve i parametri per la modifica della rubrica e, attraverso il riferimento al file, invoca un metodo per effettuare il cambiamento. Alla fine il server invierà un messaggio di avvenuta modifica o meno, a seconda del successo dell'operazione.
 
 
-Dentro visualizzaRubrica() (lato server): forse è meglio usare uno switch al posto della catena di if
+Dentro visualizzaRubrica() (lato server): 
+    - Forse è meglio usare uno switch al posto della catena di if
+    - Decidere se impostare un limite di record nella rubrica e scegliere di conseguenza la dimensione di output oppure usare una stringa sempre più grande ad ogni ciclo
