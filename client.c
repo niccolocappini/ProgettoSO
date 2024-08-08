@@ -45,7 +45,9 @@ int main(int argc, char *argv[])
     printf("Connessione con Server andata a buon fine \n");
 
     // Fase in cui il client determina l'operazione da richiedere la server
-
+    if(argc == 1){
+        generazioneErrore("Nessun codice passato al client \n");
+    }
     int richiesta = atoi(argv[1]);
     if(richiesta < 1 || richiesta >7){
         generazioneErrore("Codice richiesta non valido \n");
