@@ -215,7 +215,7 @@ void controlloOutput(int risultato, char * messaggio){
 
 char * visualizzaRubrica(){
 
-  char output[1000];
+  char output[1000]=" ";
 
   // Caso in cui venga eseguito prima server di generatoreRubrica (la Rubrica è vuota)
   if(sizeof(rubrica) == 0) {
@@ -226,7 +226,7 @@ char * visualizzaRubrica(){
 
   fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
   for (int i = 0; i < 4*NUM_RECORD_RUBRICA; i++)
-  {
+  { 
     if(i%4 == 0){
       strcat(output,"Nome: ");
     }
@@ -239,7 +239,7 @@ char * visualizzaRubrica(){
     if(i%4 == 3){
       strcat(output,"Telefono: ");
     }
-    fgets(output,i*MAX_LUNG_CAMPO,rubrica);
+    fread(output,i*MAX_LUNG_CAMPO,rubrica);
     // strcat(output,"\0");
     strcat(output,"------------------------------------------------------------- \n");
   }
