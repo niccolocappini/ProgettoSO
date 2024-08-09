@@ -47,10 +47,12 @@ Gestione Conflitti Client (la coda delle richieste è gestita automaticamente da
 DIVISIONE COMPITI
 Bolle
     Generazione Rubrica (fatto)
-    Scheletro Client (es. Operazioni Richieste dal Client al Server)
+    Scheletro Client (es. Operazioni Richieste dal Client al Server) (fatto)
+    fare AggiungiRecord(), modificaIndirizzo()
 Nicco
-    Scheletro Server (creazione socket e bind, ascolto, accept, login utente e fork) ✓
-    (ho lasciato commentato tutta la parte di ChatGPT che ancora non ho fatto/controllato e che deve ancora essere implementato)
+    Scheletro Server (creazione socket e bind, ascolto, accept, login utente e fork) ✓ (fatto)
+    fare RimuoviRecord(), modificaTelefono()
+    
 
 
 Da fare:
@@ -98,6 +100,7 @@ Gestione Richiesta di Scrittura (supponendo una previa autenticazione):
 
 
 visualizzaRubrica(): completata
+ricercaRecordConCognome(): completata
+ricercaRecordConCognomeNome(): completata
 
 
-Nelle comunicazioni con send e receive non si dovrebbe utilizzare la dimensione esatta del messaggio inviato dalla controparte: per esempio lato client si definisce char * richiesta[72], ma se la dimensione della richiesta aumenta si stampa una stringa sbagliata.
