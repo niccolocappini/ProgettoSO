@@ -132,6 +132,7 @@ void stampaOutputDalServer(int clientSocket, char *str)
         n = read(clientSocket, str, 1);
         printf("%s", str);
     } while (n > 0 && strcmp(str, "\0") != 0);
+    printf("\n");
 }
 
 void visualizzaRubrica()
@@ -154,7 +155,16 @@ void ricercaRecordCognome(int clientSocket)
 
 void ricercaRecordNomeCognome(int clientSocket)
 {
-    char *nome, cognome;
+    char nome[MAX_LUNG_CAMPO];
+    char cognome[MAX_LUNG_CAMPO];
+
+    printf("Inserire Nome da Ricercare: \n");
+    scanf("%s",nome);
+    printf("Inserire Cognome da Ricercare: \n");
+    scanf("%s",cognome);
+    send(clientSocket, nome, MAX_LUNG_CAMPO, 0);
+    send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
+
 }
 
 void aggiungiRecord(int clientSocket)

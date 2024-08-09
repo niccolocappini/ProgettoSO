@@ -86,7 +86,6 @@ int main()
 
       // Login utente
       int richiesta = 0;
-      // si leggono 4 byte = dimensione intero
       int risultato = recv(clientSocket, &richiesta, sizeof(richiesta), 0);
       if (risultato < 1)
       {
@@ -111,19 +110,19 @@ int main()
         break;
 
       case RICERCA_RECORD_CON_COGNOME:
-        printf("Gestione Richiesta 2\n");
+        printf("Gestione Richiesta 2: \n");
         output = ricercaRecordConCognome(clientSocket);
 
         break;
 
       case RICERCA_RECORD_CON_NOME_COGNOME:
-        printf("Gestione Richiesta 3\n");
-        output = ricercaRecordConCognomeNome(clientSocket);
+        printf("Gestione Richiesta 3: \n");
+        ricercaRecordConCognomeNome(clientSocket, &output);
 
         break;
 
       case AGGIUGI_RECORD:
-        printf("Gestione Richiesta 4\n");
+        printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket);
         controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n");
@@ -131,7 +130,7 @@ int main()
         break;
 
       case RIMUOVI_RECORD:
-        printf("Gestione Richiesta 5\n");
+        printf("Gestione Richiesta 5: \n");
         richiestaPassword(clientSocket);
         risultato = rimuoviRecord(clientSocket);
         controlloOutput(risultato, "Rimozione Record in Rubrica Fallita \n");
@@ -139,7 +138,7 @@ int main()
         break;
 
       case MODIFICA_TELEFONO:
-        printf("Gestione Richiesta 6\n");
+        printf("Gestione Richiesta 6: \n");
         richiestaPassword(clientSocket);
         risultato = modificaTelefono(clientSocket);
         controlloOutput(risultato, "Modifica Telefono Fallita \n");
@@ -147,7 +146,7 @@ int main()
         break;
 
       case MODIFICA_INDIRIZZO:
-        printf("Gestione Richiesta 7\n");
+        printf("Gestione Richiesta 7: \n");
         richiestaPassword(clientSocket);
         risultato = modificaIndirizzo(clientSocket);
         controlloOutput(risultato, "Modifica Indirizzo Fallita \n");
@@ -271,9 +270,29 @@ char *ricercaRecordConCognome(int clientSocket)
   return output;
 }
 
-char *ricercaRecordConCognomeNome(int clientSocket)
+void ricercaRecordConCognomeNome(int clientSocket, char **output)
 {
-  return NULL;
+  char nome[MAX_LUNG_CAMPO];
+  char cognome[MAX_LUNG_CAMPO];
+  char supporto[MAX_LUNG_CAMPO];
+  int i = 0;
+
+  recv(clientSocket,nome,MAX_LUNG_CAMPO,0);
+  printf("Nome ricevuto: %s\n",nome);
+  recv(clientSocket,cognome,MAX_LUNG_CAMPO,0);
+  printf("Cognome ricevuto: %s\n",cognome);
+
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
+  while (1)
+  {
+
+    i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
+    if (i <= 0)
+    {
+      break;
+    }
+
+  }
 }
 
 int aggiungiRecord(int clientSocket)
