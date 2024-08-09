@@ -61,7 +61,7 @@ int main()
          "4) Aggiunta Record \n"
          "5) Eliminazione Record \n"
          "6) Modifica Numero di Telefono \n"
-         "7) Modifica Indirizzo \n");
+         "7) Modifica Indirizzo \n\n");
 
   while (1)
   {
@@ -315,7 +315,7 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 
     if(contatoreCampi%4 == 2 || contatoreCampi%4 == 3)
     {
-      
+
     }
 
     if(strcmp(supporto,nome) == 0)

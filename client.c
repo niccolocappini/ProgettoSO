@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
          "4) Aggiunta Record \n"
          "5) Eliminazione Record \n"
          "6) Modifica Numero di Telefono \n"
-         "7) Modifica Indirizzo \n");
-         
+         "7) Modifica Indirizzo \n\n");
+
     int clientSocket, dimServer, risultato;
 
     struct sockaddr_in indirizzoINETServer;
@@ -52,14 +52,12 @@ int main(int argc, char *argv[])
         }
     } while (risultato == -1);
 
-    printf("Connessione con Server andata a buon fine \n");
+    printf("Connessione con Server andata a buon fine \n\n");
 
     // Fase in cui il client determina l'operazione da richiedere la server
-    if (argc == 1)
-    {
-        generazioneErrore("Nessun codice passato al client \n");
-    }
-    int richiesta = atoi(argv[1]);
+    int richiesta = 0;
+    printf("Inserisci il codice dell'operazione da effettuare: \n");
+    scanf("%d",&richiesta);
     if (richiesta < 1 || richiesta > 7)
     {
         generazioneErrore("Codice richiesta non valido \n");
