@@ -11,6 +11,15 @@
 
 int main(int argc, char *argv[])
 {
+    printf("Menù delle operazione che possono essere richieste dal client: \n"
+         "1) Visualizzazzione tutti i record della rubrica \n"
+         "2) Ricerca record tramite cognome \n"
+         "3) Ricerca record tramite coppia nome-cognome \n"
+         "4) Aggiunta Record \n"
+         "5) Eliminazione Record \n"
+         "6) Modifica Numero di Telefono \n"
+         "7) Modifica Indirizzo \n");
+         
     int clientSocket, dimServer, risultato;
 
     struct sockaddr_in indirizzoINETServer;
