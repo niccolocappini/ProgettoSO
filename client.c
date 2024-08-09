@@ -114,8 +114,7 @@ int main(int argc, char *argv[])
     }
 
     // Fase di stampa dei Riusultati
-    char output[1];
-    stampaOutputDalServer(clientSocket, output);
+    stampaOutputDalServer(clientSocket);
 
     // Chiusura della connessione con il Server
     close(clientSocket);
@@ -123,8 +122,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void stampaOutputDalServer(int clientSocket, char *str)
+void stampaOutputDalServer(int clientSocket)
 {
+
+    char str[1];
     int n = 0;
 
     do
@@ -142,15 +143,11 @@ void visualizzaRubrica()
 
 void ricercaRecordCognome(int clientSocket)
 {
-    char *richiestaCognome;
-    recv(clientSocket, richiestaCognome, sizeof(richiestaCognome), 0);
-    printf("%s", richiestaCognome);
-    char *cognome;
-    scanf("Inserire un cognome per la ricerca: %s", cognome);
-    send(clientSocket, cognome, sizeof(cognome), 0);
-    char *risultato;
-    recv(clientSocket, risultato, sizeof(risultato), 0);
-    printf("%s\n", risultato);
+    char cognomeDaRicercare[MAX_LUNG_CAMPO];
+    printf("Inserire un cognome per la ricerca: ");
+    scanf("%s", cognomeDaRicercare);
+    send(clientSocket, cognomeDaRicercare, MAX_LUNG_CAMPO, 0);
+    printf("Cognome inviato al server \n");
 }
 
 void ricercaRecordNomeCognome(int clientSocket)
