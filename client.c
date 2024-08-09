@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
         break;
 
-    case AGGIUGI_RECORD:
+    case AGGIUNGI_RECORD:
         aggiungiRecord(clientSocket);
 
         break;

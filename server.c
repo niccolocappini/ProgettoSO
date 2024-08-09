@@ -124,7 +124,7 @@ int main()
 
         break;
 
-      case AGGIUGI_RECORD:
+      case AGGIUNGI_RECORD:
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket);
