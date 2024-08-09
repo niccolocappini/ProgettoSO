@@ -3,7 +3,7 @@
 
 #include "definizioniComuni.h"
 
-void stampaOutputDalServer(int clientSocket, char * str);
+void stampaOutputDalServer(int clientSocket);
 /*void ricercaRecordCognome(char cognome[]);
 void ricercaRecordNomeCognome(char nome[], char cognome[]);
 

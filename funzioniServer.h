@@ -7,9 +7,9 @@ void richiestaPassword(int clientSocket);
 void controlloOutput(int risultato, char * messaggio);
 
 /* Questi metodi restituiranno una stringa contenente ciò che è stato richiesto*/
-void visualizzaRubrica();
-char * ricercaRecordConCognome(int clientSocket);
-char * ricercaRecordConCognomeNome(int clientSocket);
+void visualizzaRubrica(char **output);
+void ricercaRecordConCognome(int clientSocket, char **output);
+void ricercaRecordConCognomeNome(int clientSocket, char **output);
 
 /* Questi metodi restituiranno un intero (codice) che in caso di successo sarà 1 altrimenti 0*/
 int aggiungiRecord(int clientSocket);

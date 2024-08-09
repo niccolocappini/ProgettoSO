@@ -97,28 +97,33 @@ int main()
 
       risultato = -1;
       char *output; // stringa che contterrà ciò che verrà inviato al client
+      int dimensione;
       switch (richiesta)
       {
 
-        case VISUALIZZA_OGNI_RECORD:
-          printf("Gestione Richiesta 1: \n");
-          int dimensione = recordContenuti*4*MAX_LUNG_CAMPO + 4*recordContenuti*2 + recordContenuti*2;
-          output = (char *) malloc(dimensione);
-          visualizzaRubrica(&output);
-          
-          break;
+      case VISUALIZZA_OGNI_RECORD:
+        printf("Gestione Richiesta 1: \n");
+        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2;
+        output = (char *)malloc(dimensione);
+        visualizzaRubrica(&output);
+
+        break;
 
         break;
 
       case RICERCA_RECORD_CON_COGNOME:
         printf("Gestione Richiesta 2\n");
-        output = ricercaRecordConCognome(clientSocket);
+        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
+        output = (char *)malloc(dimensione);
+        ricercaRecordConCognome(clientSocket, &output);
 
         break;
 
       case RICERCA_RECORD_CON_NOME_COGNOME:
         printf("Gestione Richiesta 3\n");
-        output = ricercaRecordConCognomeNome(clientSocket);
+        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
+        output = (char *)malloc(dimensione);
+        ricercaRecordConCognomeNome(clientSocket, &output);
 
         break;
 
@@ -159,8 +164,9 @@ int main()
       }
 
       // Invio della risposta al client
-      write(clientSocket, output, strlen(output)+1);
+      write(clientSocket, output, strlen(output) + 1);
       printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
+      printf("Richiesta eseguita: terminazione di questo figlio\n");
       close(clientSocket);
       exit(EXIT_SUCCESS);
     }
@@ -210,65 +216,66 @@ void controlloOutput(int risultato, char *messaggio)
   }
 }
 
-void visualizzaRubrica(char **output){
+void visualizzaRubrica(char **output)
+{
 
   char supporto[MAX_LUNG_CAMPO];
-  int i=0;
-  int contatore=0;
+  int i = 0;
+  int contatore = 0;
 
-  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio del file
-  while(1) {
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
+  while (1)
+  {
 
-    i = fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
-    if(i <= 0){
+    i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
+    if (i <= 0)
+    {
       break;
     }
 
-    strcat(*output,supporto);
-    strcat(*output," ");
-    if(contatore%4 == 3){
-      strcat(*output,"\n");
+    strcat(*output, supporto);
+    strcat(*output, " ");
+    if (contatore % 4 == 3)
+    {
+      strcat(*output, "\n");
     }
 
     contatore++;
   }
 }
 
-char *ricercaRecordConCognome(int clientSocket)
+void ricercaRecordConCognome(int clientSocket, char **output)
 {
 
-  char richiestaCognome[] = "Richiesto un cognome per poter effettuare la ricerca\n";
-  send(clientSocket, richiestaCognome, sizeof(richiestaCognome), 0);
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
+  printf("In attesa del cognome da ricercare... \n");
   int byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
   if (byteLetti < 1)
-    generazioneErrore("Cognome non ricevuto/valido");
-
-  char output[1000];
+    generazioneErrore("Cognome non ricevuto o non valido");
 
   fseek(rubrica, MAX_LUNG_CAMPO, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
-  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+  for (int i = 0; i < recordContenuti; i++)
   {
     char cognome[MAX_LUNG_CAMPO];
-    if(read(rubrica, cognome, MAX_LUNG_CAMPO) == 0){
+    if (fread(cognome, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+    {
       generazioneErrore("Errore nella lettura");
     }
 
-    if(strcmp(cognome, cognomeDaRicercare) == 0) {
+    if (strcmp(cognome, cognomeDaRicercare) == 0)
+    {
+      /*
       char recordTrovato[4 * MAX_LUNG_CAMPO];
       fgets(recordTrovato, sizeof(recordTrovato), rubrica);
-      strcat(output, recordTrovato);
-      strcat(output, "------------------------------------------------------------- \n");
+      */
+      strcat(*output, cognome);
+      strcat(*output, "\n");
     }
-
   }
-
-  return output;
 }
 
-char *ricercaRecordConCognomeNome(int clientSocket)
+void ricercaRecordConCognomeNome(int clientSocket, char **output)
 {
-  return NULL;
 }
 
 int aggiungiRecord(int clientSocket)
