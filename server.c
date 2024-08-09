@@ -124,7 +124,7 @@ int main()
       case AGGIUNGI_RECORD:
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
-        risultato = aggiungiRecord(clientSocket);
+        risultato = aggiungiRecord(clientSocket,&output);
         controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n");
 
         break;
@@ -210,6 +210,17 @@ void controlloOutput(int risultato, char *messaggio)
   }
 }
 
+void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDato, char *messaggio)
+{
+  int byteLetti;
+
+  byteLetti = recv(clientSocket, datoDaRicevere, dimensioneDato, 0);
+  if (byteLetti < 1)
+  {
+    generazioneErrore(messaggio);
+  }
+}
+
 void visualizzaRubrica(char **output)
 {
 
@@ -254,12 +265,9 @@ void visualizzaRubrica(char **output)
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
+
   printf("In attesa del cognome da ricercare... \n");
-  int byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
-  if (byteLetti < 1)
-  {  
-    generazioneErrore("Cognome non ricevuto o non valido\n");
-  }
+  riceviDatiDaClient(clientSocket,cognomeDaRicercare,sizeof(cognomeDaRicercare),"Cognome non ricevuto o non valido\n");
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato;
@@ -312,18 +320,10 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
   int byteLetti;
 
   printf("In attesa del nome da ricercare... \n");
-  byteLetti = recv(clientSocket, nomeDaRicercare, sizeof(nomeDaRicercare), 0);
-  if (byteLetti < 1)
-  {
-    generazioneErrore("Nome non ricevuto o non valido\n");
-  }
+  riceviDatiDaClient(clientSocket,nomeDaRicercare,sizeof(nomeDaRicercare),"Nome non ricevuto o non valido\n");
   
   printf("In attesa del cognome da ricercare... \n");
-  byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
-  if (byteLetti < 1)
-  {
-    generazioneErrore("Cognome non ricevuto o non valido\n");
-  }
+  riceviDatiDaClient(clientSocket,cognomeDaRicercare,sizeof(cognomeDaRicercare),"Cognome non ricevuto o non valido\n");
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 0;
@@ -374,12 +374,23 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 }
 
 /* Casi di errore: Aggiunta non riuscita*/
-int aggiungiRecord(int clientSocket)
+int aggiungiRecord(int clientSocket, char **output)
 {
+  recordRub recordDaAggiungere;
+
+  printf("In attesa del nome da inserire... \n");
+  riceviDatiDaClient(clientSocket,recordDaAggiungere.nome,sizeof(recordDaAggiungere.nome),"Nome non ricevuto o non valido\n");
+  
+  printf("In attesa del cognome da inserire... \n");
+  riceviDatiDaClient(clientSocket,recordDaAggiungere.cognome,sizeof(recordDaAggiungere.cognome),"Cognome non ricevuto o non valido\n");
+  
+
+
   return 0;
 }
 
-/* Casi di errore: Eliminazione non riuscita*/
+/* Casi di errore: Eliminazione non riuscita
+  Gestire il ricompattamento del file dopo l'eliminazione del record*/
 int rimuoviRecord(int clientSocket)
 {
   return 0;
