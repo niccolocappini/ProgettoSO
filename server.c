@@ -61,7 +61,7 @@ int main()
          "4) Aggiunta Record \n"
          "5) Eliminazione Record \n"
          "6) Modifica Numero di Telefono \n"
-         "7) Modifica Indirizzo \n");
+         "7) Modifica Indirizzo \n\n");
 
   while (1)
   {
@@ -296,7 +296,8 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
   char cognome[MAX_LUNG_CAMPO];
   char supporto[MAX_LUNG_CAMPO];
   int i = 0;
-  int contatore = 0;
+  int contatoreUguaglianze = 0;
+  int contatoreCampi = 0;
 
   recv(clientSocket, nome, MAX_LUNG_CAMPO, 0);
   printf("Nome ricevuto: %s\n", nome);
@@ -312,28 +313,35 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
       break;
     }
 
+    if(contatoreCampi%4 == 2 || contatoreCampi%4 == 3)
+    {
+
+    }
+
     if(strcmp(supporto,nome) == 0)
     {
-      contatore++;
+      contatoreUguaglianze++;
     }
     else
     {
-      contatore = 0;
+      contatoreUguaglianze = 0;
     }
 
     if(strcmp(supporto,cognome) == 0)
     {
-      contatore++;
+      contatoreUguaglianze++;
     }
     else
     {
-      contatore = 0;
+      contatoreUguaglianze = 0;
     }
 
-    if(contatore == 2)
+    if(contatoreUguaglianze == 2)
     {
       break;
     }
+
+    contatoreCampi++;
 
   }
 }
