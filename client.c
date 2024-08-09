@@ -125,7 +125,6 @@ int main(int argc, char *argv[])
 
 void stampaOutputDalServer(int clientSocket)
 {
-
     char str[1];
     int n = 0;
 

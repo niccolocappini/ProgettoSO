@@ -225,7 +225,6 @@ void visualizzaRubrica(char **output)
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
   while (1)
   {
-
     i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
     if (i <= 0)
     {
@@ -246,6 +245,7 @@ void visualizzaRubrica(char **output)
   }
 }
 
+/* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
 
@@ -291,12 +291,14 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   }
 }
 
+/* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognomeNome(int clientSocket, char **output)
 {
   char nome[MAX_LUNG_CAMPO];
   char cognome[MAX_LUNG_CAMPO];
   char supporto[MAX_LUNG_CAMPO];
   int i = 0;
+  int contatore = 0;
 
   recv(clientSocket, nome, MAX_LUNG_CAMPO, 0);
   printf("Nome ricevuto: %s\n", nome);
@@ -306,30 +308,57 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
   while (1)
   {
-
     i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
     if (i <= 0)
     {
       break;
     }
+
+    if(strcmp(supporto,nome) == 0)
+    {
+      contatore++;
+    }
+    else
+    {
+      contatore = 0;
+    }
+
+    if(strcmp(supporto,cognome) == 0)
+    {
+      contatore++;
+    }
+    else
+    {
+      contatore = 0;
+    }
+
+    if(contatore == 2)
+    {
+      break;
+    }
+
   }
 }
 
+/* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket)
 {
   return 0;
 }
 
+/* Casi di errore: Eliminazione non riuscita*/
 int rimuoviRecord(int clientSocket)
 {
   return 0;
 }
 
+/* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
 int modificaTelefono(int clientSocket)
 {
   return 0;
 }
 
+/* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
 int modificaIndirizzo(int clientSocket)
 {
   return 0;
