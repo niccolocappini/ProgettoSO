@@ -138,7 +138,7 @@ void stampaOutputDalServer(int clientSocket)
 
 void visualizzaRubrica()
 {
-    printf("Stampa della Rubrica attuale: \n");
+    printf("\nStampa della Rubrica attuale: \n");
 }
 
 void ricercaRecordCognome(int clientSocket)
@@ -148,6 +148,7 @@ void ricercaRecordCognome(int clientSocket)
     scanf("%s", cognomeDaRicercare);
     send(clientSocket, cognomeDaRicercare, MAX_LUNG_CAMPO, 0);
     printf("Cognome inviato al server \n");
+    printf("\nStampa dei record in cui il cognome è %s: \n", cognomeDaRicercare);
 }
 
 void ricercaRecordNomeCognome(int clientSocket)
