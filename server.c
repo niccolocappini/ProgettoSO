@@ -54,7 +54,7 @@ int main()
   }
   listen(serverSocket, 10);
 
-  printf("Menù delle operazione che possono essere richieste dal client: \n"
+  printf("Menù delle operazioni che possono essere richieste dal client: \n"
          "1) Visualizzazzione tutti i record della rubrica \n"
          "2) Ricerca record tramite cognome \n"
          "3) Ricerca record tramite coppia nome-cognome \n"
@@ -216,30 +216,39 @@ void controlloOutput(int risultato, char *messaggio)
 void visualizzaRubrica(char **output)
 {
 
-  char supporto[MAX_LUNG_CAMPO];
-  int i = 0;
-  int contatore = 0;
-
-  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
-  while (1)
+  long int posizioneFinale = fseek(rubrica, 0, SEEK_END);
+  if (posizioneFinale == 0)
   {
-    i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
-    if (i <= 0)
-    {
-      break;
-    }
+    char stringaRubricaVuota[] = "La rubrica al momento è vuota\n";
+    strcat(*output, stringaRubricaVuota);
+  }
+  else
+  {
+    char supporto[MAX_LUNG_CAMPO];
+    int i = 0;
+    int contatore = 0;
 
-    strcat(*output, supporto);
-    if (contatore % 4 != 3)
+    fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
+    while (1)
     {
-      strcat(*output, ", ");
-    }
-    else
-    {
-      strcat(*output, "\n");
-    }
+      i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
+      if (i <= 0)
+      {
+        break;
+      }
 
-    contatore++;
+      strcat(*output, supporto);
+      if (contatore % 4 != 3)
+      {
+        strcat(*output, ", ");
+      }
+      else
+      {
+        strcat(*output, "\n");
+      }
+
+      contatore++;
+    }
   }
 }
 
@@ -253,10 +262,11 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   if (byteLetti < 1)
     generazioneErrore("Cognome non ricevuto o non valido\n");
 
-  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
+
   for (int i = 0; i < recordContenuti; i++)
   {
     recordTrovato = 1;
@@ -287,6 +297,13 @@ void ricercaRecordConCognome(int clientSocket, char **output)
       strcat(*output, "\n");
     }
   }
+
+  if(strlen(*output) == 0){
+    char stringaNessunRecordTrovato[] = "Nella rubrica non è presente nessun record con il cognome ";
+    strcat(stringaNessunRecordTrovato, cognomeDaRicercare);
+    strcat(*output, stringaNessunRecordTrovato);
+  }
+
 }
 
 /* Casi di errore: Record non Trovato*/
@@ -313,12 +330,11 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
       break;
     }
 
-    if(contatoreCampi%4 == 2 || contatoreCampi%4 == 3)
+    if (contatoreCampi % 4 == 2 || contatoreCampi % 4 == 3)
     {
-
     }
 
-    if(strcmp(supporto,nome) == 0)
+    if (strcmp(supporto, nome) == 0)
     {
       contatoreUguaglianze++;
     }
@@ -327,7 +343,7 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
       contatoreUguaglianze = 0;
     }
 
-    if(strcmp(supporto,cognome) == 0)
+    if (strcmp(supporto, cognome) == 0)
     {
       contatoreUguaglianze++;
     }
@@ -336,13 +352,12 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
       contatoreUguaglianze = 0;
     }
 
-    if(contatoreUguaglianze == 2)
+    if (contatoreUguaglianze == 2)
     {
       break;
     }
 
     contatoreCampi++;
-
   }
 }
 
