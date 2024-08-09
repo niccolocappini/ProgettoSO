@@ -12,10 +12,9 @@
 #include "funzioniServer.h"
 
 #define PASSWORD "PROGETTOSO"
-// #define dimBuffer 2048 // dimensione buffer per la comunicazione tramite socket
 
 static FILE *rubrica = NULL;
-// static int recordContenuti = 0;
+static int recordContenuti = NUM_RECORD_RUBRICA; // da aggiornare ad ogni aggiunta ed eliminazione
 
 /*
 
@@ -31,20 +30,10 @@ int main()
   /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
   e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "a+");
-  /*long int k = sizeof(rubrica);
-  char * stringa;
-  sprintf(stringa,"%d",k);
-  printf("%s",stringa);*/
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
   int lunghezzaIndirizzo = sizeof(indirizzo);
-
-  /*
-    char input[dimBuffer] = {0};  // buffer utilizzato per le richieste dei
-    client char output[dimBuffer] = {0}; // buffer utilizzato per le risposte
-    del server
-  */
 
   // Creazione del socket
   serverSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
@@ -111,9 +100,17 @@ int main()
       switch (richiesta)
       {
 
-      case VISUALIZZA_OGNI_RECORD:
-        printf("Gestione Richiesta 1: \n");
-        output = visualizzaRubrica();
+        case VISUALIZZA_OGNI_RECORD:
+          printf("Gestione Richiesta 1: \n");
+          int dimensione = recordContenuti*4*MAX_LUNG_CAMPO + 4*recordContenuti*2 + recordContenuti*2;
+          output = (char *) malloc(dimensione);
+          visualizzaRubrica(&output);
+          char dimStr[10];
+          sprintf(dimStr,"%d",dimensione);
+          printf("%s\n",dimStr);
+          send(clientSocket,dimStr,strlen(dimStr),0);
+          
+          break;
 
         break;
 
@@ -166,8 +163,8 @@ int main()
       }
 
       // Invio della risposta al client
-      send(clientSocket, output, strlen(output), 0);
-      printf("Risposta inviata: %s\n", output);
+      send(clientSocket, output, sizeof(output), 0);
+      printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
       close(clientSocket);
       exit(EXIT_SUCCESS);
     }
@@ -217,36 +214,49 @@ void controlloOutput(int risultato, char *messaggio)
   }
 }
 
-char *visualizzaRubrica()
-{
+void visualizzaRubrica(char **output){
 
-  char output[1000];
+  char supporto[MAX_LUNG_CAMPO];
+  int i=0;
+  int contatore=0;
 
-  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
-  for (int i = 0; i < 4 * NUM_RECORD_RUBRICA; i++)
-  {
-    if (i % 4 == 0)
-    {
-      strcat(output, "Nome: ");
+  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
+  while(1) {
+
+    /*switch (contatore%4){
+      case 0:
+        strcat(*output,"Nome: ");
+        break;
+      
+      case 1:
+        strcat(*output,"Cognome: ");
+        break;
+      
+      case 2:
+        strcat(*output,"Indirizzo: ");
+        break;
+      
+      case 3:
+        strcat(*output,"Telefono: ");
+        break;
+      
+      default:
+        break;
+    }*/
+
+    i = fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
+    if(i <= 0){
+      break;
     }
-    if (i % 4 == 1)
-    {
-      strcat(output, "Cognome: ");
+
+    strcat(*output,supporto);
+    strcat(*output," ");
+    if(contatore%4 == 3){
+      strcat(*output,"\n");
     }
-    if (i % 4 == 2)
-    {
-      strcat(output, "Indirizzo: ");
-    }
-    if (i % 4 == 3)
-    {
-      strcat(output, "Telefono: ");
-    }
-    fgets(output, i * MAX_LUNG_CAMPO, rubrica);
-    // strcat(output,"\0");
-    strcat(output, "------------------------------------------------------------- \n");
+
+    contatore++;
   }
-
-  return output;
 }
 
 char *ricercaRecordConCognome(int clientSocket)

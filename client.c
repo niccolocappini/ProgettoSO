@@ -78,11 +78,11 @@ int main(int argc, char *argv[])
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta
-
+    long dimensioneOutput = 0;
     switch (richiesta)
     {
-    case VISUALIZZA_OGNI_RECORD:
-        visualizzaRubrica(clientSocket);
+        case VISUALIZZA_OGNI_RECORD:
+            dimensioneOutput = visualizzaRubrica(clientSocket);
 
         break;
 
@@ -109,20 +109,14 @@ int main(int argc, char *argv[])
     case MODIFICA_TELEFONO:
         modificaTelefono(clientSocket);
 
-        break;
-
-    case MODIFICA_INDIRIZZO:
-        modificaIndirizzo(clientSocket);
-
-        break;
-
-    default:
-        generazioneErrore("Richiesta non valida\n");
+        default:
+            generazioneErrore("Richiesta non valida\n");
+            break;
     }
 
     // Fase attesa risultati da Server
-    char *output;
-    recv(clientSocket, output, sizeof(output), 0);
+    char output[dimensioneOutput];
+    recv(clientSocket, output, dimensioneOutput, 0);
 
     // Fase di stampa dei risultati
     printf("%s", output);
@@ -135,10 +129,12 @@ int main(int argc, char *argv[])
 }
 
 /* I parametri li facciamo inserire dagli utenti tramite tastiera ??????? */
-void visualizzaRubrica(int clientSocket)
-{
-    char *rubrica;
+int visualizzaRubrica(int clientSocket){
+    char dimStr[5];
+    recv(clientSocket,dimStr,sizeof(dimStr),0);
+    printf("%s\n",dimStr);
     printf("Stampa della Rubrica Attuale: \n");
+    return atoi(dimStr);
 }
 
 void ricercaRecordCognome(int clientSocket)
