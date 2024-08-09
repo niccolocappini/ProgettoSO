@@ -65,12 +65,13 @@ int main(int argc, char *argv[])
     }
 
     // Fase in cui il client riceve l'eventuale richiesta di password
-    if (richiesta >= 4 && richiesta <= 7)
+    if  (richiesta >= 4 && richiesta <= 7)
+    
     {
         char richiestaStr[72];
         char password[100];
         recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
-        printf("%s", richiestaStr);
+        printf("%s",  richiestaStr);
         printf("Inserisci Password: \n");
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
