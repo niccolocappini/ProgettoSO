@@ -363,6 +363,14 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
       strcat(*output, "\n");
     }
   }
+
+  if(strlen(*output) == 0){
+    strcat(*output, "Nella rubrica non è presente nessun record con nome-cognome ");
+    strcat(*output, nomeDaRicercare);
+    strcat(*output," ");
+    strcat(*output, cognomeDaRicercare);
+    strcat(*output,"\n");
+  }
 }
 
 /* Casi di errore: Aggiunta non riuscita*/
