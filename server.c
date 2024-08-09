@@ -287,7 +287,6 @@ void ricercaRecordConCognome(int clientSocket, char **output)
       {
         recordTrovato = 0;
       }
-      else break;
     }
 
     if (recordTrovato == 0)
