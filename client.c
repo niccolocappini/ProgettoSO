@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
 
     // Creazione Socket del Client
     clientSocket = socket(AF_INET, SOCK_STREAM, DEFAULT_PROTOCOL);
-    if (clientSocket < 0){
+    if (clientSocket < 0)
+    {
         generazioneErrore("Creazione Socket del Client Fallita \n");
     }
 
@@ -45,18 +46,21 @@ int main(int argc, char *argv[])
     printf("Connessione con Server andata a buon fine \n");
 
     // Fase in cui il client determina l'operazione da richiedere la server
-    if(argc == 1){
+    if (argc == 1)
+    {
         generazioneErrore("Nessun codice passato al client \n");
     }
     int richiesta = atoi(argv[1]);
-    if(richiesta < 1 || richiesta >7){
+    if (richiesta < 1 || richiesta > 7)
+    {
         generazioneErrore("Codice richiesta non valido \n");
     }
 
     // Fase in cui il client inoltra, tramite socket, il codice della richiesta al server
 
-    int scritto = send(clientSocket,&richiesta,sizeof(richiesta),0);
-    if(scritto < 0){
+    int scritto = send(clientSocket, &richiesta, sizeof(richiesta), 0);
+    if (scritto < 0)
+    {
         generazioneErrore("Scrittura su socket fallita \n");
     }
 
@@ -67,9 +71,9 @@ int main(int argc, char *argv[])
         recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
         printf("%s",richiestaStr);
         printf("Inserisci Password: \n");
-        scanf("%s",password);
-        printf("Password Inserita: %s \n",password);
-        send(clientSocket,password,sizeof(password),0);
+        scanf("%s", password);
+        printf("Password Inserita: %s \n", password);
+        send(clientSocket, password, sizeof(password), 0);
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta
@@ -77,37 +81,31 @@ int main(int argc, char *argv[])
     {
         case VISUALIZZA_OGNI_RECORD:
             visualizzaRubrica();
-            break;
 
-        case RICERCA_RECORD_CON_COGNOME:
-            ricercaRecordCognome();
+        break;
 
-            break;
+    case RICERCA_RECORD_CON_COGNOME:
+        ricercaRecordCognome(clientSocket);
 
-        case RICERCA_RECORD_CON_NOME_COGNOME:
-            ricercaRecordNomeCognome();
+        break;
 
-            break;
+    case RICERCA_RECORD_CON_NOME_COGNOME:
+        ricercaRecordNomeCognome(clientSocket);
 
-        case AGGIUGI_RECORD:
-            aggiungiRecord();
+        break;
 
-            break;
+    case AGGIUGI_RECORD:
+        aggiungiRecord(clientSocket);
 
-        case RIMUOVI_RECORD:
-            rimuoviRecord();
-        
-            break;
+        break;
 
-        case MODIFICA_TELEFONO:
-            modificaTelefono();
-        
-            break;
+    case RIMUOVI_RECORD:
+        rimuoviRecord(clientSocket);
 
-        case MODIFICA_INDIRIZZO:
-            modificaIndirizzo();
-        
-            break;
+        break;
+
+    case MODIFICA_TELEFONO:
+        modificaTelefono(clientSocket);
 
         default:
             generazioneErrore("Richiesta non valida\n");
@@ -140,26 +138,40 @@ void visualizzaRubrica(){
     printf("Stampa della Rubrica attuale: \n");
 }
 
-void ricercaRecordCognome(){
+void ricercaRecordCognome(int clientSocket)
+{
+    char *richiestaCognome;
+    recv(clientSocket, richiestaCognome, sizeof(richiestaCognome), 0);
+    printf("%s", richiestaCognome);
     char * cognome;
+    scanf("Inserire un cognome per la ricerca: %s", cognome);
+    send(clientSocket, cognome, sizeof(cognome), 0);
+    char *risultato;
+    recv(clientSocket, risultato, sizeof(risultato), 0);
+    printf(risultato);
 }
 
-void ricercaRecordNomeCognome(){
+void ricercaRecordNomeCognome(int clientSocket)
+{
     char * nome, cognome;
 }
 
-void aggiungiRecord(){
+void aggiungiRecord(int clientSocket)
+{
     recordRub record;
 }
 
-void rimuoviRecord(){
+void rimuoviRecord(int clientSocket)
+{
     recordRub record;
 }
 
-void modificaTelefono(){
-    char * vecchioTelefono, nuovoTelefono;
+void modificaTelefono(int clientSocket)
+{
+    char *vecchioTelefono, nuovoTelefono;
 }
 
-void modificaIndirizzo(){
-    char * vecchioIndirizzo, nuovoIndirizzo;
+void modificaIndirizzo(int clientSocket)
+{
+    char *vecchioIndirizzo, nuovoIndirizzo;
 }

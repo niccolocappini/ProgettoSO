@@ -88,14 +88,15 @@ int main()
       int richiesta = 0;
       // si leggono 4 byte = dimensione intero
       int risultato = recv(clientSocket, &richiesta, sizeof(richiesta), 0);
-      if (risultato < 1){
+      if (risultato < 1)
+      {
         generazioneErrore("Lettura fallita\n");
       }
 
       printf("Lettura effettuata: %d\n", richiesta);
 
       risultato = -1;
-      char * output; // stringa che contterrà ciò che verrà inviato al client
+      char *output; // stringa che contterrà ciò che verrà inviato al client
       switch (richiesta)
       {
 
@@ -107,53 +108,54 @@ int main()
           
           break;
 
-        case RICERCA_RECORD_CON_COGNOME:
-          printf("Gestione Richiesta 2\n");
-          output = ricercaRecordConCognome(clientSocket);
+        break;
 
-          break;
+      case RICERCA_RECORD_CON_COGNOME:
+        printf("Gestione Richiesta 2\n");
+        output = ricercaRecordConCognome(clientSocket);
 
-        case RICERCA_RECORD_CON_NOME_COGNOME:
-          printf("Gestione Richiesta 3\n");
-          output = ricercaRecordConCognomeNome(clientSocket);
+        break;
 
-          break;
+      case RICERCA_RECORD_CON_NOME_COGNOME:
+        printf("Gestione Richiesta 3\n");
+        output = ricercaRecordConCognomeNome(clientSocket);
 
-        case AGGIUGI_RECORD:
-          printf("Gestione Richiesta 4\n");
-          richiestaPassword(clientSocket);
-          risultato = aggiungiRecord(clientSocket);
-          controlloOutput(risultato,"Aggiunta Record in Rubrica Fallita \n");
+        break;
 
-          break;
+      case AGGIUGI_RECORD:
+        printf("Gestione Richiesta 4\n");
+        richiestaPassword(clientSocket);
+        risultato = aggiungiRecord(clientSocket);
+        controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n");
 
-        case RIMUOVI_RECORD:
-          printf("Gestione Richiesta 5\n");
-          richiestaPassword(clientSocket);
-          risultato = rimuoviRecord(clientSocket);
-          controlloOutput(risultato,"Rimozione Record in Rubrica Fallita \n");
+        break;
 
-          break;
+      case RIMUOVI_RECORD:
+        printf("Gestione Richiesta 5\n");
+        richiestaPassword(clientSocket);
+        risultato = rimuoviRecord(clientSocket);
+        controlloOutput(risultato, "Rimozione Record in Rubrica Fallita \n");
 
-        case MODIFICA_TELEFONO:
-          printf("Gestione Richiesta 6\n");
-          richiestaPassword(clientSocket);
-          risultato = modificaTelefono(clientSocket);
-          controlloOutput(risultato,"Modifica Telefono Fallita \n");
+        break;
 
-          break;
+      case MODIFICA_TELEFONO:
+        printf("Gestione Richiesta 6\n");
+        richiestaPassword(clientSocket);
+        risultato = modificaTelefono(clientSocket);
+        controlloOutput(risultato, "Modifica Telefono Fallita \n");
 
-        case MODIFICA_INDIRIZZO:
-          printf("Gestione Richiesta 7\n");
-          richiestaPassword(clientSocket);
-          risultato = modificaIndirizzo(clientSocket);
-          controlloOutput(risultato,"Modifica Indirizzo Fallita \n");
+        break;
 
-          break;
+      case MODIFICA_INDIRIZZO:
+        printf("Gestione Richiesta 7\n");
+        richiestaPassword(clientSocket);
+        risultato = modificaIndirizzo(clientSocket);
+        controlloOutput(risultato, "Modifica Indirizzo Fallita \n");
 
-        default:
-          generazioneErrore("Richiesta non valida\n");
-          break;
+        break;
+
+      default:
+        generazioneErrore("Richiesta non valida\n");
       }
 
       // Invio della risposta al client
@@ -188,18 +190,22 @@ void richiestaPassword(int clientSocket)
 
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
-  printf("Password Ricevuta: %s \n",passwordRicevuta);
+  printf("Password Ricevuta: %s \n", passwordRicevuta);
 
-  if (strcmp(passwordRicevuta, PASSWORD) != 0){
+  if (strcmp(passwordRicevuta, PASSWORD) != 0)
+  {
     generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
   }
-  else{
+  else
+  {
     printf("Password Accettata \n");
   }
 }
 
-void controlloOutput(int risultato, char * messaggio){
-  if(risultato == 0){
+void controlloOutput(int risultato, char *messaggio)
+{
+  if (risultato == 0)
+  {
     generazioneErrore(messaggio);
   }
 }
@@ -228,26 +234,59 @@ void visualizzaRubrica(char **output){
   }
 }
 
-char * ricercaRecordConCognome(int clientSocket){
+char *ricercaRecordConCognome(int clientSocket)
+{
+
+  char richiestaCognome[] = "Richiesto un cognome per poter effettuare la ricerca\n";
+  send(clientSocket, richiestaCognome, sizeof(richiestaCognome), 0);
+  char cognomeDaRicercare[MAX_LUNG_CAMPO];
+  int byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
+  if (byteLetti < 1)
+    generazioneErrore("Cognome non ricevuto/valido");
+
+  char output[1000];
+
+  fseek(rubrica, MAX_LUNG_CAMPO, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+  {
+    char cognome[MAX_LUNG_CAMPO];
+    if(read(rubrica, cognome, MAX_LUNG_CAMPO) == 0){
+      generazioneErrore("Errore nella lettura");
+    }
+
+    if(strcmp(cognome, cognomeDaRicercare) == 0) {
+      char recordTrovato[4 * MAX_LUNG_CAMPO];
+      fgets(recordTrovato, sizeof(recordTrovato), rubrica);
+      strcat(output, recordTrovato);
+      strcat(output, "------------------------------------------------------------- \n");
+    }
+
+  }
+
+  return output;
+}
+
+char *ricercaRecordConCognomeNome(int clientSocket)
+{
   return NULL;
 }
 
-char * ricercaRecordConCognomeNome(int clientSocket){
-  return NULL;
-}
-
-int aggiungiRecord(int clientSocket){
+int aggiungiRecord(int clientSocket)
+{
   return 0;
 }
 
-int rimuoviRecord(int clientSocket){
+int rimuoviRecord(int clientSocket)
+{
   return 0;
 }
 
-int modificaTelefono(int clientSocket){
+int modificaTelefono(int clientSocket)
+{
   return 0;
 }
 
-int modificaIndirizzo(int clientSocket){
+int modificaIndirizzo(int clientSocket)
+{
   return 0;
 }
