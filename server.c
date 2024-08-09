@@ -213,7 +213,8 @@ void controlloOutput(int risultato, char *messaggio)
 void visualizzaRubrica(char **output)
 {
 
-  long int posizioneFinale = lseek(rubrica, 0, SEEK_END);
+  fseek(rubrica, 0, SEEK_END);
+  long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
     char stringaRubricaVuota[] = "La rubrica al momento è vuota\n";
