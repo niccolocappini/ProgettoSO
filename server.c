@@ -82,7 +82,7 @@ int main()
 
     if (pid == 0)
     {
-      printf("Sono un figlio generato per gestire la richiesta appena arrivata\n");
+      printf("Sono un figlio generato per gestire la richiesta del client\n");
 
       // Login utente
       int richiesta = 0;
@@ -160,7 +160,7 @@ int main()
       // Invio della risposta al client
       write(clientSocket, output, strlen(output) + 1);
       printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
-      printf("Richiesta eseguita: terminazione di questo figlio\n");
+      printf("Richiesta eseguita: terminazione di questo figlio\n\n");
       close(clientSocket);
       exit(EXIT_SUCCESS);
     }
@@ -325,7 +325,7 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
     generazioneErrore("Cognome non ricevuto o non valido\n");
   }
 
-  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 0;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
