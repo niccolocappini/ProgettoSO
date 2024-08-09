@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
 
     // Fase in cui il client riceve l'eventuale richiesta di password
     if(richiesta >= 4 && richiesta <= 7){
-        char richiesta[72];
+        char richiestaStr[72];
         char password[100];
-        recv(clientSocket, richiesta, sizeof(richiesta), 0);
-        printf("%s",richiesta);
+        recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
+        printf("%s",richiestaStr);
         printf("Inserisci Password: \n");
         scanf("%s",password);
         printf("Password Inserita: %s \n",password);
@@ -73,12 +73,10 @@ int main(int argc, char *argv[])
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta
-    long dimensioneOutput = 0;
     switch (richiesta)
     {
         case VISUALIZZA_OGNI_RECORD:
-            dimensioneOutput = visualizzaRubrica(clientSocket);
-
+            visualizzaRubrica();
             break;
 
         case RICERCA_RECORD_CON_COGNOME:
@@ -116,14 +114,9 @@ int main(int argc, char *argv[])
             break;
     }
 
-    // Fase attesa risultati da Server
-    char output[dimensioneOutput];
-    recv(clientSocket, output, dimensioneOutput, 0);
-
-
-    // Fase di stampa dei risultati
-    printf("%s",output);
-    printf("\n");
+    // Fase di stampa dei Riusultati
+    char output[1];
+    stampaOutputDalServer(clientSocket,output);
 
     // Chiusura della connessione con il Server
     close(clientSocket);
@@ -131,13 +124,20 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-/* I parametri li facciamo inserire dagli utenti tramite tastiera ??????? */
-int visualizzaRubrica(int clientSocket){
-    char dimStr[5];
-    recv(clientSocket,dimStr,sizeof(dimStr),0);
-    printf("%s\n",dimStr);
-    printf("Stampa della Rubrica Attuale: \n");
-    return atoi(dimStr);
+void stampaOutputDalServer(int clientSocket,char * str){
+
+    int n = 0;
+
+    do
+    {
+        n = read(clientSocket,str,1);
+        printf("%s",str);
+    } while (n > 0 && strcmp(str,"\0")!=0);
+}
+
+
+void visualizzaRubrica(){
+    printf("Stampa della Rubrica attuale: \n");
 }
 
 void ricercaRecordCognome(){

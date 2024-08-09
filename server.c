@@ -104,10 +104,6 @@ int main()
           int dimensione = recordContenuti*4*MAX_LUNG_CAMPO + 4*recordContenuti*2 + recordContenuti*2;
           output = (char *) malloc(dimensione);
           visualizzaRubrica(&output);
-          char dimStr[10];
-          sprintf(dimStr,"%d",dimensione);
-          printf("%s\n",dimStr);
-          send(clientSocket,dimStr,strlen(dimStr),0);
           
           break;
 
@@ -161,7 +157,7 @@ int main()
       }
 
       // Invio della risposta al client
-      send(clientSocket, output, sizeof(output), 0);
+      write(clientSocket, output, strlen(output)+1);
       printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
       close(clientSocket);
       exit(EXIT_SUCCESS);
@@ -214,29 +210,8 @@ void visualizzaRubrica(char **output){
   int i=0;
   int contatore=0;
 
-  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio
+  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio del file
   while(1) {
-
-    /*switch (contatore%4){
-      case 0:
-        strcat(*output,"Nome: ");
-        break;
-      
-      case 1:
-        strcat(*output,"Cognome: ");
-        break;
-      
-      case 2:
-        strcat(*output,"Indirizzo: ");
-        break;
-      
-      case 3:
-        strcat(*output,"Telefono: ");
-        break;
-      
-      default:
-        break;
-    }*/
 
     i = fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
     if(i <= 0){

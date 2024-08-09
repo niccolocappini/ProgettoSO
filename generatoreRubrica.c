@@ -90,7 +90,7 @@ void generatoreNome(char nome[])
         "Davide", "Beatrice", "Enrico", "Camilla", "Fabio", "Chiara", "Federico", "Claudia", "Francesco", "Cristina",
         "Gabriele", "Daniela", "Gianluca", "Elena", "Giovanni", "Elisa", "Giuseppe", "Elisabetta", "Jacopo",
         "Federica", "Leonardo", "Francesca", "Lorenzo", "Gabriella", "Luca", "Giada", "Marco", "Giulia", "Mario",
-        "Ilaria", "Matteo", "Laura", "Michele", "Lavinia", "Niccolò", "Linda", "Paolo", "Lisa", "Pietro", "Lucia",
+        "Ilaria", "Matteo", "Laura", "Michele", "Lavinia", "Niccolo", "Linda", "Paolo", "Lisa", "Pietro", "Lucia",
         "Riccardo", "Maddalena", "Roberto", "Maria", "Salvatore", "Martina", "Stefano", "Michela", "Tommaso", "Miriam",
         "Umberto", "Monica", "Valentino", "Nadia", "Vincenzo", "Nicole", "Alessio", "Paola", "Emanuele", "Roberta",
         "Daniele", "Sara", "Angelo", "Simona", "Raffaele", "Sofia", "Silvio", "Silvia", "Giulio", "Teresa", "Cristian",

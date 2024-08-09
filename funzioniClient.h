@@ -3,7 +3,7 @@
 
 #include "definizioniComuni.h"
 
-int visualizzaRubrica(int clientSocket);
+void stampaOutputDalServer(int clientSocket, char * str);
 /*void ricercaRecordCognome(char cognome[]);
 void ricercaRecordNomeCognome(char nome[], char cognome[]);
 
@@ -12,6 +12,7 @@ void rimuoviRecord(recordRub record);
 void modificaTelefono(char vecchioTelefono[], char nuovoTelefono[]);
 void modificaIndirizzo(char vecchioIndirizzo[], char nuovoIndirizzo[]);*/
 
+void visualizzaRubrica();
 void ricercaRecordCognome();
 void ricercaRecordNomeCognome();
 
