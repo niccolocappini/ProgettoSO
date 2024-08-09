@@ -96,13 +96,12 @@ int main()
 
       risultato = -1;
       char *output; // stringa che contterrà ciò che verrà inviato al client
-      int dimensione;
+      int dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
       switch (richiesta)
       {
 
       case VISUALIZZA_OGNI_RECORD:
         printf("Gestione Richiesta 1: \n");
-        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2;
         output = (char *)malloc(dimensione);
         visualizzaRubrica(&output);
 
@@ -110,7 +109,6 @@ int main()
 
       case RICERCA_RECORD_CON_COGNOME:
         printf("Gestione Richiesta 2\n");
-        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
         output = (char *)malloc(dimensione);
         ricercaRecordConCognome(clientSocket, &output);
 
@@ -118,7 +116,6 @@ int main()
 
       case RICERCA_RECORD_CON_NOME_COGNOME:
         printf("Gestione Richiesta 3\n");
-        dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
         output = (char *)malloc(dimensione);
         ricercaRecordConCognomeNome(clientSocket, &output);
 
@@ -216,7 +213,7 @@ void controlloOutput(int risultato, char *messaggio)
 void visualizzaRubrica(char **output)
 {
 
-  long int posizioneFinale = fseek(rubrica, 0, SEEK_END);
+  long int posizioneFinale = lseek(rubrica, 0, SEEK_END);
   if (posizioneFinale == 0)
   {
     char stringaRubricaVuota[] = "La rubrica al momento è vuota\n";
@@ -255,12 +252,13 @@ void visualizzaRubrica(char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
-
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
   printf("In attesa del cognome da ricercare... \n");
   int byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
   if (byteLetti < 1)
+  {  
     generazioneErrore("Cognome non ricevuto o non valido\n");
+  }
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato;
@@ -309,55 +307,62 @@ void ricercaRecordConCognome(int clientSocket, char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognomeNome(int clientSocket, char **output)
 {
-  char nome[MAX_LUNG_CAMPO];
-  char cognome[MAX_LUNG_CAMPO];
-  char supporto[MAX_LUNG_CAMPO];
-  int i = 0;
-  int contatoreUguaglianze = 0;
-  int contatoreCampi = 0;
+  char nomeDaRicercare[MAX_LUNG_CAMPO];
+  char cognomeDaRicercare[MAX_LUNG_CAMPO];
+  int byteLetti;
 
-  recv(clientSocket, nome, MAX_LUNG_CAMPO, 0);
-  printf("Nome ricevuto: %s\n", nome);
-  recv(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
-  printf("Cognome ricevuto: %s\n", cognome);
-
-  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
-  while (1)
+  printf("In attesa del nome da ricercare... \n");
+  byteLetti = recv(clientSocket, nomeDaRicercare, sizeof(nomeDaRicercare), 0);
+  if (byteLetti < 1)
   {
-    i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
-    if (i <= 0)
+    generazioneErrore("Nome non ricevuto o non valido\n");
+  }
+  
+  printf("In attesa del cognome da ricercare... \n");
+  byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
+  if (byteLetti < 1)
+  {
+    generazioneErrore("Cognome non ricevuto o non valido\n");
+  }
+
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  int recordTrovato = 0;
+  char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
+  char campoLetto[MAX_LUNG_CAMPO];
+  for (int i = 0; i < recordContenuti; i++)
+  {
+    recordTrovato = 0;
+    strcpy(recordCorrente, "");
+    for (int j = 0; j < 4; j++)
     {
-      break;
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      {
+        generazioneErrore("Errore nella lettura\n");
+      }
+
+      strcat(recordCorrente, campoLetto);
+      if (j != 3)
+      {
+        strcat(recordCorrente, ", ");
+      }
+
+      if (j == 0 && strcmp(campoLetto, nomeDaRicercare) == 0)
+      {
+        recordTrovato++;
+      }
+
+      if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
+      {
+        recordTrovato++;
+      }
+      // else break;
     }
 
-    if (contatoreCampi % 4 == 2 || contatoreCampi % 4 == 3)
+    if (recordTrovato == 2)
     {
+      strcat(*output, recordCorrente);
+      strcat(*output, "\n");
     }
-
-    if (strcmp(supporto, nome) == 0)
-    {
-      contatoreUguaglianze++;
-    }
-    else
-    {
-      contatoreUguaglianze = 0;
-    }
-
-    if (strcmp(supporto, cognome) == 0)
-    {
-      contatoreUguaglianze++;
-    }
-    else
-    {
-      contatoreUguaglianze = 0;
-    }
-
-    if (contatoreUguaglianze == 2)
-    {
-      break;
-    }
-
-    contatoreCampi++;
   }
 }
 

@@ -163,9 +163,9 @@ void ricercaRecordNomeCognome(int clientSocket)
     char nome[MAX_LUNG_CAMPO];
     char cognome[MAX_LUNG_CAMPO];
 
-    printf("Inserire Nome da Ricercare: \n");
+    printf("Inserire Nome da Ricercare: ");
     scanf("%s",nome);
-    printf("Inserire Cognome da Ricercare: \n");
+    printf("Inserire Cognome da Ricercare: ");
     scanf("%s",cognome);
     send(clientSocket, nome, MAX_LUNG_CAMPO, 0);
     send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
