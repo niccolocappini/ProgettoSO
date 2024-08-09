@@ -65,11 +65,12 @@ int main(int argc, char *argv[])
     }
 
     // Fase in cui il client riceve l'eventuale richiesta di password
-    if(richiesta >= 4 && richiesta <= 7){
+    if (richiesta >= 4 && richiesta <= 7)
+    {
         char richiestaStr[72];
         char password[100];
         recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
-        printf("%s",richiestaStr);
+        printf("%s", richiestaStr);
         printf("Inserisci Password: \n");
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
@@ -79,8 +80,8 @@ int main(int argc, char *argv[])
     // Fase Passaggio Dati per soddisfare la Richiesta
     switch (richiesta)
     {
-        case VISUALIZZA_OGNI_RECORD:
-            visualizzaRubrica();
+    case VISUALIZZA_OGNI_RECORD:
+        visualizzaRubrica();
 
         break;
 
@@ -107,14 +108,14 @@ int main(int argc, char *argv[])
     case MODIFICA_TELEFONO:
         modificaTelefono(clientSocket);
 
-        default:
-            generazioneErrore("Richiesta non valida\n");
-            break;
+    default:
+        generazioneErrore("Richiesta non valida\n");
+        break;
     }
 
     // Fase di stampa dei Riusultati
     char output[1];
-    stampaOutputDalServer(clientSocket,output);
+    stampaOutputDalServer(clientSocket, output);
 
     // Chiusura della connessione con il Server
     close(clientSocket);
@@ -122,19 +123,20 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void stampaOutputDalServer(int clientSocket,char * str){
+void stampaOutputDalServer(int clientSocket, char *str)
+{
 
     int n = 0;
 
     do
     {
-        n = read(clientSocket,str,1);
-        printf("%s",str);
-    } while (n > 0 && strcmp(str,"\0")!=0);
+        n = read(clientSocket, str, 1);
+        printf("%s", str);
+    } while (n > 0 && strcmp(str, "\0") != 0);
 }
 
-
-void visualizzaRubrica(){
+void visualizzaRubrica()
+{
     printf("Stampa della Rubrica attuale: \n");
 }
 
@@ -143,17 +145,17 @@ void ricercaRecordCognome(int clientSocket)
     char *richiestaCognome;
     recv(clientSocket, richiestaCognome, sizeof(richiestaCognome), 0);
     printf("%s", richiestaCognome);
-    char * cognome;
+    char *cognome;
     scanf("Inserire un cognome per la ricerca: %s", cognome);
     send(clientSocket, cognome, sizeof(cognome), 0);
     char *risultato;
     recv(clientSocket, risultato, sizeof(risultato), 0);
-    printf(risultato);
+    printf("%s\n", risultato);
 }
 
 void ricercaRecordNomeCognome(int clientSocket)
 {
-    char * nome, cognome;
+    char *nome, cognome;
 }
 
 void aggiungiRecord(int clientSocket)

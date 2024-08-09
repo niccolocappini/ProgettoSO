@@ -100,13 +100,13 @@ int main()
       switch (richiesta)
       {
 
-        case VISUALIZZA_OGNI_RECORD:
-          printf("Gestione Richiesta 1: \n");
-          int dimensione = recordContenuti*4*MAX_LUNG_CAMPO + 4*recordContenuti*2 + recordContenuti*2;
-          output = (char *) malloc(dimensione);
-          visualizzaRubrica(&output);
-          
-          break;
+      case VISUALIZZA_OGNI_RECORD:
+        printf("Gestione Richiesta 1: \n");
+        int dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2;
+        output = (char *)malloc(dimensione);
+        visualizzaRubrica(&output);
+
+        break;
 
         break;
 
@@ -159,7 +159,7 @@ int main()
       }
 
       // Invio della risposta al client
-      write(clientSocket, output, strlen(output)+1);
+      write(clientSocket, output, strlen(output) + 1);
       printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
       close(clientSocket);
       exit(EXIT_SUCCESS);
@@ -210,24 +210,28 @@ void controlloOutput(int risultato, char *messaggio)
   }
 }
 
-void visualizzaRubrica(char **output){
+void visualizzaRubrica(char **output)
+{
 
   char supporto[MAX_LUNG_CAMPO];
-  int i=0;
-  int contatore=0;
+  int i = 0;
+  int contatore = 0;
 
-  fseek(rubrica,0,SEEK_SET); // il puntatore del file viene spostato all'inizio del file
-  while(1) {
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
+  while (1)
+  {
 
-    i = fread(supporto,MAX_LUNG_CAMPO,1,rubrica);
-    if(i <= 0){
+    i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
+    if (i <= 0)
+    {
       break;
     }
 
-    strcat(*output,supporto);
-    strcat(*output," ");
-    if(contatore%4 == 3){
-      strcat(*output,"\n");
+    strcat(*output, supporto);
+    strcat(*output, " ");
+    if (contatore % 4 == 3)
+    {
+      strcat(*output, "\n");
     }
 
     contatore++;
@@ -250,17 +254,18 @@ char *ricercaRecordConCognome(int clientSocket)
   for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
   {
     char cognome[MAX_LUNG_CAMPO];
-    if(read(rubrica, cognome, MAX_LUNG_CAMPO) == 0){
+    if (read(rubrica, cognome, MAX_LUNG_CAMPO) == 0)
+    {
       generazioneErrore("Errore nella lettura");
     }
 
-    if(strcmp(cognome, cognomeDaRicercare) == 0) {
+    if (strcmp(cognome, cognomeDaRicercare) == 0)
+    {
       char recordTrovato[4 * MAX_LUNG_CAMPO];
       fgets(recordTrovato, sizeof(recordTrovato), rubrica);
       strcat(output, recordTrovato);
       strcat(output, "------------------------------------------------------------- \n");
     }
-
   }
 
   return output;

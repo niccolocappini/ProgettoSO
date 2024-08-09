@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
     }
 
     FILE *RubricaDB = fopen("RubricaDB", "w+");
-    if (RubricaDB == NULL){
+    if (RubricaDB == NULL)
+    {
         generazioneErrore("Il file RubricaDB non è stato aperto \n");
     }
 
@@ -50,8 +51,9 @@ int main(int argc, char *argv[])
     }
     fclose(RubricaDB);*/
 
-    for (int i = 0; i < NUM_RECORD_RUBRICA; i++){
-        fwrite(&rubrica[i],sizeof(recordRub),1,RubricaDB);
+    for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
+    {
+        fwrite(&rubrica[i], sizeof(recordRub), 1, RubricaDB);
     }
 
     /*for (int i = 0; i < NUM_RECORD_RUBRICA; i++)
