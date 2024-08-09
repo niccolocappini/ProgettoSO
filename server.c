@@ -108,8 +108,6 @@ int main()
 
         break;
 
-        break;
-
       case RICERCA_RECORD_CON_COGNOME:
         printf("Gestione Richiesta 2\n");
         dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
@@ -232,8 +230,11 @@ void visualizzaRubrica(char **output)
     }
 
     strcat(*output, supporto);
-    strcat(*output, " ");
-    if (contatore % 4 == 3)
+    if (contatore % 4 != 3)
+    {
+      strcat(*output, ", ");
+    }
+    else
     {
       strcat(*output, "\n");
     }
@@ -250,24 +251,39 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   printf("In attesa del cognome da ricercare... \n");
   int byteLetti = recv(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), 0);
   if (byteLetti < 1)
-    generazioneErrore("Cognome non ricevuto o non valido");
+    generazioneErrore("Cognome non ricevuto o non valido\n");
 
-  fseek(rubrica, MAX_LUNG_CAMPO, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del primo cognome
+  int recordTrovato;
+  char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
+  char campoLetto[MAX_LUNG_CAMPO];
   for (int i = 0; i < recordContenuti; i++)
   {
-    char cognome[MAX_LUNG_CAMPO];
-    if (fread(cognome, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+    recordTrovato = 1;
+    strcpy(recordCorrente, "");
+    for (int j = 0; j < 4; j++)
     {
-      generazioneErrore("Errore nella lettura");
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      {
+        generazioneErrore("Errore nella lettura\n");
+      }
+
+      strcat(recordCorrente, campoLetto);
+      if (j != 3)
+      {
+        strcat(recordCorrente, ", ");
+      }
+
+      if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
+      {
+        recordTrovato = 0;
+      }
+      // else break;
     }
 
-    if (strcmp(cognome, cognomeDaRicercare) == 0)
+    if (recordTrovato == 0)
     {
-      /*
-      char recordTrovato[4 * MAX_LUNG_CAMPO];
-      fgets(recordTrovato, sizeof(recordTrovato), rubrica);
-      */
-      strcat(*output, cognome);
+      strcat(*output, recordCorrente);
       strcat(*output, "\n");
     }
   }
@@ -283,10 +299,10 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
   int contatoreUguaglianze = 0;
   int contatoreCampi = 0;
 
-  recv(clientSocket,nome,MAX_LUNG_CAMPO,0);
-  printf("Nome ricevuto: %s\n",nome);
-  recv(clientSocket,cognome,MAX_LUNG_CAMPO,0);
-  printf("Cognome ricevuto: %s\n",cognome);
+  recv(clientSocket, nome, MAX_LUNG_CAMPO, 0);
+  printf("Nome ricevuto: %s\n", nome);
+  recv(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
+  printf("Cognome ricevuto: %s\n", cognome);
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
   while (1)
