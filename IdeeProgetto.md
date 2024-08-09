@@ -7,9 +7,6 @@ Struttura rubrica:
     vettore di struct → statico, non si possono aggiungere elementi X
     file di testo → complesso da gestire X
 
-Ordinamento Rubrica:
-    Numero di telefono
-
 Campi Della Rubrica:
     Nome
     Cognome
@@ -47,7 +44,7 @@ Gestione Conflitti Client (la coda delle richieste è gestita automaticamente da
 
 
 
-Divisione Compiti
+DIVISIONE COMPITI
 Bolle
     Generazione Rubrica (fatto)
     Scheletro Client (es. Operazioni Richieste dal Client al Server)
@@ -59,7 +56,7 @@ Nicco
 Da fare:
     Gestire il login utente ricevendo un segnale particolare (in parallelo col lato client)
     Gestire l'invio di messaggi tra server e client tramite segnali
-    Gestire la richiesta in base al tipo
+    Gestire la richiesta in base al tipo (fatto)
     Gestione errori nelle varie fasi
 
 DOPO:
@@ -100,9 +97,7 @@ Gestione Richiesta di Scrittura (supponendo una previa autenticazione):
     - Il server riceve i parametri per la modifica della rubrica e, attraverso il riferimento al file, invoca un metodo per effettuare il cambiamento. Alla fine il server invierà un messaggio di avvenuta modifica o meno, a seconda del successo dell'operazione.
 
 
-Dentro visualizzaRubrica() (lato server): 
-    - Forse è meglio usare uno switch al posto della catena di if (fatto)
-    - Decidere se impostare un limite di record nella rubrica e scegliere di conseguenza la dimensione di output oppure usare una stringa sempre più grande ad ogni ciclo
-    - Rimuovere la parte che considera il lancio del server prima del generatore rubrica (fatto)
+visualizzaRubrica(): completata
+
 
 Nelle comunicazioni con send e receive non si dovrebbe utilizzare la dimensione esatta del messaggio inviato dalla controparte: per esempio lato client si definisce char * richiesta[72], ma se la dimensione della richiesta aumenta si stampa una stringa sbagliata.

@@ -13,12 +13,12 @@ void modificaTelefono(char vecchioTelefono[], char nuovoTelefono[]);
 void modificaIndirizzo(char vecchioIndirizzo[], char nuovoIndirizzo[]);*/
 
 void visualizzaRubrica();
-void ricercaRecordCognome();
-void ricercaRecordNomeCognome();
+void ricercaRecordCognome(int clientSocket);
+void ricercaRecordNomeCognome(int clientSocket);
 
-void aggiungiRecord();
-void rimuoviRecord();
-void modificaTelefono();
-void modificaIndirizzo();
+void aggiungiRecord(int clientSocket);
+void rimuoviRecord(int clientSocket);
+void modificaTelefono(int clientSocket);
+void modificaIndirizzo(int clientSocket);
 
 #endif
