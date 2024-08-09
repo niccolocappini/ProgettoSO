@@ -108,8 +108,6 @@ int main()
 
         break;
 
-        break;
-
       case RICERCA_RECORD_CON_COGNOME:
         printf("Gestione Richiesta 2\n");
         dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
@@ -273,7 +271,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
       strcat(recordCorrente, campoLetto);
       if (j != 3)
       {
-        strcat(recordCorrente, " ");
+        strcat(recordCorrente, ", ");
       }
 
       if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
