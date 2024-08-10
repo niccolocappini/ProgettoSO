@@ -186,8 +186,8 @@ void logoutUtente(int clientSocket) {}
 
 void richiestaPassword(int clientSocket)
 {
-  char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
-  send(clientSocket, richiesta, sizeof(richiesta), 0);
+  /*char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
+  send(clientSocket, richiesta, sizeof(richiesta), 0);*/
 
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
@@ -400,21 +400,16 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 int aggiungiRecord(int clientSocket, char **output)
 {
   recordRub recordDaAggiungere;
+  char recordStr[4*MAX_LUNG_CAMPO];
   recordContenuti++; // da spostare
 
+  sleep(20);
   printf("In attesa del record da inserire... \n");
-  int byteLetti;
-  byteLetti = recv(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
-  if (byteLetti < 1)
-  {
-    generazioneErrore("Record non ricevuto o non valido\n");
-  }
-  printf("%s\n", recordDaAggiungere.nome);
-  printf("%s\n", recordDaAggiungere.cognome);
-  printf("%s\n", recordDaAggiungere.indirizzo);
-  printf("%s\n", recordDaAggiungere.telefono);
+  riceviDatiDaClient(clientSocket,recordStr,sizeof(recordStr),"Record non ricevuto o non valido\n");
+  
+  printf("%s",recordStr);
   fseek(rubrica, 0, SEEK_END);
-  fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
+  fwrite(recordStr, sizeof(recordStr), 1, rubrica);
   return 0;
 }
 

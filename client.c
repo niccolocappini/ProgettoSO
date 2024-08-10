@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
     {
         char richiestaStr[72];
         char password[100];
-        recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
-        printf("%s",  richiestaStr);
+        /*recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
+        printf("%s",  richiestaStr);*/
         printf("Inserisci Password: \n");
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
@@ -153,13 +153,13 @@ void ricercaRecordCognome(int clientSocket)
     char cognomeDaRicercare[MAX_LUNG_CAMPO];
     char supporto;
     printf("Inserire un cognome per la ricerca: ");
-    //fflush(stdin);
+    fflush(stdin);
     scanf("%c",&supporto);
     scanf("%[^'\n']s", cognomeDaRicercare); // in questo modo si prendono da input le stringhe con gli spazi e senza l'accapo
     send(clientSocket, cognomeDaRicercare, MAX_LUNG_CAMPO, 0);
     printf("Cognome inviato al server \n");
     printf("\nStampa dei record in cui il cognome è %s: \n", cognomeDaRicercare);
-    //fflush(stdin);
+    fflush(stdin);
 }
 
 void ricercaRecordNomeCognome(int clientSocket)
@@ -168,6 +168,7 @@ void ricercaRecordNomeCognome(int clientSocket)
     char cognome[MAX_LUNG_CAMPO];
     char supporto;
 
+    fflush(stdin);
     printf("Inserire Nome da Ricercare: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", nome);
@@ -178,32 +179,40 @@ void ricercaRecordNomeCognome(int clientSocket)
     send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
     printf("Nome e Cognome inviati al server \n");
     printf("\nStampa dei record in cui nome e cognome sono %s e %s: \n", nome,cognome);
+    fflush(stdin);
 }
 
 void aggiungiRecord(int clientSocket)
 {
     recordRub record;
+    char recordStr[4*MAX_LUNG_CAMPO];
     char supporto;
 
+    fflush(stdin);
     printf("Inserire Nome da Inserire: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", record.nome);
+    strcpy(recordStr,record.nome);
 
     printf("Inserire Cognome da Inserire: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", record.cognome);
+    strcat(recordStr,record.cognome);
 
     printf("Inserire Indirizzo da Inserire: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", record.indirizzo);
+    strcat(recordStr,record.indirizzo);
 
     printf("Inserire Telefono da Inserire: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", record.telefono);
+    strcat(recordStr,record.telefono);
 
-    send(clientSocket, &record, sizeof(record), 0);
+    send(clientSocket, recordStr, sizeof(recordStr), 0);
 
     printf("Dati del record inviati al server per l'inserimento\n");
+    fflush(stdin);
 }
 
 void rimuoviRecord(int clientSocket)
