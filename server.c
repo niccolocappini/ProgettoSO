@@ -225,19 +225,18 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
 int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
 {
 }
+
 void normalizzaRecord(recordRub *recordDaAggiungere)
 {
 }
 
-void visualizzaRubrica(char **output)
+int visualizzaRubricaVuota(char **output)
 {
-
   fseek(rubrica, 0, SEEK_END);
   long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
-    char stringaRubricaVuota[] = "La rubrica al momento è vuota\n";
-    strcat(*output, stringaRubricaVuota);
+    strcat(*output, "La rubrica al momento è vuota\n");
     return 0;
   }
   return 1;
@@ -245,7 +244,6 @@ void visualizzaRubrica(char **output)
 
 void visualizzaRubrica(char **output)
 {
-
   if (controlloRubricaVuota(output) != 0)
   {
     char supporto[MAX_LUNG_CAMPO];
@@ -279,10 +277,8 @@ void visualizzaRubrica(char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
-
   if (controlloRubricaVuota(output) != 0)
   {
-
     char cognomeDaRicercare[MAX_LUNG_CAMPO];
 
     printf("In attesa del cognome da ricercare... \n");
@@ -335,7 +331,6 @@ void ricercaRecordConCognome(int clientSocket, char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognomeNome(int clientSocket, char **output)
 {
-
   if (controlloRubricaVuota(output) != 0)
   {
 
@@ -402,6 +397,10 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
+  if (controlloRubricaVuota(output) != 0)
+  {
+    return 0;
+  }
   recordRub recordDaAggiungere;
 
   printf("In attesa del nome da inserire... \n");
@@ -417,7 +416,6 @@ int aggiungiRecord(int clientSocket, char **output)
   Gestire il ricompattamento del file dopo l'eliminazione del record*/
 int rimuoviRecord(int clientSocket, char **output)
 {
-
   if (controlloRubricaVuota(output) != 0)
   {
     return 0;
