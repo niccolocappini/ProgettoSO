@@ -169,7 +169,8 @@ void ricercaRecordNomeCognome(int clientSocket)
     char supporto;
 
     printf("Inserire Nome da Ricercare: ");
-    scanf("%s",nome);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", nome);
     printf("Inserire Cognome da Ricercare: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", cognome);
@@ -182,22 +183,25 @@ void ricercaRecordNomeCognome(int clientSocket)
 void aggiungiRecord(int clientSocket)
 {
     recordRub record;
+    char supporto;
 
     printf("Inserire Nome da Inserire: ");
-    scanf("%s",record.nome);
-    send(clientSocket, record.nome, MAX_LUNG_CAMPO, 0);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", record.nome);
 
     printf("Inserire Cognome da Inserire: ");
-    scanf("%s",record.cognome);
-    send(clientSocket, record.cognome, MAX_LUNG_CAMPO, 0);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", record.cognome);
 
     printf("Inserire Indirizzo da Inserire: ");
-    scanf("%s",record.indirizzo);
-    send(clientSocket, record.indirizzo, MAX_LUNG_CAMPO, 0);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", record.indirizzo);
 
     printf("Inserire Telefono da Inserire: ");
-    scanf("%s",record.telefono);
-    send(clientSocket, record.telefono, MAX_LUNG_CAMPO, 0);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", record.telefono);
+
+    send(clientSocket, &record, sizeof(record), 0);
 
     printf("Dati del record inviati al server per l'inserimento\n");
 }

@@ -402,18 +402,13 @@ int aggiungiRecord(int clientSocket, char **output)
   recordRub recordDaAggiungere;
   recordContenuti++; // da spostare
 
-  printf("In attesa del nome da inserire... \n");
-  riceviDatiDaClient(clientSocket, recordDaAggiungere.nome, sizeof(recordDaAggiungere.nome), "Nome non ricevuto o non valido\n");
-
-  printf("In attesa del cognome da inserire... \n");
-  riceviDatiDaClient(clientSocket, recordDaAggiungere.cognome, sizeof(recordDaAggiungere.cognome), "Cognome non ricevuto o non valido\n");
-
-  printf("In attesa dell'indirizzo da inserire... \n");
-  riceviDatiDaClient(clientSocket, recordDaAggiungere.indirizzo, sizeof(recordDaAggiungere.indirizzo), "Indirizzo non ricevuto o non valido\n");
-
-  printf("In attesa del telefono da inserire... \n");
-  riceviDatiDaClient(clientSocket, recordDaAggiungere.telefono, sizeof(recordDaAggiungere.telefono), "Telefono non ricevuto o non valido\n");
-
+  printf("In attesa del record da inserire... \n");
+  int byteLetti;
+  byteLetti = recv(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
+  if (byteLetti < 1)
+  {
+    generazioneErrore("Record non ricevuto o non valido\n");
+  }
   printf("%s\n", recordDaAggiungere.nome);
   printf("%s\n", recordDaAggiungere.cognome);
   printf("%s\n", recordDaAggiungere.indirizzo);
