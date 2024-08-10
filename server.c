@@ -221,6 +221,11 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
   }
 }
 
+void normalizzaRecord(recordRub *recordDaAggiungere)
+{
+  
+}
+
 void visualizzaRubrica(char **output)
 {
 
