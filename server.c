@@ -124,7 +124,7 @@ int main()
       case AGGIUNGI_RECORD:
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
-        risultato = aggiungiRecord(clientSocket,&output);
+        risultato = aggiungiRecord(clientSocket, &output);
         controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n");
 
         break;
@@ -132,7 +132,7 @@ int main()
       case RIMUOVI_RECORD:
         printf("Gestione Richiesta 5: \n");
         richiestaPassword(clientSocket);
-        risultato = rimuoviRecord(clientSocket);
+        risultato = rimuoviRecord(clientSocket, &output);
         controlloOutput(risultato, "Rimozione Record in Rubrica Fallita \n");
 
         break;
@@ -140,7 +140,7 @@ int main()
       case MODIFICA_TELEFONO:
         printf("Gestione Richiesta 6: \n");
         richiestaPassword(clientSocket);
-        risultato = modificaTelefono(clientSocket);
+        risultato = modificaTelefono(clientSocket, &output);
         controlloOutput(risultato, "Modifica Telefono Fallita \n");
 
         break;
@@ -148,7 +148,7 @@ int main()
       case MODIFICA_INDIRIZZO:
         printf("Gestione Richiesta 7: \n");
         richiestaPassword(clientSocket);
-        risultato = modificaIndirizzo(clientSocket);
+        risultato = modificaIndirizzo(clientSocket, &output);
         controlloOutput(risultato, "Modifica Indirizzo Fallita \n");
 
         break;
@@ -223,7 +223,7 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
 
 void normalizzaRecord(recordRub *recordDaAggiungere)
 {
-  
+
 }
 
 void visualizzaRubrica(char **output)
@@ -403,19 +403,19 @@ int aggiungiRecord(int clientSocket, char **output)
 
 /* Casi di errore: Eliminazione non riuscita
   Gestire il ricompattamento del file dopo l'eliminazione del record*/
-int rimuoviRecord(int clientSocket)
+int rimuoviRecord(int clientSocket, char **output)
 {
   return 0;
 }
 
 /* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
-int modificaTelefono(int clientSocket)
+int modificaTelefono(int clientSocket, char **output)
 {
   return 0;
 }
 
 /* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
-int modificaIndirizzo(int clientSocket)
+int modificaIndirizzo(int clientSocket, char **output)
 {
   return 0;
 }
