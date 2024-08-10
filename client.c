@@ -176,7 +176,7 @@ void ricercaRecordNomeCognome(int clientSocket)
     send(clientSocket, nome, MAX_LUNG_CAMPO, 0);
     send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
     printf("Nome e Cognome inviati al server \n");
-    printf("\nStampa dei record in cui nome e cognome sono %s %s: \n", nome,cognome);
+    printf("\nStampa dei record in cui nome e cognome sono %s e %s: \n", nome,cognome);
 }
 
 void aggiungiRecord(int clientSocket)
