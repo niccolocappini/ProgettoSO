@@ -228,8 +228,7 @@ void visualizzaRubrica(char **output)
   long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
-    char stringaRubricaVuota[] = "La rubrica al momento è vuota\n";
-    strcat(*output, stringaRubricaVuota);
+    strcat(*output, "La rubrica al momento è vuota\n");
   }
   else
   {
@@ -384,7 +383,15 @@ int aggiungiRecord(int clientSocket, char **output)
   printf("In attesa del cognome da inserire... \n");
   riceviDatiDaClient(clientSocket,recordDaAggiungere.cognome,sizeof(recordDaAggiungere.cognome),"Cognome non ricevuto o non valido\n");
   
+  printf("In attesa dell'indirizzo da inserire... \n");
+  riceviDatiDaClient(clientSocket,recordDaAggiungere.indirizzo,sizeof(recordDaAggiungere.indirizzo),"Indirizzo non ricevuto o non valido\n");
 
+  printf("In attesa del telefono da inserire... \n");
+  riceviDatiDaClient(clientSocket,recordDaAggiungere.telefono,sizeof(recordDaAggiungere.telefono),"Telefono non ricevuto o non valido\n");
+
+  normalizzaRecord(&recordDaAggiungere);
+  fseek(rubrica,0,SEEK_END); // il puntatore del file viene spostato in fondo
+  fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
 
   return 0;
 }

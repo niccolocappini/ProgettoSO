@@ -57,7 +57,7 @@ Nicco
 
 Da fare:
     Gestire il login utente ricevendo un segnale particolare (in parallelo col lato client)
-    Gestire l'invio di messaggi tra server e client tramite segnali
+    Gestire segnali, terminazione o sospensione, da parte di un utente
     Gestire la richiesta in base al tipo (fatto)
     Gestione errori nelle varie fasi
 
@@ -69,7 +69,8 @@ DOPO:
 
 Idee:
 - Il client non ha accesso alla rubrica, solo il server può accedervi
-- Nel cliet, all'interno delle funzioni avviene: invio parametri al server, ricezione risultato, la stampa del risultato  nelle funzioni stesse
+- Nel cliet, all'interno delle funzioni avviene l'invio parametri al server, la stampa del risultato inoltrato dal server   avviene al di fuori dello switch
+- Nel caso di aggiungiRecord(), lato server viene operata una normalizzazione del record da inserire. Ovvero ogni stringa che compone il record, che non sia il numero di telefono o il civico della via, inizierà con la lettera maiuscola
 
 
 PROTOCOLLO DI COMUNICAZIONE CLIENT-SERVER

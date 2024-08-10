@@ -105,7 +105,7 @@ void generatoreIndirizzo(char indirizzo[])
 
     const char *vie[20] = {
         "Via Roma", "Via Garibaldi", "Corso Vittorio Emanuele", "Via Dante Alighieri", "Via Giuseppe Mazzini",
-        "Via Giacomo Matteotti", "Via Giovanni Pascoli", "Via Leonardo da Vinci", "Via Alessandro Volta",
+        "Via Giacomo Matteotti", "Via Giovanni Pascoli", "Via Leonardo Da Vinci", "Via Alessandro Volta",
         "Via Galileo Galilei", "Via Cesare Battisti", "Via Francesco Petrarca", "Via Ugo Foscolo",
         "Via Antonio Gramsci", "Via Luigi Pirandello", "Via Guglielmo Marconi", "Via Enrico Fermi",
         "Via Vittorio Veneto", "Via Aldo Moro", "Via Sandro Pertini"};
