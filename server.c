@@ -222,14 +222,11 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
   }
 }
 
-int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
-{
-}
 void normalizzaRecord(recordRub *recordDaAggiungere)
 {
 }
 
-void visualizzaRubrica(char **output)
+int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
 {
 
   fseek(rubrica, 0, SEEK_END);
