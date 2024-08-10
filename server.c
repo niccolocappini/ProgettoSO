@@ -101,7 +101,7 @@ int main()
       {
 
       case VISUALIZZA_OGNI_RECORD:
-        printf("Gestione Richiesta 1: \n");
+        printf("Gestione Richiesta 1\n");
         output = (char *)malloc(dimensione);
         visualizzaRubrica(&output);
 

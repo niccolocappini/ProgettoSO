@@ -151,22 +151,28 @@ void visualizzaRubrica()
 void ricercaRecordCognome(int clientSocket)
 {
     char cognomeDaRicercare[MAX_LUNG_CAMPO];
+    char supporto;
     printf("Inserire un cognome per la ricerca: ");
-    scanf("%s", cognomeDaRicercare);
+    //fflush(stdin);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", cognomeDaRicercare); // in questo modo si prendono da input le stringhe con gli spazi e senza l'accapo
     send(clientSocket, cognomeDaRicercare, MAX_LUNG_CAMPO, 0);
     printf("Cognome inviato al server \n");
     printf("\nStampa dei record in cui il cognome è %s: \n", cognomeDaRicercare);
+    //fflush(stdin);
 }
 
 void ricercaRecordNomeCognome(int clientSocket)
 {
     char nome[MAX_LUNG_CAMPO];
     char cognome[MAX_LUNG_CAMPO];
+    char supporto;
 
     printf("Inserire Nome da Ricercare: ");
     scanf("%s",nome);
     printf("Inserire Cognome da Ricercare: ");
-    scanf("%s",cognome);
+    scanf("%c",&supporto);
+    scanf("%[^'\n']s", cognome);
     send(clientSocket, nome, MAX_LUNG_CAMPO, 0);
     send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
     printf("Nome e Cognome inviati al server \n");
@@ -176,7 +182,7 @@ void ricercaRecordNomeCognome(int clientSocket)
 void aggiungiRecord(int clientSocket)
 {
     recordRub record;
-    
+
     printf("Inserire Nome da Inserire: ");
     scanf("%s",record.nome);
     send(clientSocket, record.nome, MAX_LUNG_CAMPO, 0);
