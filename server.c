@@ -238,6 +238,10 @@ void normalizzaRecord(recordRub *recordDaAggiungere)
 {
 }
 
+void ricercaRecord(int clientSocket, char **output) // metodo generale di ricerca record da usare nelle ricerche settoriali
+{
+}
+
 void visualizzaRubrica(char **output)
 {
   if (controlloRubricaVuota(output) != 0)
@@ -394,6 +398,7 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 int aggiungiRecord(int clientSocket, char **output)
 {
   recordRub recordDaAggiungere;
+  recordContenuti++; // da spostare
 
   printf("In attesa del nome da inserire... \n");
   riceviDatiDaClient(clientSocket, recordDaAggiungere.nome, sizeof(recordDaAggiungere.nome), "Nome non ricevuto o non valido\n");
@@ -401,6 +406,18 @@ int aggiungiRecord(int clientSocket, char **output)
   printf("In attesa del cognome da inserire... \n");
   riceviDatiDaClient(clientSocket, recordDaAggiungere.cognome, sizeof(recordDaAggiungere.cognome), "Cognome non ricevuto o non valido\n");
 
+  printf("In attesa dell'indirizzo da inserire... \n");
+  riceviDatiDaClient(clientSocket, recordDaAggiungere.indirizzo, sizeof(recordDaAggiungere.indirizzo), "Indirizzo non ricevuto o non valido\n");
+
+  printf("In attesa del telefono da inserire... \n");
+  riceviDatiDaClient(clientSocket, recordDaAggiungere.telefono, sizeof(recordDaAggiungere.telefono), "Telefono non ricevuto o non valido\n");
+
+  printf("%s\n",recordDaAggiungere.nome);
+  printf("%s\n",recordDaAggiungere.cognome);
+  printf("%s\n",recordDaAggiungere.indirizzo);
+  printf("%s\n",recordDaAggiungere.telefono);
+  fseek(rubrica,0,SEEK_END);
+  fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
   return 0;
 }
 
@@ -410,6 +427,7 @@ int rimuoviRecord(int clientSocket, char **output)
 {
   if (controlloRubricaVuota(output) != 0)
   {
+    recordContenuti--; // da spostare
     return 0;
   }
 }
