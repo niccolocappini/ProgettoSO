@@ -399,15 +399,15 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  recordRub recordDaAggiungere;
-  char recordStr[4*MAX_LUNG_CAMPO];
+
+  char recordStr[4 * MAX_LUNG_CAMPO];
   recordContenuti++; // da spostare
 
   sleep(20);
   printf("In attesa del record da inserire... \n");
-  riceviDatiDaClient(clientSocket,recordStr,sizeof(recordStr),"Record non ricevuto o non valido\n");
-  
-  printf("%s",recordStr);
+  riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
+
+  printf("%s", recordStr);
   fseek(rubrica, 0, SEEK_END);
   fwrite(recordStr, sizeof(recordStr), 1, rubrica);
   return 0;
@@ -420,25 +420,16 @@ int rimuoviRecord(int clientSocket, char **output)
   if (controlloRubricaVuota(output) != 0)
   {
     recordRub recordDaRimuovere;
+    char recordStr[4 * MAX_LUNG_CAMPO];
 
-    printf("In attesa del nome da rimuovere... \n");
-    riceviDatiDaClient(clientSocket, recordDaRimuovere.nome, sizeof(recordDaRimuovere.nome), "Nome non ricevuto o non valido\n");
+    printf("In attesa del record da inserire... \n");
+    riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
 
-    printf("In attesa del cognome da rimuovere... \n");
-    riceviDatiDaClient(clientSocket, recordDaRimuovere.cognome, sizeof(recordDaRimuovere.cognome), "Cognome non ricevuto o non valido\n");
-
-    printf("In attesa dell'indirizzo da rimuovere... \n");
-    riceviDatiDaClient(clientSocket, recordDaRimuovere.indirizzo, sizeof(recordDaRimuovere.indirizzo), "Indirizzo non ricevuto o non valido\n");
-
-    printf("In attesa del telefono da rimuovere... \n");
-    riceviDatiDaClient(clientSocket, recordDaRimuovere.telefono, sizeof(recordDaRimuovere.telefono), "Telefono non ricevuto o non valido\n");
-
-    printf("%s\n", recordDaRimuovere.nome);
-    printf("%s\n", recordDaRimuovere.cognome);
-    printf("%s\n", recordDaRimuovere.indirizzo);
-    printf("%s\n", recordDaRimuovere.telefono);
+    printf("%s", recordStr);
+    fseek(rubrica, 0, SEEK_END);
 
     long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
+    if(posizioneRecordDaRimuovere < 0) return 0;
 
     fseek(rubrica, posizioneRecordDaRimuovere, 0);
 
@@ -448,7 +439,7 @@ int rimuoviRecord(int clientSocket, char **output)
     }
 
     recordContenuti--; // da spostare
-    return 0;
+    return 1;
   }
 }
 
