@@ -397,21 +397,27 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  char recordStr[4 * MAX_LUNG_CAMPO];
-  recordContenuti++; // da spostare
+  recordRub record;
+  char recordStr[4*MAX_LUNG_CAMPO];
+  int byteLetti,byteScritti;
 
   printf("In attesa del record da inserire... \n");
-  riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
 
-  printf("recordStr: %s\n", recordStr);
+  byteLetti = recv(clientSocket, &record, sizeof(record), 0);
+  if (byteLetti < 1)
+  {
+    generazioneErrore("Record non ricevuto o non valido\n");
+  }
+
   fseek(rubrica, 0, SEEK_END);
-  int byteScritti = fwrite(recordStr, strlen(recordStr), 1, rubrica);
-  if (byteScritti <= 0)
+  byteScritti = fwrite(&record, sizeof(record), 1, rubrica);
+  if(byteScritti <= 0)
   {
     *output = "Aggiunta Record Fallita\n";
     return 0;
   }
   *output = "Aggiunta Record andata a buon fine\n";
+  recordContenuti++;
   return 1;
 }
 
