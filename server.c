@@ -125,8 +125,8 @@ int main()
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket, &output);
-        controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n");
-
+        controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n"); 
+        //spostare controllo output poiché in caso di errore l'output non viene inoltrato all'utente
         break;
 
       case RIMUOVI_RECORD:
@@ -160,9 +160,9 @@ int main()
       // Invio della risposta al client
       write(clientSocket, output, strlen(output) + 1);
       printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
-      free(output);
       printf("Richiesta eseguita: terminazione di questo figlio\n\n");
       close(clientSocket);
+      // free(output);
       exit(EXIT_SUCCESS);
     }
     else
@@ -186,8 +186,8 @@ void logoutUtente(int clientSocket) {}
 
 void richiestaPassword(int clientSocket)
 {
-  /*char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
-  send(clientSocket, richiesta, sizeof(richiesta), 0);*/
+  char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
+  send(clientSocket, richiesta, sizeof(richiesta), 0);
 
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
@@ -399,18 +399,25 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  recordRub recordDaAggiungere;
+  // recordRub recordDaAggiungere;
   char recordStr[4*MAX_LUNG_CAMPO];
   recordContenuti++; // da spostare
 
-  sleep(20);
+  // sleep(20);
   printf("In attesa del record da inserire... \n");
-  riceviDatiDaClient(clientSocket,recordStr,sizeof(recordStr),"Record non ricevuto o non valido\n");
-  
-  printf("%s",recordStr);
+  // riceviDatiDaClient(clientSocket,recordStr,strlen(recordStr),"Record non ricevuto o non valido\n");
+  recv(clientSocket,recordStr,sizeof(recordStr),0);
+
+  printf("recordStr: %s\n",recordStr);
   fseek(rubrica, 0, SEEK_END);
-  fwrite(recordStr, sizeof(recordStr), 1, rubrica);
-  return 0;
+  int byteScritti = fwrite(recordStr, strlen(recordStr), 1, rubrica);
+  if(byteScritti <= 0)
+  {
+    *output = "Aggiunta Record Fallita\n";
+    return 0;
+  }
+  *output = "Aggiunta Record andata a buon fine\n";
+  return 1;
 }
 
 /* Casi di errore: Eliminazione non riuscita

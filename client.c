@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
     {
         char richiestaStr[72];
         char password[100];
-        /*recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
-        printf("%s",  richiestaStr);*/
+        recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
+        printf("%s",  richiestaStr);
         printf("Inserisci Password: \n");
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
@@ -188,7 +188,7 @@ void aggiungiRecord(int clientSocket)
     char recordStr[4*MAX_LUNG_CAMPO];
     char supporto;
 
-    fflush(stdin);
+    /*fflush(stdin);
     printf("Inserire Nome da Inserire: ");
     scanf("%c",&supporto);
     scanf("%[^'\n']s", record.nome);
@@ -209,7 +209,10 @@ void aggiungiRecord(int clientSocket)
     scanf("%[^'\n']s", record.telefono);
     strcat(recordStr,record.telefono);
 
-    send(clientSocket, recordStr, sizeof(recordStr), 0);
+    printf("%s\n",recordStr);
+    // write(clientSocket,recordStr,strlen(recordStr)+1);*/
+    strcat(recordStr,"prova \n");
+    send(clientSocket,recordStr,sizeof(recordStr),0);
 
     printf("Dati del record inviati al server per l'inserimento\n");
     fflush(stdin);
