@@ -95,7 +95,7 @@ int main()
       printf("Lettura effettuata: %d\n", richiesta);
 
       risultato = -1;
-      char *output;                                                                                          // stringa che contterrà ciò che verrà inviato al client
+      char *output;                                                                                         // stringa che contterrà ciò che verrà inviato al client
       int dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
       switch (richiesta)
       {
@@ -125,15 +125,15 @@ int main()
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket, &output);
-        controlloOutput(risultato, "Aggiunta Record in Rubrica Fallita \n"); 
-        //spostare controllo output poiché in caso di errore l'output non viene inoltrato all'utente
+        controlloOutput(clientSocket, risultato, "Aggiunta Record in Rubrica Fallita \n"); 
+    
         break;
 
       case RIMUOVI_RECORD:
         printf("Gestione Richiesta 5: \n");
         richiestaPassword(clientSocket);
         risultato = rimuoviRecord(clientSocket, &output);
-        controlloOutput(risultato, "Rimozione Record in Rubrica Fallita \n");
+        controlloOutput(clientSocket, risultato, "Rimozione Record in Rubrica Fallita \n");
 
         break;
 
@@ -141,7 +141,7 @@ int main()
         printf("Gestione Richiesta 6: \n");
         richiestaPassword(clientSocket);
         risultato = modificaTelefono(clientSocket, &output);
-        controlloOutput(risultato, "Modifica Telefono Fallita \n");
+        controlloOutput(clientSocket, risultato, "Modifica Telefono Fallita \n");
 
         break;
 
@@ -149,7 +149,7 @@ int main()
         printf("Gestione Richiesta 7: \n");
         richiestaPassword(clientSocket);
         risultato = modificaIndirizzo(clientSocket, &output);
-        controlloOutput(risultato, "Modifica Indirizzo Fallita \n");
+        controlloOutput(clientSocket, risultato, "Modifica Indirizzo Fallita \n");
 
         break;
 
@@ -186,12 +186,8 @@ void logoutUtente(int clientSocket) {}
 
 void richiestaPassword(int clientSocket)
 {
-  char passwordLung[3];
-  sprintf(passwordLung,"%d",(int)strlen(PASSWORD));
-  send(clientSocket, passwordLung, sizeof(passwordLung), 0);
-
-  char passwordRicevuta[sizeof(PASSWORD)];
-  recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
+  char passwordRicevuta[MAX_LUNG_PASSWORD];
+  recv(clientSocket, passwordRicevuta, sizeof(passwordRicevuta), 0);
   printf("Password Ricevuta: %s \n", passwordRicevuta);
 
   if (strcmp(passwordRicevuta, PASSWORD) != 0)
@@ -204,10 +200,11 @@ void richiestaPassword(int clientSocket)
   }
 }
 
-void controlloOutput(int risultato, char *messaggio)
+void controlloOutput(int clientSocket, int risultato, char *messaggio)
 {
   if (risultato == 0)
   {
+    write(clientSocket, messaggio, strlen(messaggio) + 1);
     generazioneErrore(messaggio);
   }
 }
@@ -400,21 +397,11 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  char recordStr[4*2];
+  char recordStr[4*MAX_LUNG_CAMPO];
   recordContenuti++; // da spostare
 
-  // sleep(20);
   printf("In attesa del record da inserire... \n");
-  
-  char str[1];
-  int n = 0;
-
-  do
-  {
-      n = read(clientSocket, str, 1);
-      printf("%s", str);
-  } while (n > 0 && strcmp(str, "\0") != 0);
-  printf("\n");
+  riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
 
   printf("recordStr: %s\n",recordStr);
   fseek(rubrica, 0, SEEK_END);

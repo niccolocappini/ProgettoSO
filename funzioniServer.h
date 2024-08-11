@@ -4,7 +4,7 @@
 int loginUtente(int clientSocket);
 void logoutUtente(int clientSocket);
 void richiestaPassword(int clientSocket);
-void controlloOutput(int risultato, char *messaggio);
+void controlloOutput(int clientSocket, int risultato, char *messaggio);
 void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDato, char *messaggio);
 int controlloRubricaVuota(char **output);
 void normalizzaRecord(recordRub *recordDaAggiungere);

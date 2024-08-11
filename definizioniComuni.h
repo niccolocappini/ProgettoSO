@@ -12,6 +12,8 @@
 #define MODIFICA_TELEFONO 6
 #define MODIFICA_INDIRIZZO 7
 
+#define MAX_LUNG_PASSWORD 100
+
 typedef struct
 {
     char nome[MAX_LUNG_CAMPO];
