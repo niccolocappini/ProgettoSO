@@ -215,9 +215,8 @@ void aggiungiRecord(int clientSocket)
     scanf("%[^'\n']s", record.telefono);
     strcat(recordStr,record.telefono);
 
-    printf("%s\n",recordStr);
-    write(clientSocket,recordStr,strlen(recordStr)+1);
-    
+    printf("Record inviato: %s\n",recordStr);
+    send(clientSocket,&record,sizeof(record),0);
 
     printf("Dati del record inviati al server per l'inserimento\n");
     fflush(stdin);
