@@ -188,43 +188,52 @@ void ricercaRecordNomeCognome(int clientSocket)
     fflush(stdin);
 }
 
-void aggiungiRecord(int clientSocket)
+void inserimentodatiRecord(recordRub *record)
 {
-    recordRub record;
     char recordStr[4*MAX_LUNG_CAMPO ];
     char supporto;
 
     fflush(stdin);
-    printf("Inserire Nome da Inserire: ");
+    printf("Inserire Nome: ");
     scanf("%c",&supporto);
-    scanf("%[^'\n']s", record.nome);
-    strcpy(recordStr,record.nome);
+    scanf("%[^'\n']s", (char *)record->nome);
+    strcpy(recordStr,(char *)record->nome);
 
-    printf("Inserire Cognome da Inserire: ");
+    printf("Inserire Cognome: ");
     scanf("%c",&supporto);
-    scanf("%[^'\n']s", record.cognome);
-    strcat(recordStr,record.cognome);
+    scanf("%[^'\n']s", (char *)record->cognome);
+    strcat(recordStr,(char *)record->cognome);
 
-    printf("Inserire Indirizzo da Inserire: ");
+    printf("Inserire Indirizzo: ");
     scanf("%c",&supporto);
-    scanf("%[^'\n']s", record.indirizzo);
-    strcat(recordStr,record.indirizzo);
+    scanf("%[^'\n']s", (char *)record->indirizzo);
+    strcat(recordStr,(char *)record->indirizzo);
 
-    printf("Inserire Telefono da Inserire: ");
+    printf("Inserire Telefono: ");
     scanf("%c",&supporto);
-    scanf("%[^'\n']s", record.telefono);
-    strcat(recordStr,record.telefono);
+    scanf("%[^'\n']s", (char *)record->telefono);
+    strcat(recordStr, (char *)record->telefono);
 
     printf("Record inviato: %s\n",recordStr);
-    send(clientSocket,&record,sizeof(record),0);
-
-    printf("Dati del record inviati al server per l'inserimento\n");
     fflush(stdin);
+}
+
+void aggiungiRecord(int clientSocket)
+{
+    recordRub record;
+    
+    inserimentodatiRecord(&record);
+    send(clientSocket,&record,sizeof(record),0);
+    printf("Dati del record inviati al server per l'inserimento\n");
 }
 
 void rimuoviRecord(int clientSocket)
 {
     recordRub record;
+
+    inserimentodatiRecord(&record);
+    send(clientSocket,&record,sizeof(record),0);
+    printf("Dati del record inviati al server per la rimozione\n");
 }
 
 void modificaTelefono(int clientSocket)

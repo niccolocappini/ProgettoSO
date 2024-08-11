@@ -117,7 +117,7 @@ int main()
       case RICERCA_RECORD_CON_NOME_COGNOME:
         printf("Gestione Richiesta 3\n");
         output = (char *)malloc(dimensione);
-        ricercaRecordConCognomeNome(clientSocket, &output);
+        ricercaRecordConNomeCognome(clientSocket, &output);
 
         break;
 
@@ -216,6 +216,7 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
   byteLetti = recv(clientSocket, datoDaRicevere, dimensioneDato, 0);
   if (byteLetti < 1)
   {
+    write(clientSocket, messaggio, strlen(messaggio) + 1);
     generazioneErrore(messaggio);
   }
 }
@@ -236,8 +237,10 @@ void normalizzaRecord(recordRub *recordDaAggiungere)
 {
 }
 
-int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
+long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
 {
+  long int posizioneRecord = -1;
+
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 0;
   char campoLetto[MAX_LUNG_CAMPO];
@@ -246,6 +249,11 @@ int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca re
     recordTrovato = 0;
     for (int j = 0; j < 4; j++)
     {
+      if(j == 0)
+      {
+        posizioneRecord = ftell(rubrica);
+      }
+
       if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
       {
         generazioneErrore("Errore nella lettura\n");
@@ -274,10 +282,10 @@ int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca re
 
     if (recordTrovato == 4)
     {
-      return 1;
+      return posizioneRecord;
     }
   }
-  return 0; // si ritorna 0 se il record non è presente, 1 se il record è presente
+  return -1; // si ritorna -1 se il record non è presente, altrimenti la posizione del record
 }
 
 void visualizzaRubrica(char **output)
@@ -367,11 +375,10 @@ void ricercaRecordConCognome(int clientSocket, char **output)
 }
 
 /* Casi di errore: Record non Trovato*/
-void ricercaRecordConCognomeNome(int clientSocket, char **output)
+void ricercaRecordConNomeCognome(int clientSocket, char **output)
 {
   if (controlloRubricaVuota(output) != 0)
   {
-
     char nomeDaRicercare[MAX_LUNG_CAMPO];
     char cognomeDaRicercare[MAX_LUNG_CAMPO];
 
@@ -445,7 +452,7 @@ int aggiungiRecord(int clientSocket, char **output)
     generazioneErrore("Record non ricevuto o non valido\n");
   }
 
-  if(ricercaRecord(&recordDaAggiungere) == 1)
+  if(ricercaRecord(&recordDaAggiungere) != -1)
   {
     *output = "Record Presente in Rubrica\n";
     return 0;

@@ -4,6 +4,7 @@
 #include "definizioniComuni.h"
 
 void stampaOutputDalServer(int clientSocket);
+void inserimentodatiRecord(recordRub *record);
 void visualizzaRubrica();
 void ricercaRecordCognome(int clientSocket);
 void ricercaRecordNomeCognome(int clientSocket);
