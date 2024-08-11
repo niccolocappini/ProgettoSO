@@ -125,7 +125,7 @@ int main()
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket, &output);
-        controlloOutput(clientSocket, risultato, "Aggiunta Record in Rubrica Fallita \n"); 
+        controlloOutput(clientSocket, risultato, output); 
     
         break;
 
@@ -236,10 +236,48 @@ void normalizzaRecord(recordRub *recordDaAggiungere)
 {
 }
 
-long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
+int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
 {
-  long int posizioneRecord = ftell(rubrica);
-  return posizioneRecord; // si ritorna la posizione del record o -1 se il record non è presente
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
+  int recordTrovato = 0;
+  char campoLetto[MAX_LUNG_CAMPO];
+  for (int i = 0; i < recordContenuti; i++)
+  {
+    recordTrovato = 0;
+    for (int j = 0; j < 4; j++)
+    {
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      {
+        generazioneErrore("Errore nella lettura\n");
+      }
+
+      if (j == 0 && strcmp(campoLetto, (const char *)recordDaRicercare->nome) == 0)
+      {
+        recordTrovato++;
+      }
+
+      if (j == 1 && strcmp(campoLetto, (const char *)recordDaRicercare->cognome) == 0)
+      {
+        recordTrovato++;
+      }
+
+      if (j == 2 && strcmp(campoLetto, (const char *)recordDaRicercare->indirizzo) == 0)
+      {
+        recordTrovato++;
+      }
+
+      if (j == 3 && strcmp(campoLetto, (const char *)recordDaRicercare->telefono) == 0)
+      {
+        recordTrovato++;
+      }
+    }
+
+    if (recordTrovato == 4)
+    {
+      return 1;
+    }
+  }
+  return 0; // si ritorna 0 se il record non è presente, 1 se il record è presente
 }
 
 void visualizzaRubrica(char **output)
@@ -336,7 +374,6 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 
     char nomeDaRicercare[MAX_LUNG_CAMPO];
     char cognomeDaRicercare[MAX_LUNG_CAMPO];
-    int byteLetti;
 
     printf("In attesa del nome da ricercare... \n");
     riceviDatiDaClient(clientSocket, nomeDaRicercare, sizeof(nomeDaRicercare), "Nome non ricevuto o non valido\n");
@@ -397,20 +434,27 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  recordRub record;
-  char recordStr[4*MAX_LUNG_CAMPO];
+  recordRub recordDaAggiungere;
   int byteLetti,byteScritti;
 
   printf("In attesa del record da inserire... \n");
 
-  byteLetti = recv(clientSocket, &record, sizeof(record), 0);
+  byteLetti = recv(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
   if (byteLetti < 1)
   {
     generazioneErrore("Record non ricevuto o non valido\n");
   }
 
+  if(ricercaRecord(&recordDaAggiungere) == 1)
+  {
+    *output = "Record Presente in Rubrica\n";
+    return 0;
+  }
+
+  normalizzaRecord(&recordDaAggiungere);
+
   fseek(rubrica, 0, SEEK_END);
-  byteScritti = fwrite(&record, sizeof(record), 1, rubrica);
+  byteScritti = fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
   if(byteScritti <= 0)
   {
     *output = "Aggiunta Record Fallita\n";

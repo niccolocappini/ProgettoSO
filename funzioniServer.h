@@ -8,7 +8,7 @@ void controlloOutput(int clientSocket, int risultato, char *messaggio);
 void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDato, char *messaggio);
 int controlloRubricaVuota(char **output);
 void normalizzaRecord(recordRub *recordDaAggiungere);
-long int ricercaRecord(recordRub *recordDaRicercare);
+int ricercaRecord(recordRub *recordDaRicercare);
 
 /* Questi metodi restituiranno una stringa contenente ciò che è stato richiesto*/
 void visualizzaRubrica(char **output);
