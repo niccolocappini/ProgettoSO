@@ -159,7 +159,7 @@ int main()
 
       // Invio della risposta al client
       write(clientSocket, output, strlen(output) + 1);
-      printf("Risposta inviata: \n%s\n", output); // da togliere prima della consegna
+      printf("Risposta inviata: %s\n", output); // da togliere prima della consegna
       printf("Richiesta eseguita: terminazione di questo figlio\n\n");
       close(clientSocket);
       // free(output);
@@ -186,8 +186,9 @@ void logoutUtente(int clientSocket) {}
 
 void richiestaPassword(int clientSocket)
 {
-  char richiesta[] = "Richiesta password per effettuare operazioni di modifica della rubrica\n";
-  send(clientSocket, richiesta, sizeof(richiesta), 0);
+  char passwordLung[3];
+  sprintf(passwordLung,"%d",(int)strlen(PASSWORD));
+  send(clientSocket, passwordLung, sizeof(passwordLung), 0);
 
   char passwordRicevuta[sizeof(PASSWORD)];
   recv(clientSocket, passwordRicevuta, sizeof(PASSWORD), 0);
@@ -399,14 +400,21 @@ void ricercaRecordConCognomeNome(int clientSocket, char **output)
 /* Casi di errore: Aggiunta non riuscita*/
 int aggiungiRecord(int clientSocket, char **output)
 {
-  // recordRub recordDaAggiungere;
-  char recordStr[4*MAX_LUNG_CAMPO];
+  char recordStr[4*2];
   recordContenuti++; // da spostare
 
   // sleep(20);
   printf("In attesa del record da inserire... \n");
-  // riceviDatiDaClient(clientSocket,recordStr,strlen(recordStr),"Record non ricevuto o non valido\n");
-  recv(clientSocket,recordStr,sizeof(recordStr),0);
+  
+  char str[1];
+  int n = 0;
+
+  do
+  {
+      n = read(clientSocket, str, 1);
+      printf("%s", str);
+  } while (n > 0 && strcmp(str, "\0") != 0);
+  printf("\n");
 
   printf("recordStr: %s\n",recordStr);
   fseek(rubrica, 0, SEEK_END);

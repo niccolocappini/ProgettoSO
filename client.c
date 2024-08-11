@@ -73,12 +73,12 @@ int main(int argc, char *argv[])
 
     // Fase in cui il client riceve l'eventuale richiesta di password
     if  (richiesta >= 4 && richiesta <= 7)
-    
     {
-        char richiestaStr[72];
-        char password[100];
-        recv(clientSocket, richiestaStr, sizeof(richiestaStr), 0);
-        printf("%s",  richiestaStr);
+        char passwordLungStr[3];
+        int passwordLung = 0;
+        char password[11];
+        recv(clientSocket, passwordLungStr, sizeof(passwordLungStr), 0);
+        passwordLung = atoi(passwordLungStr);
         printf("Inserisci Password: \n");
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
@@ -185,7 +185,7 @@ void ricercaRecordNomeCognome(int clientSocket)
 void aggiungiRecord(int clientSocket)
 {
     recordRub record;
-    char recordStr[4*MAX_LUNG_CAMPO];
+    char recordStr[8] = "prova \n";
     char supporto;
 
     /*fflush(stdin);
@@ -209,13 +209,12 @@ void aggiungiRecord(int clientSocket)
     scanf("%[^'\n']s", record.telefono);
     strcat(recordStr,record.telefono);
 
-    printf("%s\n",recordStr);
-    // write(clientSocket,recordStr,strlen(recordStr)+1);*/
-    strcat(recordStr,"prova \n");
-    send(clientSocket,recordStr,sizeof(recordStr),0);
+    printf("%s\n",recordStr);*/
+    write(clientSocket,recordStr,strlen(recordStr)+1);
+    
 
     printf("Dati del record inviati al server per l'inserimento\n");
-    fflush(stdin);
+    // fflush(stdin);
 }
 
 void rimuoviRecord(int clientSocket)
