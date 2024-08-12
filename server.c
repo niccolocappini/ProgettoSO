@@ -243,12 +243,6 @@ void normalizzaRecord(recordRub *recordDaAggiungere)
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
 {
-  char *output;
-  if(controlloRubricaVuota(&output) == 0)
-  {
-    return -1;
-  }
-
   long int posizioneRecord = -1;
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
@@ -264,7 +258,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
         posizioneRecord = ftell(rubrica);
       }
 
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
         generazioneErrore("Errore nella lettura\n");
       }
@@ -354,7 +348,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
     strcpy(recordCorrente, "");
     for (int j = 0; j < 4; j++)
     {
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
         generazioneErrore("Errore nella lettura\n");
       }
@@ -414,7 +408,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
     strcpy(recordCorrente, "");
     for (int j = 0; j < 4; j++)
     {
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
         generazioneErrore("Errore nella lettura\n");
       }
@@ -482,8 +476,8 @@ int aggiungiRecord(int clientSocket, char **output)
     *output = "Aggiunta Record Fallita\n";
     return 0;
   }
-  *output = "Aggiunta Record andata a buon fine\n";
   recordContenuti++;
+  *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
 
