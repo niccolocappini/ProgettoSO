@@ -270,32 +270,30 @@ long int ricercaRecord(recordRub *recordDaRicercare, int recordContenuti) // met
 
       if (j == 0 && strcmp(campoLetto, recordDaRicercare->nome) == 0)
       {
-        printf("Primo campo uguale\n");
         recordTrovato++;
       }
 
       if (j == 1 && strcmp(campoLetto, recordDaRicercare->cognome) == 0)
       {
-        printf("Secondo campo uguale\n");
         recordTrovato++;
       }
 
       if (j == 2 && strcmp(campoLetto, recordDaRicercare->indirizzo) == 0)
       {
-        printf("Terzo campo uguale\n");
-        recordTrovato++; 
+        recordTrovato++;
       }
 
       if (j == 3 && strcmp(campoLetto, recordDaRicercare->telefono) == 0)
       {
-        printf("Quarto campo uguale\n");
         recordTrovato++;
       }
     }
 
     if (recordTrovato == 4)
     {
-      printf("Tutti i campi sono uguali");
+      printf("Tutti i campi sono uguali\n");
+      printf("Il record trovato è il %ldesimo\n", posizioneRecord / (4 * MAX_LUNG_CAMPO) + 1);
+      printf("Posizione ritornata: %ld\n", posizioneRecord); // debug
       return posizioneRecord;
     }
   }
@@ -342,7 +340,7 @@ void ricercaRecordConCognome(int clientSocket, char **output, int recordContenut
   printf("In attesa del cognome da ricercare... \n");
   riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
 
-  if(controlloRubricaVuota(output) == 0)
+  if (controlloRubricaVuota(output) == 0)
   {
     return;
   }
@@ -351,11 +349,11 @@ void ricercaRecordConCognome(int clientSocket, char **output, int recordContenut
   int recordTrovato;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
-  printf("%d\n",recordContenuti);
+  printf("%d\n", recordContenuti);
   int esci = 0;
-  while(1)
+  while (1)
   /*{
-    
+
   }
   for (int i = 0; i < recordContenuti; i++)*/
   {
@@ -367,9 +365,9 @@ void ricercaRecordConCognome(int clientSocket, char **output, int recordContenut
       {
         esci = 1;
         break;
-        //generazioneErrore("Errore nella lettura\n");
+        // generazioneErrore("Errore nella lettura\n");
       }
-      printf("%s\n",campoLetto);
+      printf("%s\n", campoLetto);
 
       strcat(recordCorrente, campoLetto);
       if (j != 3)
@@ -389,7 +387,7 @@ void ricercaRecordConCognome(int clientSocket, char **output, int recordContenut
       strcat(*output, "\n");
     }
 
-    if(esci == 1)
+    if (esci == 1)
     {
       break;
     }
@@ -406,7 +404,7 @@ void ricercaRecordConCognome(int clientSocket, char **output, int recordContenut
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConNomeCognome(int clientSocket, char **output, int recordContenuti)
 {
-  
+
   char nomeDaRicercare[MAX_LUNG_CAMPO];
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
 
@@ -416,7 +414,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output, int recordCont
   printf("In attesa del cognome da ricercare... \n");
   riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
 
-  if(controlloRubricaVuota(output) == 0)
+  if (controlloRubricaVuota(output) == 0)
   {
     return;
   }
@@ -474,7 +472,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output, int recordCont
 int aggiungiRecord(int clientSocket, char **output, int *recordContenuti)
 {
   recordRub recordDaAggiungere;
-  int byteLetti,byteScritti;
+  int byteLetti, byteScritti;
   char campoDaAggiungere[MAX_LUNG_CAMPO];
 
   printf("In attesa del record da inserire... \n");
@@ -494,21 +492,17 @@ int aggiungiRecord(int clientSocket, char **output, int *recordContenuti)
   normalizzaRecord(&recordDaAggiungere);
 
   fseek(rubrica, 0, SEEK_END);
-  strcpy(campoDaAggiungere,recordDaAggiungere.nome);
-  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
-  strcpy(campoDaAggiungere,recordDaAggiungere.cognome);
-  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
-  strcpy(campoDaAggiungere,recordDaAggiungere.indirizzo);
-  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
-  strcpy(campoDaAggiungere,recordDaAggiungere.telefono);
-  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
-  if(byteScritti <= 0)
+  byteScritti = fwrite(recordDaAggiungere.nome, sizeof(recordDaAggiungere.nome), 1, rubrica);
+  byteScritti = fwrite(recordDaAggiungere.cognome, sizeof(recordDaAggiungere.cognome), 1, rubrica);
+  byteScritti = fwrite(recordDaAggiungere.indirizzo, sizeof(recordDaAggiungere.indirizzo), 1, rubrica);
+  byteScritti = fwrite(recordDaAggiungere.telefono, sizeof(recordDaAggiungere.telefono), 1, rubrica);
+  if (byteScritti <= 0) // ???
   {
     *output = "Aggiunta Record Fallita\n";
     return ESITO_NEGATIVO;
   }
   *recordContenuti = *recordContenuti + 1;
-  printf("%d\n",*recordContenuti);
+  printf("%d\n", *recordContenuti);
   *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
@@ -541,14 +535,36 @@ int rimuoviRecord(int clientSocket, char **output, int *recordContenuti)
 
     fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
 
-    for (int i = 0; i < 4; i++)
-    {
-      fwrite("", MAX_LUNG_CAMPO, 1, rubrica);
-    }
+    fwrite("\0", 4 * MAX_LUNG_CAMPO, 1, rubrica);
 
     *output = "Rimozione Record Compiuta\n";
     *recordContenuti = *recordContenuti - 1;
     return 0;
+  }
+  return ESITO_NEGATIVO;
+}
+
+/* Casi di errore: vecchioIndirizzo non trovato, modifica non riuscita*/
+int modificaIndirizzo(int clientSocket, char **output)
+{
+  if (controlloRubricaVuota(output) != 0)
+  {
+    char indirizzoVecchio[MAX_LUNG_CAMPO];
+
+    long int posizioneRecordDaModificare = ricercaPosizioneRecordConSingoloCampo(indirizzoVecchio, recordContenuti, 3);
+    if (posizioneRecordDaModificare < 0)
+    {
+      return ESITO_NEGATIVO;
+    }
+
+    printf("Il record da modificare è il %ldesimo \n", posizioneRecordDaModificare / (4 * MAX_LUNG_CAMPO) + 1);
+    fseek(rubrica, posizioneRecordDaModificare, SEEK_SET);
+    char indirizzoNuovo[MAX_LUNG_CAMPO];
+    riceviDatiDaClient(clientSocket, indirizzoNuovo, sizeof(indirizzoNuovo), "Errore nella ricezione del nuovo indirizzo\n");
+
+    // modifica del record
+
+    return 1;
   }
   return 0;
 }
@@ -560,7 +576,7 @@ int modificaTelefono(int clientSocket, char **output, int recordContenuti)
   {
     char telefonoVecchio[MAX_LUNG_CAMPO];
 
-    long int posizioneRecordDaModificare = ricercaPosizioneRecordConTelefono(telefonoVecchio, recordContenuti);
+    long int posizioneRecordDaModificare = ricercaPosizioneRecordConSingoloCampo(telefonoVecchio, recordContenuti, 4);
     if (posizioneRecordDaModificare < 0)
     {
       return ESITO_NEGATIVO;
@@ -577,8 +593,11 @@ int modificaTelefono(int clientSocket, char **output, int recordContenuti)
   return 0;
 }
 
-long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare, int recordContenuti) // DA TESTARE
+long int ricercaPosizioneRecordConSingoloCampo(char *valoreDaRicercare, int recordContenuti, int campoScelto) // DA TESTARE
 {
+
+  if (campoScelto < 1 || campoScelto > 4)
+    generazioneErrore("Utilizzo errato della ricerca dei record con un campo");
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 1;
@@ -593,7 +612,7 @@ long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare, int record
         generazioneErrore("Errore nella lettura\n");
       }
 
-      if (j == 4 && strcmp(campoLetto, telefonoDaRicercare) == 0)
+      if (j == campoScelto && strcmp(campoLetto, valoreDaRicercare) == 0)
       {
         recordTrovato = 0;
       }
@@ -601,23 +620,41 @@ long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare, int record
 
     if (recordTrovato == 0)
     {
-      return ftell(rubrica) - 4 * MAX_LUNG_CAMPO; // la sottrazione è perché il record è stato letto, quindi il puntatore è stato spostato alla sua fine
+      return ftell(rubrica) - campoScelto * MAX_LUNG_CAMPO; // la sottrazione è perché il record è stato letto, quindi il puntatore è stato spostato alla sua fine
     }
   }
+  return -1;
 }
 
-/* Casi di errore: vecchioIndirizzo non trovato, modifica non riuscita*/
-int modificaIndirizzo(int clientSocket, char **output)
+/*
+long int ricercaPosizioneRecordConIndirizzo(char *indirizzoDaRicercare, int recordContenuti) // DA TESTARE
 {
-  if (controlloRubricaVuota(output) != 0)
+
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
+  int recordTrovato = 1;
+  char campoLetto[MAX_LUNG_CAMPO];
+
+  // for (int i = 0; i < recordContenuti; i++)
+  while (1)
   {
-    char indirizzoVecchio[MAX_LUNG_CAMPO];
+    for (int j = 0; j < 4; j++)
+    {
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0) // EOF
+      {
+        break;
+      }
 
-    // ricerca indirizzo vecchio
+      if (j == 3 && strcmp(campoLetto, indirizzoDaRicercare) == 0)
+      {
+        recordTrovato = 0;
+      }
+    }
 
-    char indirizzoNuovo[MAX_LUNG_CAMPO];
-    riceviDatiDaClient(clientSocket, indirizzoNuovo, sizeof(indirizzoNuovo), "Errore nella ricezione del nuovo indirizzo\n");
-    return 1;
+    if (recordTrovato == 0)
+    {
+      return ftell(rubrica) - 3 * MAX_LUNG_CAMPO; // la sottrazione è perché 3 campi del record sono già stati letti
+    }
   }
-  return 0;
+  return -1;
 }
+*/
