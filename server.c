@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "definizioniComuni.h"
 #include "funzioniServer.h"
@@ -240,6 +241,9 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
 
 void normalizzaRecord(recordRub *recordDaAggiungere)
 {
+  /*int c = recordDaAggiungere->nome[0];
+  toupper(c);
+  printf("%c\n",c);*/
 }
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
@@ -259,7 +263,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
         posizioneRecord = ftell(rubrica);
       }
 
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
         generazioneErrore("Errore nella lettura\n");
       }
@@ -333,118 +337,123 @@ void visualizzaRubrica(char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
-  if (controlloRubricaVuota(output) != 0)
+  char cognomeDaRicercare[MAX_LUNG_CAMPO];
+
+  printf("In attesa del cognome da ricercare... \n");
+  riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
+
+  if(controlloRubricaVuota(output) == 0)
   {
-    char cognomeDaRicercare[MAX_LUNG_CAMPO];
+    return;
+  }
 
-    printf("In attesa del cognome da ricercare... \n");
-    riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
+  int recordTrovato;
+  char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
+  char campoLetto[MAX_LUNG_CAMPO];
 
-    fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
-    int recordTrovato;
-    char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
-    char campoLetto[MAX_LUNG_CAMPO];
-
-    for (int i = 0; i < recordContenuti; i++)
+  for (int i = 0; i < recordContenuti; i++)
+  {
+    recordTrovato = 1;
+    strcpy(recordCorrente, "");
+    for (int j = 0; j < 4; j++)
     {
-      recordTrovato = 1;
-      strcpy(recordCorrente, "");
-      for (int j = 0; j < 4; j++)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
-        if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
-        {
-          generazioneErrore("Errore nella lettura\n");
-        }
-
-        strcat(recordCorrente, campoLetto);
-        if (j != 3)
-        {
-          strcat(recordCorrente, ", ");
-        }
-
-        if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
-        {
-          recordTrovato = 0;
-        }
+        generazioneErrore("Errore nella lettura\n");
       }
 
-      if (recordTrovato == 0)
+      strcat(recordCorrente, campoLetto);
+      if (j != 3)
       {
-        strcat(*output, recordCorrente);
-        strcat(*output, "\n");
+        strcat(recordCorrente, ", ");
+      }
+
+      if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
+      {
+        recordTrovato = 0;
       }
     }
 
-    if (strlen(*output) == 0)
+    if (recordTrovato == 0)
     {
-      strcat(*output, "Nella rubrica non è presente nessun record con il cognome ");
-      strcat(*output, cognomeDaRicercare);
+      strcat(*output, recordCorrente);
       strcat(*output, "\n");
     }
+  }
+
+  if (strlen(*output) == 0)
+  {
+    strcat(*output, "Nella rubrica non è presente nessun record con il cognome ");
+    strcat(*output, cognomeDaRicercare);
+    strcat(*output, "\n");
   }
 }
 
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConNomeCognome(int clientSocket, char **output)
 {
-  if (controlloRubricaVuota(output) != 0)
+  
+  char nomeDaRicercare[MAX_LUNG_CAMPO];
+  char cognomeDaRicercare[MAX_LUNG_CAMPO];
+
+  printf("In attesa del nome da ricercare... \n");
+  riceviDatiDaClient(clientSocket, nomeDaRicercare, sizeof(nomeDaRicercare), "Nome non ricevuto o non valido\n");
+
+  printf("In attesa del cognome da ricercare... \n");
+  riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
+
+  if(controlloRubricaVuota(output) == 0)
   {
-    char nomeDaRicercare[MAX_LUNG_CAMPO];
-    char cognomeDaRicercare[MAX_LUNG_CAMPO];
+    return;
+  }
 
-    printf("In attesa del nome da ricercare... \n");
-    riceviDatiDaClient(clientSocket, nomeDaRicercare, sizeof(nomeDaRicercare), "Nome non ricevuto o non valido\n");
-
-    printf("In attesa del cognome da ricercare... \n");
-    riceviDatiDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido\n");
-
-    fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
-    int recordTrovato = 0;
-    char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
-    char campoLetto[MAX_LUNG_CAMPO];
-    for (int i = 0; i < recordContenuti; i++)
+  fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
+  int recordTrovato = 0;
+  char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
+  char campoLetto[MAX_LUNG_CAMPO];
+  for (int i = 0; i < recordContenuti; i++)
+  {
+    recordTrovato = 0;
+    strcpy(recordCorrente, "");
+    for (int j = 0; j < 4; j++)
     {
-      recordTrovato = 0;
-      strcpy(recordCorrente, "");
-      for (int j = 0; j < 4; j++)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 0)
       {
-        if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) == 0)
-        {
-          generazioneErrore("Errore nella lettura\n");
-        }
-
-        strcat(recordCorrente, campoLetto);
-        if (j != 3)
-        {
-          strcat(recordCorrente, ", ");
-        }
-
-        if (j == 0 && strcmp(campoLetto, nomeDaRicercare) == 0)
-        {
-          recordTrovato++;
-        }
-
-        if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
-        {
-          recordTrovato++;
-        }
+        generazioneErrore("Errore nella lettura\n");
       }
 
-      if (recordTrovato == 2)
+      strcat(recordCorrente, campoLetto);
+      if (j != 3)
       {
-        strcat(*output, recordCorrente);
-        strcat(*output, "\n");
+        strcat(recordCorrente, ", ");
+      }
+
+      if (j == 0 && strcmp(campoLetto, nomeDaRicercare) == 0)
+      {
+        recordTrovato++;
+      }
+
+      if (j == 1 && strcmp(campoLetto, cognomeDaRicercare) == 0)
+      {
+        recordTrovato++;
       }
     }
 
-    if (strlen(*output) == 0)
+    if (recordTrovato == 2)
     {
-      strcat(*output, "Nella rubrica non è presente nessun record con nome-cognome ");
-      strcat(*output, nomeDaRicercare);
-      strcat(*output, " ");
-      strcat(*output, cognomeDaRicercare);
+      strcat(*output, recordCorrente);
       strcat(*output, "\n");
     }
+  }
+
+  if (strlen(*output) == 0)
+  {
+    strcat(*output, "Nella rubrica non è presente nessun record con nome-cognome ");
+    strcat(*output, nomeDaRicercare);
+    strcat(*output, " ");
+    strcat(*output, cognomeDaRicercare);
+    strcat(*output, "\n");
   }
 }
 
@@ -477,8 +486,8 @@ int aggiungiRecord(int clientSocket, char **output)
     *output = "Aggiunta Record Fallita\n";
     return ESITO_NEGATIVO;
   }
-  *output = "Aggiunta Record andata a buon fine\n";
   recordContenuti++;
+  *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
 
@@ -519,6 +528,7 @@ int rimuoviRecord(int clientSocket, char **output)
     recordContenuti--;
     return 0;
   }
+  return 0;
 }
 
 /* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
@@ -540,8 +550,9 @@ int modificaTelefono(int clientSocket, char **output)
 
     // modifica del record
 
-    return 0;
+    return 1;
   }
+  return 0;
 }
 
 long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare) // DA TESTARE
@@ -584,6 +595,7 @@ int modificaIndirizzo(int clientSocket, char **output)
 
     char indirizzoNuovo[MAX_LUNG_CAMPO];
     riceviDatiDaClient(clientSocket, indirizzoNuovo, sizeof(indirizzoNuovo), "Errore nella ricezione del nuovo indirizzo\n");
-    return 0;
+    return 1;
   }
+  return 0;
 }
