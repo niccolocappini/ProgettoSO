@@ -225,8 +225,6 @@ void aggiungiRecord(int clientSocket)
 
 void rimuoviRecord(int clientSocket)
 {
-
-
     recordRub record;
 
     inserimentodatiRecord(&record);

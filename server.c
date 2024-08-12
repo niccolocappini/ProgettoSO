@@ -16,7 +16,7 @@
 #define ESITO_NEGATIVO -1
 
 static FILE *rubrica = NULL;
-static int recordContenuti = NUM_RECORD_RUBRICA; 
+static int recordContenuti = NUM_RECORD_RUBRICA;
 /*
 
 void handle_sigint(int sig);
@@ -30,7 +30,9 @@ int main()
 {
   /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
   e di conseguenza posizionandosi alla fine del file stesso */
-  rubrica = fopen("RubricaDB", "a+");
+  rubrica = fopen("RubricaDB", "w+");
+  if (rubrica == NULL)
+    printf("PORCODDDIOOOOOOOO");
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -253,7 +255,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
   int recordTrovato = 0;
   char campoLetto[MAX_LUNG_CAMPO];
   int uscita = 0;
-  while(1)
+  while (1)
   {
     recordTrovato = 0;
     for (int j = 0; j < 4; j++)
@@ -298,7 +300,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
       return posizioneRecord;
     }
 
-    if(uscita == 1)
+    if (uscita == 1)
     {
       break;
     }
@@ -355,9 +357,9 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   int recordTrovato;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
-  printf("%d\n",recordContenuti);
+  printf("%d\n", recordContenuti);
   int uscita = 0;
-  while(1)
+  while (1)
   {
     recordTrovato = 1;
     strcpy(recordCorrente, "");
@@ -388,7 +390,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
       strcat(*output, "\n");
     }
 
-    if(uscita == 1)
+    if (uscita == 1)
     {
       break;
     }
@@ -425,7 +427,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
   int uscita = 0;
-  while(1)
+  while (1)
   {
     recordTrovato = 0;
     strcpy(recordCorrente, "");
@@ -460,7 +462,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
       strcat(*output, "\n");
     }
 
-    if(uscita == 1)
+    if (uscita == 1)
     {
       break;
     }
@@ -509,8 +511,8 @@ int aggiungiRecord(int clientSocket, char **output)
     *output = "Aggiunta Record Fallita\n";
     return ESITO_NEGATIVO;
   }
-  recordContenuti = recordContenuti + 1;
-  printf("%d\n",recordContenuti);
+  recordContenuti++;
+  printf("%d\n", recordContenuti);
   *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
@@ -531,6 +533,8 @@ int rimuoviRecord(int clientSocket, char **output)
     {
       generazioneErrore("Record non ricevuto o non valido\n");
     }
+    printf("Record da rimuovere: %s, %s, %s, %s \n", recordDaRimuovere.nome, recordDaRimuovere.cognome, recordDaRimuovere.indirizzo, recordDaRimuovere.telefono);
+    printf("Dimensione campi record: %ld, %ld, %ld, %ld \n", sizeof(recordDaRimuovere.nome), sizeof(recordDaRimuovere.cognome), sizeof(recordDaRimuovere.indirizzo), sizeof(recordDaRimuovere.telefono));
 
     long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
     if (posizioneRecordDaRimuovere < 0)
@@ -546,7 +550,7 @@ int rimuoviRecord(int clientSocket, char **output)
     fwrite("\0", 4 * MAX_LUNG_CAMPO, 1, rubrica);
 
     *output = "Rimozione Record Compiuta\n";
-    recordContenuti = recordContenuti - 1;
+    recordContenuti--;
     return 0;
   }
   return ESITO_NEGATIVO;
