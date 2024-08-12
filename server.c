@@ -13,6 +13,7 @@
 #include "funzioniServer.h"
 
 #define PASSWORD "PROGETTOSO"
+#define ESITO_NEGATIVO -1
 
 static FILE *rubrica = NULL;
 int recordContenuti = NUM_RECORD_RUBRICA; // da aggiornare ad ogni aggiunta ed eliminazione
@@ -86,7 +87,7 @@ int main()
       printf("Sono un figlio generato per gestire la richiesta del client\n");
 
       // Login utente
-      int richiesta = 0;
+      int richiesta;
       int risultato = recv(clientSocket, &richiesta, sizeof(richiesta), 0);
       if (risultato < 1)
       {
@@ -95,29 +96,28 @@ int main()
 
       printf("Lettura effettuata: %d\n", richiesta);
 
-      risultato = -1;
-      char *output;                                                                                          // stringa che contterrà ciò che verrà inviato al client
-      int dimensione = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
+      char *output;                                                                                                 // stringa che contterrà ciò che verrà inviato al client
+      int dimensioneMassima = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
       switch (richiesta)
       {
 
       case VISUALIZZA_OGNI_RECORD:
         printf("Gestione Richiesta 1\n");
-        output = (char *)malloc(dimensione);
+        output = (char *)malloc(dimensioneMassima);
         visualizzaRubrica(&output);
 
         break;
 
       case RICERCA_RECORD_CON_COGNOME:
         printf("Gestione Richiesta 2\n");
-        output = (char *)malloc(dimensione);
+        output = (char *)malloc(dimensioneMassima);
         ricercaRecordConCognome(clientSocket, &output);
 
         break;
 
       case RICERCA_RECORD_CON_NOME_COGNOME:
         printf("Gestione Richiesta 3\n");
-        output = (char *)malloc(dimensione);
+        output = (char *)malloc(dimensioneMassima);
         ricercaRecordConNomeCognome(clientSocket, &output);
 
         break;
@@ -126,15 +126,15 @@ int main()
         printf("Gestione Richiesta 4: \n");
         richiestaPassword(clientSocket);
         risultato = aggiungiRecord(clientSocket, &output);
-        controlloOutput(clientSocket, risultato, output); 
-    
+        controlloOutput(clientSocket, risultato, output);
+
         break;
 
       case RIMUOVI_RECORD:
         printf("Gestione Richiesta 5: \n");
         richiestaPassword(clientSocket);
         risultato = rimuoviRecord(clientSocket, &output);
-        controlloOutput(clientSocket, risultato, "Rimozione Record in Rubrica Fallita \n");
+        controlloOutput(clientSocket, risultato, output);
 
         break;
 
@@ -191,19 +191,24 @@ void richiestaPassword(int clientSocket)
   recv(clientSocket, passwordRicevuta, sizeof(passwordRicevuta), 0);
   printf("Password Ricevuta: %s \n", passwordRicevuta);
 
+  char rispostaPassword[MAX_LUNG_MESSAGGIO];
   if (strcmp(passwordRicevuta, PASSWORD) != 0)
   {
+    strcpy(rispostaPassword, "Password Errata");
+    send(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
     generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
   }
   else
   {
+    strcpy(rispostaPassword, "Password Corretta");
+    send(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
     printf("Password Accettata \n");
   }
 }
 
 void controlloOutput(int clientSocket, int risultato, char *messaggio)
 {
-  if (risultato == 0)
+  if (risultato == ESITO_NEGATIVO)
   {
     write(clientSocket, messaggio, strlen(messaggio) + 1);
     generazioneErrore(messaggio);
@@ -243,7 +248,7 @@ void normalizzaRecord(recordRub *recordDaAggiungere)
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
 {
-  long int posizioneRecord = -1;
+  long int posizioneRecord;
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 0;
@@ -253,7 +258,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
     recordTrovato = 0;
     for (int j = 0; j < 4; j++)
     {
-      if(j == 0)
+      if (j == 0)
       {
         posizioneRecord = ftell(rubrica);
       }
@@ -263,33 +268,38 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
         generazioneErrore("Errore nella lettura\n");
       }
 
-      if (j == 0 && strcmp(campoLetto, (const char *)recordDaRicercare->nome) == 0)
+      if (j == 0 && strcmp(campoLetto, recordDaRicercare->nome) == 0)
       {
+        printf("Primo campo uguale\n");
         recordTrovato++;
       }
 
-      if (j == 1 && strcmp(campoLetto, (const char *)recordDaRicercare->cognome) == 0)
+      if (j == 1 && strcmp(campoLetto, recordDaRicercare->cognome) == 0)
       {
+        printf("Secondo campo uguale\n");
         recordTrovato++;
       }
 
-      if (j == 2 && strcmp(campoLetto, (const char *)recordDaRicercare->indirizzo) == 0)
+      if (j == 2 && strcmp(campoLetto, recordDaRicercare->indirizzo) == 0)
       {
-        recordTrovato++;
+        printf("Terzo campo uguale\n");
+        recordTrovato++; 
       }
 
-      if (j == 3 && strcmp(campoLetto, (const char *)recordDaRicercare->telefono) == 0)
+      if (j == 3 && strcmp(campoLetto, recordDaRicercare->telefono) == 0)
       {
+        printf("Quarto campo uguale\n");
         recordTrovato++;
       }
     }
 
     if (recordTrovato == 4)
     {
+      printf("Tutti i campi sono uguali");
       return posizioneRecord;
     }
   }
-  return -1; // si ritorna -1 se il record non è presente, altrimenti la posizione del record
+  return ESITO_NEGATIVO; // si ritorna -1 se il record non è presente, altrimenti la posizione del record
 }
 
 void visualizzaRubrica(char **output)
@@ -463,10 +473,10 @@ int aggiungiRecord(int clientSocket, char **output)
     generazioneErrore("Record non ricevuto o non valido\n");
   }
 
-  if(ricercaRecord(&recordDaAggiungere) != -1)
+  if (ricercaRecord(&recordDaAggiungere) != -1)
   {
-    *output = "Record Presente in Rubrica\n";
-    return 0;
+    *output = "Record già presente in Rubrica\n";
+    return ESITO_NEGATIVO;
   }
 
   normalizzaRecord(&recordDaAggiungere);
@@ -483,7 +493,7 @@ int aggiungiRecord(int clientSocket, char **output)
   if(byteScritti <= 0)
   {
     *output = "Aggiunta Record Fallita\n";
-    return 0;
+    return ESITO_NEGATIVO;
   }
   recordContenuti++;
   printf("%d\n",recordContenuti);
@@ -498,27 +508,35 @@ int rimuoviRecord(int clientSocket, char **output)
   if (controlloRubricaVuota(output) != 0)
   {
     recordRub recordDaRimuovere;
-    char recordStr[4 * MAX_LUNG_CAMPO];
+    // char recordStr[4 * MAX_LUNG_CAMPO];
 
-    printf("In attesa del record da inserire... \n");
-    riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
-
-    printf("%s", recordStr);
-    fseek(rubrica, 0, SEEK_END);
+    printf("In attesa del record da rimuovere... \n");
+    // riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
+    int byteLetti = recv(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), 0);
+    if (byteLetti < 1)
+    {
+      generazioneErrore("Record non ricevuto o non valido\n");
+    }
 
     long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
     if (posizioneRecordDaRimuovere < 0)
-      return 0;
+    {
+      *output = "Rimozione Record Fallita";
+      return ESITO_NEGATIVO;
+    }
 
-    fseek(rubrica, posizioneRecordDaRimuovere, 0);
+    printf("Record trovato: inizio rimozione...\n");
+
+    fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
 
     for (int i = 0; i < 4; i++)
     {
-      fwrite("\0", MAX_LUNG_CAMPO, 1, rubrica);
+      fwrite("", MAX_LUNG_CAMPO, 1, rubrica);
     }
 
+    *output = "Rimozione Record Compiuta\n";
     recordContenuti--;
-    return 1;
+    return 0;
   }
   return 0;
 }
@@ -533,7 +551,7 @@ int modificaTelefono(int clientSocket, char **output)
     long int posizioneRecordDaModificare = ricercaPosizioneRecordConTelefono(telefonoVecchio);
     if (posizioneRecordDaModificare < 0)
     {
-      return 0;
+      return ESITO_NEGATIVO;
     }
     printf("Il record da modificare è il %ldesimo \n", posizioneRecordDaModificare / (4 * MAX_LUNG_CAMPO) + 1);
     fseek(rubrica, posizioneRecordDaModificare, SEEK_SET);
@@ -547,7 +565,7 @@ int modificaTelefono(int clientSocket, char **output)
   return 0;
 }
 
-long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare)
+long int ricercaPosizioneRecordConTelefono(char *telefonoDaRicercare) // DA TESTARE
 {
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
