@@ -74,16 +74,6 @@ int main(int argc, char *argv[])
     // Fase in cui il client riceve l'eventuale richiesta di password
     if  (richiesta >= 4 && richiesta <= 7)
     {
-        /*char passwordLungStr[3];
-        int passwordLung = 0;
-        char password[11];
-        recv(clientSocket, passwordLungStr, sizeof(passwordLungStr), 0);
-        passwordLung = atoi(passwordLungStr);
-        printf("Inserisci Password: \n");
-        scanf("%s", password);
-        printf("Password Inserita: %s \n", password);
-        send(clientSocket, password, sizeof(password), 0);*/
-
         char password[MAX_LUNG_PASSWORD];
         printf("Inserisci Password: \n");
         scanf("%s", password);
