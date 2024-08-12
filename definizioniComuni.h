@@ -13,6 +13,7 @@
 #define MODIFICA_INDIRIZZO 7
 
 #define MAX_LUNG_PASSWORD 100
+#define MAX_LUNG_MESSAGGIO 100
 
 typedef struct
 {

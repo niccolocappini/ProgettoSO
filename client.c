@@ -89,6 +89,12 @@ int main(int argc, char *argv[])
         scanf("%s", password);
         printf("Password Inserita: %s \n", password);
         send(clientSocket, password, sizeof(password), 0);
+        char rispostaPassword[MAX_LUNG_MESSAGGIO];
+        recv(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
+        if(strcmp(rispostaPassword, "Password Errata") == 0){
+            generazioneErrore(rispostaPassword);
+        }
+        printf("%s \n", rispostaPassword);
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta
@@ -229,6 +235,8 @@ void aggiungiRecord(int clientSocket)
 
 void rimuoviRecord(int clientSocket)
 {
+
+
     recordRub record;
 
     inserimentodatiRecord(&record);
