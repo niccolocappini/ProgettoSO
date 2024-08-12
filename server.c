@@ -196,13 +196,13 @@ void richiestaPassword(int clientSocket)
   if (strcmp(passwordRicevuta, PASSWORD) != 0)
   {
     strcpy(rispostaPassword, "Password Errata");
-    send(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
+    send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0);
     generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
   }
   else
   {
     strcpy(rispostaPassword, "Password Corretta");
-    send(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
+    send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0);
     printf("Password Accettata \n");
   }
 }
@@ -481,7 +481,6 @@ int aggiungiRecord(int clientSocket, char **output)
 {
   recordRub recordDaAggiungere;
   int byteLetti, byteScritti;
-  char campoDaAggiungere[MAX_LUNG_CAMPO];
 
   printf("In attesa del record da inserire... \n");
 
@@ -531,7 +530,6 @@ int rimuoviRecord(int clientSocket, char **output)
       generazioneErrore("Record non ricevuto o non valido\n");
     }
     printf("Record da rimuovere: %s, %s, %s, %s \n", recordDaRimuovere.nome, recordDaRimuovere.cognome, recordDaRimuovere.indirizzo, recordDaRimuovere.telefono);
-    printf("Dimensione campi record: %ld, %ld, %ld, %ld \n", sizeof(recordDaRimuovere.nome), sizeof(recordDaRimuovere.cognome), sizeof(recordDaRimuovere.indirizzo), sizeof(recordDaRimuovere.telefono));
 
     long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
     if (posizioneRecordDaRimuovere < 0)
@@ -544,7 +542,8 @@ int rimuoviRecord(int clientSocket, char **output)
 
     fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
 
-    fwrite("\0", 4 * MAX_LUNG_CAMPO, 1, rubrica);
+    int byteScritti = fwrite("\0", 4 * MAX_LUNG_CAMPO, 0, rubrica); // NON SOVRASCRIVE
+    printf("%d", byteScritti);
 
     *output = "Rimozione Record Compiuta\n";
     recordContenuti--;
