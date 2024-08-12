@@ -559,7 +559,7 @@ int modificaIndirizzo(int clientSocket, char **output)
   {
     char indirizzoVecchio[MAX_LUNG_CAMPO];
 
-    long int posizioneRecordDaModificare = ricercaPosizioneRecordConSingoloCampo(indirizzoVecchio, recordContenuti, 3);
+    long int posizioneRecordDaModificare = ricercaPosizioneRecordConSingoloCampo(indirizzoVecchio, 3);
     if (posizioneRecordDaModificare < 0)
     {
       return ESITO_NEGATIVO;
