@@ -15,7 +15,7 @@
 #define PASSWORD "PROGETTOSO"
 
 static FILE *rubrica = NULL;
-static int recordContenuti = NUM_RECORD_RUBRICA; // da aggiornare ad ogni aggiunta ed eliminazione
+int recordContenuti = NUM_RECORD_RUBRICA; // da aggiornare ad ogni aggiunta ed eliminazione
 
 /*
 
@@ -341,7 +341,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   int recordTrovato;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
-
+  printf("%d\n",recordContenuti);
   for (int i = 0; i < recordContenuti; i++)
   {
     recordTrovato = 1;
@@ -352,6 +352,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
       {
         generazioneErrore("Errore nella lettura\n");
       }
+      printf("%s\n",campoLetto);
 
       strcat(recordCorrente, campoLetto);
       if (j != 3)
@@ -452,6 +453,7 @@ int aggiungiRecord(int clientSocket, char **output)
 {
   recordRub recordDaAggiungere;
   int byteLetti,byteScritti;
+  char campoDaAggiungere[MAX_LUNG_CAMPO];
 
   printf("In attesa del record da inserire... \n");
 
@@ -470,13 +472,21 @@ int aggiungiRecord(int clientSocket, char **output)
   normalizzaRecord(&recordDaAggiungere);
 
   fseek(rubrica, 0, SEEK_END);
-  byteScritti = fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
+  strcpy(campoDaAggiungere,recordDaAggiungere.nome);
+  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
+  strcpy(campoDaAggiungere,recordDaAggiungere.cognome);
+  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
+  strcpy(campoDaAggiungere,recordDaAggiungere.indirizzo);
+  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
+  strcpy(campoDaAggiungere,recordDaAggiungere.telefono);
+  byteScritti = fwrite(campoDaAggiungere, sizeof(campoDaAggiungere), 1, rubrica);
   if(byteScritti <= 0)
   {
     *output = "Aggiunta Record Fallita\n";
     return 0;
   }
   recordContenuti++;
+  printf("%d\n",recordContenuti);
   *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
