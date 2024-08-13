@@ -9,7 +9,8 @@ void riceviDatiDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDa
 int controlloRubricaVuota(char **output);
 void normalizzaRecord(recordRub *recordDaAggiungere);
 long int ricercaRecord(recordRub *recordDaRicercare);
-long int ricercaPosizioneRecordConSingoloCampo(char *valoreDaRicercare, int campoScelto);
+// long int ricercaPosizioneRecordConSingoloCampo(char *valoreDaRicercare, int campoScelto);
+int modificaCampo(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);
 
 /* Questi metodi restituiranno una stringa contenente ciò che è stato richiesto*/
 void visualizzaRubrica(char **output);

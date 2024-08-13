@@ -12,13 +12,13 @@
 int main(int argc, char *argv[])
 {
     printf("Menù delle operazione che possono essere richieste dal client: \n"
-         "1) Visualizzazzione tutti i record della rubrica \n"
-         "2) Ricerca record tramite cognome \n"
-         "3) Ricerca record tramite coppia nome-cognome \n"
-         "4) Aggiunta Record \n"
-         "5) Eliminazione Record \n"
-         "6) Modifica Numero di Telefono \n"
-         "7) Modifica Indirizzo \n\n");
+           "1) Visualizzazzione tutti i record della rubrica \n"
+           "2) Ricerca record tramite cognome \n"
+           "3) Ricerca record tramite coppia nome-cognome \n"
+           "4) Aggiunta Record \n"
+           "5) Eliminazione Record \n"
+           "6) Modifica Indirizzo \n"
+           "7) Modifica Numero di Telefono \n\n");
 
     int clientSocket, dimServer, risultato;
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     // Fase in cui il client determina l'operazione da richiedere la server
     int richiesta = 0;
     printf("Inserisci il codice dell'operazione da effettuare: \n");
-    scanf("%d",&richiesta);
+    scanf("%d", &richiesta);
     if (richiesta < 1 || richiesta > 7)
     {
         generazioneErrore("Codice richiesta non valido \n");
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     }
 
     // Fase in cui il client riceve l'eventuale richiesta di password
-    if  (richiesta >= 4 && richiesta <= 7)
+    if (richiesta >= 4 && richiesta <= 7)
     {
         char password[MAX_LUNG_PASSWORD];
         printf("Inserisci Password: \n");
@@ -81,7 +81,8 @@ int main(int argc, char *argv[])
         send(clientSocket, password, sizeof(password), 0);
         char rispostaPassword[MAX_LUNG_MESSAGGIO];
         recv(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
-        if(strcmp(rispostaPassword, "Password Errata") == 0){
+        if (strcmp(rispostaPassword, "Password Errata") == 0)
+        {
             generazioneErrore(rispostaPassword);
         }
         printf("%s \n", rispostaPassword);
@@ -115,8 +116,15 @@ int main(int argc, char *argv[])
 
         break;
 
+    case MODIFICA_INDIRIZZO:
+        modificaIndirizzo(clientSocket);
+
+        break;
+
     case MODIFICA_TELEFONO:
         modificaTelefono(clientSocket);
+
+        break;
 
     default:
         generazioneErrore("Richiesta non valida\n");
@@ -156,7 +164,7 @@ void ricercaRecordCognome(int clientSocket)
     char supporto;
     printf("Inserire un cognome per la ricerca: ");
     fflush(stdin);
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", cognomeDaRicercare); // in questo modo si prendono da input le stringhe con gli spazi e senza l'accapo
     send(clientSocket, cognomeDaRicercare, MAX_LUNG_CAMPO, 0);
     printf("Cognome inviato al server \n");
@@ -172,72 +180,100 @@ void ricercaRecordNomeCognome(int clientSocket)
 
     fflush(stdin);
     printf("Inserire Nome da Ricercare: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", nome);
     printf("Inserire Cognome da Ricercare: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", cognome);
     send(clientSocket, nome, MAX_LUNG_CAMPO, 0);
     send(clientSocket, cognome, MAX_LUNG_CAMPO, 0);
     printf("Nome e Cognome inviati al server \n");
-    printf("\nStampa dei record in cui nome e cognome sono %s e %s: \n", nome,cognome);
+    printf("\nStampa dei record in cui nome e cognome sono %s e %s: \n", nome, cognome);
     fflush(stdin);
 }
 
 void inserimentodatiRecord(recordRub *record)
 {
-    char recordStr[4*MAX_LUNG_CAMPO ];
+    char recordStr[4 * MAX_LUNG_CAMPO];
     char supporto;
 
     fflush(stdin);
     printf("Inserire Nome: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->nome);
-    strcpy(recordStr,(char *)record->nome);
+    strcpy(recordStr, (char *)record->nome);
 
     printf("Inserire Cognome: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->cognome);
-    strcat(recordStr,(char *)record->cognome);
+    strcat(recordStr, (char *)record->cognome);
 
     printf("Inserire Indirizzo: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->indirizzo);
-    strcat(recordStr,(char *)record->indirizzo);
+    strcat(recordStr, (char *)record->indirizzo);
 
     printf("Inserire Telefono: ");
-    scanf("%c",&supporto);
+    scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->telefono);
     strcat(recordStr, (char *)record->telefono);
 
-    printf("Record inviato: %s\n",recordStr);
+    printf("Record inviato: %s\n", recordStr);
     fflush(stdin);
 }
 
 void aggiungiRecord(int clientSocket)
 {
-    recordRub record;
-    
-    inserimentodatiRecord(&record);
-    send(clientSocket,&record,sizeof(record),0);
+    recordRub recordDaAggiungere;
+
+    inserimentodatiRecord(&recordDaAggiungere);
+    send(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
     printf("Dati del record inviati al server per l'inserimento\n");
 }
 
 void rimuoviRecord(int clientSocket)
 {
-    recordRub record;
+    recordRub recordDaRimuovere;
 
-    inserimentodatiRecord(&record);
-    send(clientSocket,&record,sizeof(record),0);
+    inserimentodatiRecord(&recordDaRimuovere);
+    send(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), 0);
     printf("Dati del record inviati al server per la rimozione\n");
-}
-
-void modificaTelefono(int clientSocket)
-{
-    char *vecchioTelefono, nuovoTelefono;
 }
 
 void modificaIndirizzo(int clientSocket)
 {
-    char *vecchioIndirizzo, nuovoIndirizzo;
+    recordRub recordDaModificare;
+
+    inserimentodatiRecord(&recordDaModificare);
+    send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
+    printf("Dati del record inviati al server per l'inserimento\n");
+
+    char nuovoIndirizzo[MAX_LUNG_CAMPO];
+    char supporto;
+
+    fflush(stdin);
+    printf("Inserire Nuovo Indirizzo: ");
+    scanf("%c", &supporto);
+    scanf("%[^'\n']s", nuovoIndirizzo);
+    send(clientSocket, nuovoIndirizzo, sizeof(nuovoIndirizzo), 0);
+    fflush(stdin);
+}
+
+void modificaTelefono(int clientSocket)
+{
+    recordRub recordDaModificare;
+
+    inserimentodatiRecord(&recordDaModificare);
+    send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
+    printf("Dati del record inviati al server per la modifica\n");
+
+    char nuovoTelefono[MAX_LUNG_CAMPO];
+    char supporto;
+
+    fflush(stdin);
+    printf("Inserire Nuovo Telefono: ");
+    scanf("%c", &supporto);
+    scanf("%[^'\n']s", nuovoTelefono);
+    send(clientSocket, nuovoTelefono, sizeof(nuovoTelefono), 0);
+    fflush(stdin);
 }
