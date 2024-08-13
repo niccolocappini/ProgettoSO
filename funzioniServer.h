@@ -1,14 +1,12 @@
 #ifndef FUNZIONI_SERVER_H
 #define FUNZIONI_SERVER_H
 
-int loginUtente(int clientSocket);
-void logoutUtente(int clientSocket);
 void richiestaPassword(int clientSocket);
 void controlloOutput(int clientSocket, int risultato, char *messaggio);
 void riceviCampoDaClient(int clientSocket, char *datoDaRicevere, int dimensioneDato, char *messaggioDiErrore);
 void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dimensioneRecord, char *messaggioDiErrore);
 int controlloRubricaVuota(char **output);
-void normalizzaRecord(recordRub *recordDaAggiungere);
+int normalizzaRecord(recordRub *recordDaAggiungere);
 long int ricercaRecord(recordRub *recordDaRicercare);
 // long int ricercaPosizioneRecordConSingoloCampo(char *valoreDaRicercare, int campoScelto);
 int modificaCampo(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);

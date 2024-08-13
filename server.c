@@ -27,8 +27,6 @@ void handle_errno(int errorCode, char* errorMessage);
 
 int main()
 {
-  /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
-  e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "w+");
   if (rubrica == NULL)
     generazioneErrore("Rubrica non aperta correttamente \n");
@@ -243,34 +241,89 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   return 0;
 }
 
-void normalizzaRecord(recordRub *recordDaAggiungere)
-{
-  for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
+int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
+{ 
+  char carattere;
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    if (i == 0)
-      (*recordDaAggiungere).nome[i] = toupper((*recordDaAggiungere).nome[i]);
+    carattere = (*recordDaAggiungere).nome[i];
+    if(carattere == '\0')
+    {
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    {
+      return 0;
+    }
 
-    if ((*recordDaAggiungere).nome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
-      (*recordDaAggiungere).nome[i + 1] = toupper((*recordDaAggiungere).nome[i + 1]);
+    if(i == 0 || isspace((*recordDaAggiungere).nome[i-1]))
+    {
+      (*recordDaAggiungere).nome[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).nome[i] = tolower(carattere);
+    }
+  }
+
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
+  {
+    carattere = (*recordDaAggiungere).cognome[i];
+    if(carattere == '\0')
+    {
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    {
+      return 0;
+    }
+
+    if(i == 0 || isspace((*recordDaAggiungere).cognome[i-1]))
+    {
+      (*recordDaAggiungere).cognome[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).cognome[i] = tolower(carattere);
+    }
   }
 
   for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
   {
-    if (i == 0)
-      (*recordDaAggiungere).cognome[i] = toupper((*recordDaAggiungere).cognome[i]);
+    carattere = (*recordDaAggiungere).indirizzo[i];
+    if(carattere == '\0')
+    {
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
+    {
+      return 0;
+    }
 
-    if ((*recordDaAggiungere).cognome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
-      (*recordDaAggiungere).cognome[i + 1] = toupper((*recordDaAggiungere).cognome[i + 1]);
+    if(i == 0 || isspace((*recordDaAggiungere).indirizzo[i-1]))
+    {
+      (*recordDaAggiungere).indirizzo[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).indirizzo[i] = tolower(carattere);
+    }
   }
 
-  for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    if (i == 0)
-      (*recordDaAggiungere).indirizzo[i] = toupper((*recordDaAggiungere).indirizzo[i]);
-
-    if ((*recordDaAggiungere).indirizzo[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
-      (*recordDaAggiungere).indirizzo[i + 1] = toupper((*recordDaAggiungere).indirizzo[i + 1]);
+    carattere = (*recordDaAggiungere).telefono[i];
+    if(carattere == '\0')
+    {
+      break;
+    }
+    if(isdigit(carattere) == 0)
+    {
+      return 0;
+    }
   }
+
+  return 1;
 }
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
@@ -486,9 +539,11 @@ int aggiungiRecord(int clientSocket, char **output)
     return ESITO_NEGATIVO;
   }
 
-  normalizzaRecord(&recordDaAggiungere);
-
-  printf("Record da aggiungere: %s, %s, %s, %s \n", recordDaAggiungere.nome, recordDaAggiungere.cognome, recordDaAggiungere.indirizzo, recordDaAggiungere.telefono);
+  if(normalizzaRecord(&recordDaAggiungere) == 0)
+  {
+    *output = "Record Formattato Scorrettamente\n";
+    return ESITO_NEGATIVO;
+  }
 
   fseek(rubrica, 0, SEEK_END);
 
