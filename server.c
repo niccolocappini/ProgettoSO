@@ -241,7 +241,7 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   return 0;
 }
 
-int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
+int normalizzaRecord(recordRub *recordDaAggiungere)
 { 
   char carattere;
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
@@ -253,7 +253,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
     }
     if(isalpha(carattere) == 0 && isspace(carattere) == 0)
     {
-      return 0;
+      return ESITO_NEGATIVO;
     }
 
     if(i == 0 || isspace((*recordDaAggiungere).nome[i-1]))
@@ -275,7 +275,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
     }
     if(isalpha(carattere) == 0 && isspace(carattere) == 0)
     {
-      return 0;
+      return ESITO_NEGATIVO;
     }
 
     if(i == 0 || isspace((*recordDaAggiungere).cognome[i-1]))
@@ -297,7 +297,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
     }
     if(isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
     {
-      return 0;
+      return ESITO_NEGATIVO;
     }
 
     if(i == 0 || isspace((*recordDaAggiungere).indirizzo[i-1]))
@@ -319,11 +319,11 @@ int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
     }
     if(isdigit(carattere) == 0)
     {
-      return 0;
+      return ESITO_NEGATIVO;
     }
   }
 
-  return 1;
+  return 0;
 }
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
@@ -539,7 +539,7 @@ int aggiungiRecord(int clientSocket, char **output)
     return ESITO_NEGATIVO;
   }
 
-  if(normalizzaRecord(&recordDaAggiungere) == 0)
+  if(normalizzaRecord(&recordDaAggiungere) == ESITO_NEGATIVO)
   {
     *output = "Record Formattato Scorrettamente\n";
     return ESITO_NEGATIVO;
