@@ -315,6 +315,7 @@ void visualizzaRubrica(char **output)
     char supporto[MAX_LUNG_CAMPO];
     int i = 0;
     int contatore = 0;
+    char fineStringa[MAX_LUNG_CAMPO];
 
     fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio del file
     while (1)
@@ -325,16 +326,18 @@ void visualizzaRubrica(char **output)
         break;
       }
 
-      strcat(*output, supporto);
-      if (contatore % 4 != 3)
+      if(strcmp(supporto,"\0") != 0)
       {
-        strcat(*output, ", ");
+        strcat(*output, supporto);
+        if (contatore % 4 != 3)
+        {
+          strcat(*output, ", ");
+        }
+        else
+        {
+          strcat(*output, "\n");
+        }
       }
-      else
-      {
-        strcat(*output, "\n");
-      }
-
       contatore++;
     }
   }
@@ -499,10 +502,7 @@ int aggiungiRecord(int clientSocket, char **output)
   normalizzaRecord(&recordDaAggiungere);
 
   fseek(rubrica, 0, SEEK_END);
-  byteScritti = fwrite(recordDaAggiungere.nome, sizeof(recordDaAggiungere.nome), 1, rubrica);
-  byteScritti = fwrite(recordDaAggiungere.cognome, sizeof(recordDaAggiungere.cognome), 1, rubrica);
-  byteScritti = fwrite(recordDaAggiungere.indirizzo, sizeof(recordDaAggiungere.indirizzo), 1, rubrica);
-  byteScritti = fwrite(recordDaAggiungere.telefono, sizeof(recordDaAggiungere.telefono), 1, rubrica);
+  byteScritti = fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
   if (byteScritti <= 0) // ???
   {
     *output = "Aggiunta Record Fallita\n";
@@ -542,7 +542,8 @@ int rimuoviRecord(int clientSocket, char **output)
 
     fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
 
-    int byteScritti = fwrite("\0", 4 * MAX_LUNG_CAMPO, 0, rubrica); // NON SOVRASCRIVE
+    char stringa[4*MAX_LUNG_CAMPO] = "\0";
+    int byteScritti = fwrite(stringa, sizeof(stringa), 1, rubrica); 
     printf("%d", byteScritti);
 
     *output = "Rimozione Record Compiuta\n";
