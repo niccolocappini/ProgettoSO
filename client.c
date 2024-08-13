@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         {
             generazioneErrore(rispostaPassword);
         }
-        printf("%s \n", rispostaPassword);
+        printf("%s", rispostaPassword);
     }
 
     // Fase Passaggio Dati per soddisfare la Richiesta

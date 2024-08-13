@@ -15,6 +15,8 @@
 #define MAX_LUNG_PASSWORD 100
 #define MAX_LUNG_MESSAGGIO 100
 
+#define ESITO_NEGATIVO -1
+
 typedef struct
 {
     char nome[MAX_LUNG_CAMPO];
