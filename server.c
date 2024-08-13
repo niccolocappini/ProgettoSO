@@ -134,6 +134,7 @@ int main()
       case RIMUOVI_RECORD:
         printf("Gestione Richiesta 5: \n");
         richiestaPassword(clientSocket);
+        output = (char *)malloc(MAX_LUNG_MESSAGGIO);
         risultato = rimuoviRecord(clientSocket, &output);
         controlloOutput(clientSocket, risultato, output);
 
@@ -234,7 +235,9 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
+    printf("ciao\n");
     strcat(*output, "La rubrica al momento è vuota\n");
+    printf("ciao1\n");
     return 0;
   }
   return 1;
