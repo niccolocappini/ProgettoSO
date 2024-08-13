@@ -228,6 +228,18 @@ void riceviCampoDaClient(int clientSocket, char *datoDaRicevere, int dimensioneD
   }
 }
 
+void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dimensioneRecord, char *messaggioDiErrore)
+{
+  int byteLetti;
+
+  byteLetti = recv(clientSocket, recordDaRicevere, dimensioneRecord, 0);
+  if (byteLetti < 1)
+  {
+    write(clientSocket, messaggioDiErrore, strlen(messaggioDiErrore) + 1);
+    generazioneErrore(messaggioDiErrore);
+  }
+}
+
 int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
 {
   fseek(rubrica, 0, SEEK_END);
@@ -476,18 +488,6 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
     strcat(*output, " ");
     strcat(*output, cognomeDaRicercare);
     strcat(*output, "\n");
-  }
-}
-
-void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dimensioneRecord, char *messaggio)
-{
-  int byteLetti;
-
-  byteLetti = recv(clientSocket, recordDaRicevere, dimensioneRecord, 0);
-  if (byteLetti < 1)
-  {
-    write(clientSocket, messaggio, strlen(messaggio) + 1);
-    generazioneErrore(messaggio);
   }
 }
 
