@@ -28,8 +28,6 @@ void handle_errno(int errorCode, char* errorMessage);
 
 int main()
 {
-  /* a+ -> file aperto in lettura/(scrittura in aggiunta) creandolo se necessario, o aggiungendovi a partire dalla fine
-  e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "w+");
   if (rubrica == NULL)
     generazioneErrore("Rubrica non aperta correttamente\n");
@@ -175,17 +173,12 @@ int main()
     }
 
     // Chiudi la connessione con il client
-    // logoutUtente(clientSocket);
 
     printf("La connessione si è conclusa\n");
   }
 
   return 0;
 }
-
-int loginUtente(int clientSocket) { return 0; }
-
-void logoutUtente(int clientSocket) {}
 
 void richiestaPassword(int clientSocket)
 {
@@ -253,46 +246,89 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   return 1;
 }
 
-void normalizzaRecord(recordRub *recordDaAggiungere)
+int normalizzaRecord(recordRub *recordDaAggiungere) // 0 -> errore, 1-> corretto
 { 
-  for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
+  char carattere;
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    if(i == 0)
+    carattere = (*recordDaAggiungere).nome[i];
+    if(carattere == '\0')
     {
-      (*recordDaAggiungere).nome[i] = toupper((*recordDaAggiungere).nome[i]);
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    {
+      return 0;
     }
 
-    if((*recordDaAggiungere).nome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    if(i == 0 || isspace((*recordDaAggiungere).nome[i-1]))
     {
-      (*recordDaAggiungere).nome[i+1] = toupper((*recordDaAggiungere).nome[i+1]);
+      (*recordDaAggiungere).nome[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).nome[i] = tolower(carattere);
+    }
+  }
+
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
+  {
+    carattere = (*recordDaAggiungere).cognome[i];
+    if(carattere == '\0')
+    {
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    {
+      return 0;
+    }
+
+    if(i == 0 || isspace((*recordDaAggiungere).cognome[i-1]))
+    {
+      (*recordDaAggiungere).cognome[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).cognome[i] = tolower(carattere);
     }
   }
 
   for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
   {
-    if(i == 0)
+    carattere = (*recordDaAggiungere).indirizzo[i];
+    if(carattere == '\0')
     {
-      (*recordDaAggiungere).cognome[i] = toupper((*recordDaAggiungere).cognome[i]);
+      break;
+    }
+    if(isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
+    {
+      return 0;
     }
 
-    if((*recordDaAggiungere).cognome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    if(i == 0 || isspace((*recordDaAggiungere).indirizzo[i-1]))
     {
-      (*recordDaAggiungere).cognome[i+1] = toupper((*recordDaAggiungere).cognome[i+1]);
+      (*recordDaAggiungere).indirizzo[i] = toupper(carattere);
+    }
+    else
+    {
+      (*recordDaAggiungere).indirizzo[i] = tolower(carattere);
     }
   }
 
-  for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    if(i == 0)
+    carattere = (*recordDaAggiungere).telefono[i];
+    if(carattere == '\0')
     {
-      (*recordDaAggiungere).indirizzo[i] = toupper((*recordDaAggiungere).indirizzo[i]);
+      break;
     }
-
-    if((*recordDaAggiungere).indirizzo[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    if(isdigit(carattere) == 0)
     {
-      (*recordDaAggiungere).indirizzo[i+1] = toupper((*recordDaAggiungere).indirizzo[i+1]);
+      return 0;
     }
   }
+
+  return 1;
 }
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
@@ -542,7 +578,11 @@ int aggiungiRecord(int clientSocket, char **output)
     return ESITO_NEGATIVO;
   }
 
-  normalizzaRecord(&recordDaAggiungere);
+  if(normalizzaRecord(&recordDaAggiungere) == 0)
+  {
+    *output = "Record Formattato Scorrettamente\n";
+    return ESITO_NEGATIVO;
+  }
 
   fseek(rubrica, 0, SEEK_END);
   byteScritti = fwrite(&recordDaAggiungere, sizeof(recordDaAggiungere), 1, rubrica);
