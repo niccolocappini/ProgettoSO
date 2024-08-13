@@ -254,10 +254,45 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
 }
 
 void normalizzaRecord(recordRub *recordDaAggiungere)
-{
-  /*int c = recordDaAggiungere->nome[0];
-  toupper(c);
-  printf("%c\n",c);*/
+{ 
+  for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
+  {
+    if(i == 0)
+    {
+      (*recordDaAggiungere).nome[i] = toupper((*recordDaAggiungere).nome[i]);
+    }
+
+    if((*recordDaAggiungere).nome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    {
+      (*recordDaAggiungere).nome[i+1] = toupper((*recordDaAggiungere).nome[i+1]);
+    }
+  }
+
+  for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
+  {
+    if(i == 0)
+    {
+      (*recordDaAggiungere).cognome[i] = toupper((*recordDaAggiungere).cognome[i]);
+    }
+
+    if((*recordDaAggiungere).cognome[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    {
+      (*recordDaAggiungere).cognome[i+1] = toupper((*recordDaAggiungere).cognome[i+1]);
+    }
+  }
+
+  for (int i = 0; i < MAX_LUNG_CAMPO-1; i++)
+  {
+    if(i == 0)
+    {
+      (*recordDaAggiungere).indirizzo[i] = toupper((*recordDaAggiungere).indirizzo[i]);
+    }
+
+    if((*recordDaAggiungere).indirizzo[i] == 32) // 32 = codifica ASCII per lo spazio vuoto
+    {
+      (*recordDaAggiungere).indirizzo[i+1] = toupper((*recordDaAggiungere).indirizzo[i+1]);
+    }
+  }
 }
 
 long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
