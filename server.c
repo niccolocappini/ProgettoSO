@@ -32,7 +32,7 @@ int main()
   e di conseguenza posizionandosi alla fine del file stesso */
   rubrica = fopen("RubricaDB", "w+");
   if (rubrica == NULL)
-    printf("PORCODDDIOOOOOOOO");
+    generazioneErrore("Rubrica non aperta correttamente\n");
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -357,7 +357,6 @@ void ricercaRecordConCognome(int clientSocket, char **output)
   int recordTrovato;
   char recordCorrente[4 * MAX_LUNG_CAMPO + 100];
   char campoLetto[MAX_LUNG_CAMPO];
-  printf("%d\n", recordContenuti);
   int uscita = 0;
   while (1)
   {
@@ -370,7 +369,6 @@ void ricercaRecordConCognome(int clientSocket, char **output)
         uscita = 1;
         break;
       }
-      printf("%s\n", campoLetto);
 
       strcat(recordCorrente, campoLetto);
       if (j != 3)
@@ -511,7 +509,6 @@ int aggiungiRecord(int clientSocket, char **output)
     return ESITO_NEGATIVO;
   }
   recordContenuti++;
-  printf("%d\n", recordContenuti);
   *output = "Aggiunta Record andata a buon fine\n";
   return 1;
 }
