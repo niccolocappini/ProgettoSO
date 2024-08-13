@@ -247,9 +247,7 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
-    printf("ciao\n");
     strcat(*output, "La rubrica al momento è vuota\n");
-    printf("ciao1\n");
     return 0;
   }
   return 1;
@@ -527,39 +525,35 @@ int aggiungiRecord(int clientSocket, char **output)
   Gestire il ricompattamento del file dopo l'eliminazione del record*/
 int rimuoviRecord(int clientSocket, char **output)
 {
-  if (controlloRubricaVuota(output) != 0)
+  recordRub recordDaRimuovere;
+
+  printf("In attesa del record da rimuovere... \n");
+  riceviRecordDaClient(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere),"Record non ricevuto o non valido\n");
+  
+  printf("Record da rimuovere: %s, %s, %s, %s \n", recordDaRimuovere.nome, recordDaRimuovere.cognome, recordDaRimuovere.indirizzo, recordDaRimuovere.telefono);
+
+  if (controlloRubricaVuota(output) == 0)
   {
-    recordRub recordDaRimuovere;
-    // char recordStr[4 * MAX_LUNG_CAMPO];
+    return ESITO_NEGATIVO;
+  }
 
-    printf("In attesa del record da rimuovere... \n");
-    // riceviDatiDaClient(clientSocket, recordStr, sizeof(recordStr), "Record non ricevuto o non valido\n");
-    int byteLetti = recv(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), 0);
-    if (byteLetti < 1)
-    {
-      generazioneErrore("Record non ricevuto o non valido\n");
-    }
-    printf("Record da rimuovere: %s, %s, %s, %s \n", recordDaRimuovere.nome, recordDaRimuovere.cognome, recordDaRimuovere.indirizzo, recordDaRimuovere.telefono);
-
-    long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
-    if (posizioneRecordDaRimuovere < 0)
-    {
-      *output = "Rimozione Record Fallita";
-      return ESITO_NEGATIVO;
-    }
+  long int posizioneRecordDaRimuovere = ricercaRecord(&recordDaRimuovere);
+  if (posizioneRecordDaRimuovere < 0)
+  {
+    *output = "Rimozione Record Fallita";
+    return ESITO_NEGATIVO;
+  }
 
   printf("Record trovato: inizio rimozione...\n");
 
-    fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
-    
-    char fineStringa[4 * MAX_LUNG_CAMPO] = "\0";
-    int byteScritti = fwrite(fineStringa, 4 * MAX_LUNG_CAMPO, 1, rubrica);
+  fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
+  
+  char fineStringa[4 * MAX_LUNG_CAMPO] = "\0";
+  int byteScritti = fwrite(fineStringa, 4 * MAX_LUNG_CAMPO, 1, rubrica);
 
-    *output = "Rimozione Record Compiuta\n";
-    recordContenuti--;
-    return 0;
-  }
-  return ESITO_NEGATIVO;
+  *output = "Rimozione Record Compiuta\n";
+  recordContenuti--;
+  return 0;
 }
 
 /* Casi di errore: vecchioIndirizzo non trovato, modifica non riuscita*/
