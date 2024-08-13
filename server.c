@@ -541,10 +541,9 @@ int rimuoviRecord(int clientSocket, char **output)
     printf("Record trovato: inizio rimozione...\n");
 
     fseek(rubrica, posizioneRecordDaRimuovere, SEEK_SET);
-
-    char stringa[4*MAX_LUNG_CAMPO] = "\0";
-    int byteScritti = fwrite(stringa, sizeof(stringa), 1, rubrica); 
-    printf("%d", byteScritti);
+    
+    char fineStringa[4 * MAX_LUNG_CAMPO] = "\0";
+    int byteScritti = fwrite(fineStringa, 4 * MAX_LUNG_CAMPO, 1, rubrica);
 
     *output = "Rimozione Record Compiuta\n";
     recordContenuti--;
