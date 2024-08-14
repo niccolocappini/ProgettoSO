@@ -7,6 +7,9 @@ void riceviCampoDaClient(int clientSocket, char *datoDaRicevere, int dimensioneD
 void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dimensioneRecord, char *messaggioDiErrore);
 int controlloRubricaVuota(char **output);
 int normalizzaRecord(recordRub *record);
+int normalizzaNomeCognome(char campo[MAX_LUNG_CAMPO]);
+int normalizzaIndirizzo(char campo[MAX_LUNG_CAMPO]);
+int normalizzaTelefono(char campo[MAX_LUNG_CAMPO]);
 long int ricercaRecord(recordRub *recordDaRicercare);
 int modificaCampoRubrica(int clientSocket, char **output, int campoScelto);
 int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);

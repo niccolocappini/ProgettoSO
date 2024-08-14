@@ -132,7 +132,7 @@ int main()
         printf("Gestione Richiesta 6: \n");
         richiestaPassword(clientSocket);
         risultato = modificaIndirizzo(clientSocket, &output);
-        controlloOutput(clientSocket, risultato, "Modifica Indirizzo Fallita \n");
+        controlloOutput(clientSocket, risultato, output);
 
         break;
 
@@ -140,7 +140,7 @@ int main()
         printf("Gestione Richiesta 7: \n");
         richiestaPassword(clientSocket);
         risultato = modificaTelefono(clientSocket, &output);
-        controlloOutput(clientSocket, risultato, "Modifica Telefono Fallita \n");
+        controlloOutput(clientSocket, risultato, output);
 
         break;
 
@@ -267,66 +267,12 @@ int normalizzaNomeCognome(char campo[MAX_LUNG_CAMPO])
   return 0;
 }
 
-int normalizzaRecord(recordRub *record)
+int normalizzaIndirizzo(char campo[MAX_LUNG_CAMPO])
 {
   char carattere;
-  /*for (int i = 0; i < MAX_LUNG_CAMPO; i++)
+  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    carattere = (*record).nome[i];
-    if (carattere == '\0')
-    {
-      break;
-    }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
-    {
-      return ESITO_NEGATIVO;
-    }
-
-    if (i == 0 || isspace((*record).nome[i - 1]))
-    {
-      (*record).nome[i] = toupper(carattere);
-    }
-    else
-    {
-      (*record).nome[i] = tolower(carattere);
-    }
-  }*/
-  int risultato = normalizzaNomeCognome((*record).nome);
-  if(risultato == ESITO_NEGATIVO)
-  {
-    return ESITO_NEGATIVO;
-  }
-
-  /*for (int i = 0; i < MAX_LUNG_CAMPO; i++)
-  {
-    carattere = (*record).cognome[i];
-    if (carattere == '\0')
-    {
-      break;
-    }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
-    {
-      return ESITO_NEGATIVO;
-    }
-
-    if (i == 0 || isspace((*record).cognome[i - 1]))
-    {
-      (*record).cognome[i] = toupper(carattere);
-    }
-    else
-    {
-      (*record).cognome[i] = tolower(carattere);
-    }
-  }*/
-  risultato = normalizzaNomeCognome((*record).cognome);
-  if(risultato == ESITO_NEGATIVO)
-  {
-    return ESITO_NEGATIVO;
-  }
-
-  for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
-  {
-    carattere = (*record).indirizzo[i];
+    carattere = campo[i];
     if (carattere == '\0')
     {
       break;
@@ -336,19 +282,24 @@ int normalizzaRecord(recordRub *record)
       return ESITO_NEGATIVO;
     }
 
-    if (i == 0 || isspace((*record).indirizzo[i - 1]))
+    if (i == 0 || isspace(campo[i - 1]))
     {
-      (*record).indirizzo[i] = toupper(carattere);
+      campo[i] = toupper(carattere);
     }
     else
     {
-      (*record).indirizzo[i] = tolower(carattere);
+      campo[i] = tolower(carattere);
     }
   }
+  return 0;
+}
 
+int normalizzaTelefono(char campo[MAX_LUNG_CAMPO])
+{
+  char carattere;
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    carattere = (*record).telefono[i];
+    carattere = campo[i];
     if (carattere == '\0')
     {
       break;
@@ -357,6 +308,34 @@ int normalizzaRecord(recordRub *record)
     {
       return ESITO_NEGATIVO;
     }
+  }
+  return 0;
+}
+
+int normalizzaRecord(recordRub *record)
+{  
+  int risultato = normalizzaNomeCognome((*record).nome);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
+  }
+
+  risultato = normalizzaNomeCognome((*record).cognome);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
+  }
+
+  risultato = normalizzaIndirizzo((*record).indirizzo);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
+  }
+
+  risultato = normalizzaTelefono((*record).telefono);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
   }
 
   return 0;
@@ -684,6 +663,23 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
   strcat(messaggioDiErrore, " \n");
 
   riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
+
+  if(campoScelto == 3)
+  {
+    if (normalizzaIndirizzo(nuovoValore) == ESITO_NEGATIVO)
+    {
+      *output = "Record Formattato Scorrettamente \n";
+      return ESITO_NEGATIVO;
+    }
+  }
+  else
+  {
+    if (normalizzaTelefono(nuovoValore) == ESITO_NEGATIVO)
+    {
+      *output = "Record Formattato Scorrettamente \n";
+      return ESITO_NEGATIVO;
+    }
+  }
 
   printf("Nuovo %s: %s \n", nomeCampo, nuovoValore);
 

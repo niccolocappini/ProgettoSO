@@ -225,7 +225,7 @@ void inserimentoDatiRecord(recordRub *record)
 void invioRecord(int clientSocket)
 {
     recordRub recordDaInviare;
-    inserimentodatiRecord(&recordDaInviare);
+    inserimentoDatiRecord(&recordDaInviare);
     if (send(clientSocket, &recordDaInviare, sizeof(recordDaInviare), 0) < 0)
         generazioneErrore("Invio del record fallito \n");
 }

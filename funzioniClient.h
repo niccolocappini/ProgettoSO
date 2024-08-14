@@ -5,6 +5,7 @@
 
 void stampaOutputDalServer(int clientSocket);
 void inserimentoDatiRecord(recordRub *record);
+void invioRecord(int clientSocket);
 void visualizzaRubrica();
 void ricercaRecordCognome(int clientSocket);
 void ricercaRecordNomeCognome(int clientSocket);
