@@ -192,7 +192,7 @@ void ricercaRecordNomeCognome(int clientSocket)
     fflush(stdin);
 }
 
-void inserimentodatiRecord(recordRub *record)
+void inserimentoDatiRecord(recordRub *record)
 {
     char recordStr[4 * MAX_LUNG_CAMPO];
     char supporto;
@@ -226,7 +226,7 @@ void aggiungiRecord(int clientSocket)
 {
     recordRub recordDaAggiungere;
 
-    inserimentodatiRecord(&recordDaAggiungere);
+    inserimentoDatiRecord(&recordDaAggiungere);
     send(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
     printf("Dati del record inviati al server per l'inserimento\n");
 }
@@ -235,7 +235,7 @@ void rimuoviRecord(int clientSocket)
 {
     recordRub recordDaRimuovere;
 
-    inserimentodatiRecord(&recordDaRimuovere);
+    inserimentoDatiRecord(&recordDaRimuovere);
     send(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), 0);
     printf("Dati del record inviati al server per la rimozione\n");
 }
@@ -244,7 +244,7 @@ void modificaIndirizzo(int clientSocket)
 {
     recordRub recordDaModificare;
 
-    inserimentodatiRecord(&recordDaModificare);
+    inserimentoDatiRecord(&recordDaModificare);
     send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
     printf("Dati del record inviati al server per l'inserimento\n");
 
@@ -263,7 +263,7 @@ void modificaTelefono(int clientSocket)
 {
     recordRub recordDaModificare;
 
-    inserimentodatiRecord(&recordDaModificare);
+    inserimentoDatiRecord(&recordDaModificare);
     send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
     printf("Dati del record inviati al server per la modifica\n");
 

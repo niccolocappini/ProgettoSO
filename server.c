@@ -240,83 +240,120 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   return posizioneFinale;
 }
 
-int normalizzaRecord(recordRub *recordDaAggiungere)
+int normalizzaNomeCognome(char campo[MAX_LUNG_CAMPO])
 {
   char carattere;
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    carattere = (*recordDaAggiungere).nome[i];
+    carattere = campo[i];
     if (carattere == '\0')
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
     {
       return ESITO_NEGATIVO;
     }
 
-    if (i == 0 || isspace((*recordDaAggiungere).nome[i - 1]))
+    if (i == 0 || isspace(campo[i - 1]))
     {
-      (*recordDaAggiungere).nome[i] = toupper(carattere);
+      campo[i] = toupper(carattere);
     }
     else
     {
-      (*recordDaAggiungere).nome[i] = tolower(carattere);
+      campo[i] = tolower(carattere);
     }
   }
+  return 0;
+}
 
-  for (int i = 0; i < MAX_LUNG_CAMPO; i++)
+int normalizzaRecord(recordRub *record)
+{
+  char carattere;
+  /*for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    carattere = (*recordDaAggiungere).cognome[i];
+    carattere = (*record).nome[i];
     if (carattere == '\0')
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
     {
       return ESITO_NEGATIVO;
     }
 
-    if (i == 0 || isspace((*recordDaAggiungere).cognome[i - 1]))
+    if (i == 0 || isspace((*record).nome[i - 1]))
     {
-      (*recordDaAggiungere).cognome[i] = toupper(carattere);
+      (*record).nome[i] = toupper(carattere);
     }
     else
     {
-      (*recordDaAggiungere).cognome[i] = tolower(carattere);
+      (*record).nome[i] = tolower(carattere);
     }
+  }*/
+  int risultato = normalizzaNomeCognome((*record).nome);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
+  }
+
+  /*for (int i = 0; i < MAX_LUNG_CAMPO; i++)
+  {
+    carattere = (*record).cognome[i];
+    if (carattere == '\0')
+    {
+      break;
+    }
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
+    {
+      return ESITO_NEGATIVO;
+    }
+
+    if (i == 0 || isspace((*record).cognome[i - 1]))
+    {
+      (*record).cognome[i] = toupper(carattere);
+    }
+    else
+    {
+      (*record).cognome[i] = tolower(carattere);
+    }
+  }*/
+  risultato = normalizzaNomeCognome((*record).cognome);
+  if(risultato == ESITO_NEGATIVO)
+  {
+    return ESITO_NEGATIVO;
   }
 
   for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
   {
-    carattere = (*recordDaAggiungere).indirizzo[i];
+    carattere = (*record).indirizzo[i];
     if (carattere == '\0')
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0) 
     {
       return ESITO_NEGATIVO;
     }
 
-    if (i == 0 || isspace((*recordDaAggiungere).indirizzo[i - 1]))
+    if (i == 0 || isspace((*record).indirizzo[i - 1]))
     {
-      (*recordDaAggiungere).indirizzo[i] = toupper(carattere);
+      (*record).indirizzo[i] = toupper(carattere);
     }
     else
     {
-      (*recordDaAggiungere).indirizzo[i] = tolower(carattere);
+      (*record).indirizzo[i] = tolower(carattere);
     }
   }
 
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
-    carattere = (*recordDaAggiungere).telefono[i];
+    carattere = (*record).telefono[i];
     if (carattere == '\0')
     {
       break;
     }
-    if (isdigit(carattere) == 0) // ???
+    if (isdigit(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
