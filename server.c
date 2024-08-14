@@ -149,7 +149,7 @@ int main()
       }
 
       // Invio della risposta al client
-      while (write(clientSocket, output, strlen(output) + 1) == -1)
+      while (write(clientSocket, output, strlen(output) + 1) < 0)
       {
       }
       printf("Risposta inviata: \n%s \n", output); // da rimuovere (forse) prima della consegna
@@ -181,7 +181,7 @@ void richiestaPassword(int clientSocket)
   if (strcmp(passwordRicevuta, PASSWORD) != 0)
   {
     strcpy(rispostaPassword, "Password Errata \n");
-    while (send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0) == ESITO_NEGATIVO)
+    while (send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0) < 0)
     {
     }
     generazioneErrore("Password errata: l'operazione non può essere eseguita \n");
@@ -189,7 +189,7 @@ void richiestaPassword(int clientSocket)
   else
   {
     strcpy(rispostaPassword, "Password Corretta \n");
-    while (send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0) == ESITO_NEGATIVO)
+    while (send(clientSocket, rispostaPassword, MAX_LUNG_MESSAGGIO, 0) < 0)
     {
     }
     printf("Password Accettata \n");
@@ -200,7 +200,7 @@ void controlloOutput(int clientSocket, int risultato, char *messaggio)
 {
   if (risultato == ESITO_NEGATIVO)
   {
-    while (write(clientSocket, messaggio, strlen(messaggio) + 1) == ESITO_NEGATIVO)
+    while (write(clientSocket, messaggio, strlen(messaggio) + 1) < 0)
     {
     }
     generazioneErrore(messaggio);
@@ -211,7 +211,7 @@ void riceviCampoDaClient(int clientSocket, char *datoDaRicevere, int dimensioneD
 {
   if (recv(clientSocket, datoDaRicevere, dimensioneDato, 0) < 1)
   {
-    while (write(clientSocket, messaggioDiErrore, strlen(messaggioDiErrore) + 1) == ESITO_NEGATIVO)
+    while (write(clientSocket, messaggioDiErrore, strlen(messaggioDiErrore) + 1) < 0)
     {
     }
     generazioneErrore(messaggioDiErrore);
@@ -222,7 +222,7 @@ void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dim
 {
   if (recv(clientSocket, recordDaRicevere, dimensioneRecord, 0) < 1)
   {
-    while (write(clientSocket, messaggioDiErrore, strlen(messaggioDiErrore) + 1) == ESITO_NEGATIVO)
+    while (write(clientSocket, messaggioDiErrore, strlen(messaggioDiErrore) + 1) < 0)
     {
     }
     generazioneErrore(messaggioDiErrore);
@@ -236,27 +236,26 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   if (posizioneFinale == 0)
   {
     strcat(*output, "La rubrica al momento è vuota \n");
-    return ESITO_NEGATIVO;
   }
-  return 0;
+  return posizioneFinale;
 }
 
 int normalizzaRecord(recordRub *recordDaAggiungere)
-{ 
+{
   char carattere;
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
     carattere = (*recordDaAggiungere).nome[i];
-    if(carattere == '\0')
+    if (carattere == '\0')
     {
       break;
     }
-    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
     {
       return ESITO_NEGATIVO;
     }
 
-    if(i == 0 || isspace((*recordDaAggiungere).nome[i-1]))
+    if (i == 0 || isspace((*recordDaAggiungere).nome[i - 1]))
     {
       (*recordDaAggiungere).nome[i] = toupper(carattere);
     }
@@ -269,16 +268,16 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
     carattere = (*recordDaAggiungere).cognome[i];
-    if(carattere == '\0')
+    if (carattere == '\0')
     {
       break;
     }
-    if(isalpha(carattere) == 0 && isspace(carattere) == 0)
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
     {
       return ESITO_NEGATIVO;
     }
 
-    if(i == 0 || isspace((*recordDaAggiungere).cognome[i-1]))
+    if (i == 0 || isspace((*recordDaAggiungere).cognome[i - 1]))
     {
       (*recordDaAggiungere).cognome[i] = toupper(carattere);
     }
@@ -291,16 +290,16 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
   for (int i = 0; i < MAX_LUNG_CAMPO - 1; i++)
   {
     carattere = (*recordDaAggiungere).indirizzo[i];
-    if(carattere == '\0')
+    if (carattere == '\0')
     {
       break;
     }
-    if(isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0) // ???
     {
       return ESITO_NEGATIVO;
     }
 
-    if(i == 0 || isspace((*recordDaAggiungere).indirizzo[i-1]))
+    if (i == 0 || isspace((*recordDaAggiungere).indirizzo[i - 1]))
     {
       (*recordDaAggiungere).indirizzo[i] = toupper(carattere);
     }
@@ -313,11 +312,11 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
   for (int i = 0; i < MAX_LUNG_CAMPO; i++)
   {
     carattere = (*recordDaAggiungere).telefono[i];
-    if(carattere == '\0')
+    if (carattere == '\0')
     {
       break;
     }
-    if(isdigit(carattere) == 0)
+    if (isdigit(carattere) == 0) // ???
     {
       return ESITO_NEGATIVO;
     }
@@ -334,7 +333,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
   int recordTrovato = 0;
   char campoLetto[MAX_LUNG_CAMPO];
   int uscita = 0;
-  while (1)
+  while (uscita == 0)
   {
     recordTrovato = 0;
     for (int j = 0; j < 4; j++)
@@ -342,7 +341,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
       if (j == 0)
         posizioneRecord = ftell(rubrica);
 
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) <= 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 1)
       {
         uscita = 1;
         break;
@@ -366,9 +365,6 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
       printf("Il record trovato è il %ldesimo \n", posizioneRecord / (4 * MAX_LUNG_CAMPO) + 1);
       return posizioneRecord;
     }
-
-    if (uscita == 1)
-      break;
   }
   return ESITO_NEGATIVO; // si ritorna -1 se il record non è presente, altrimenti la posizione del record
 }
@@ -388,7 +384,7 @@ void visualizzaRubrica(char **output)
   while (1)
   {
     i = fread(supporto, MAX_LUNG_CAMPO, 1, rubrica);
-    if (i <= 0)
+    if (i < 1)
       break;
 
     if (strcmp(supporto, "\0") != 0)
@@ -429,7 +425,7 @@ void ricercaRecordConCognome(int clientSocket, char **output)
     strcpy(recordCorrente, "");
     for (int j = 0; j < 4; j++)
     {
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) <= 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 1)
       {
         uscita = 1;
         break;
@@ -488,7 +484,7 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
     strcpy(recordCorrente, "");
     for (int j = 0; j < 4; j++)
     {
-      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) <= 0)
+      if (fread(campoLetto, MAX_LUNG_CAMPO, 1, rubrica) < 1)
       {
         uscita = 1;
         break;
@@ -533,15 +529,17 @@ int aggiungiRecord(int clientSocket, char **output)
   printf("In attesa del record da inserire... \n");
   riceviRecordDaClient(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), "Record non ricevuto o non valido \n");
 
-  if (ricercaRecord(&recordDaAggiungere) != -1)
+  if (normalizzaRecord(&recordDaAggiungere) == ESITO_NEGATIVO)
   {
-    *output = "Record già presente in Rubrica\n";
+    *output = "Record Formattato Scorrettamente \n";
     return ESITO_NEGATIVO;
   }
 
-  if(normalizzaRecord(&recordDaAggiungere) == ESITO_NEGATIVO)
+  printf("Record da aggiungere: %s, %s, %s, %s \n", recordDaAggiungere.nome, recordDaAggiungere.cognome, recordDaAggiungere.indirizzo, recordDaAggiungere.telefono);
+
+  if (ricercaRecord(&recordDaAggiungere) != ESITO_NEGATIVO)
   {
-    *output = "Record Formattato Scorrettamente\n";
+    *output = "Record già presente in Rubrica \n";
     return ESITO_NEGATIVO;
   }
 
@@ -570,6 +568,12 @@ int rimuoviRecord(int clientSocket, char **output)
 
   printf("In attesa del record da rimuovere... \n");
   riceviRecordDaClient(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), "Record non ricevuto o non valido \n");
+
+  if (normalizzaRecord(&recordDaRimuovere) == ESITO_NEGATIVO)
+  {
+    *output = "Record Formattato Scorrettamente \n";
+    return ESITO_NEGATIVO;
+  }
 
   printf("Record da rimuovere: %s, %s, %s, %s \n", recordDaRimuovere.nome, recordDaRimuovere.cognome, recordDaRimuovere.indirizzo, recordDaRimuovere.telefono);
 
@@ -610,6 +614,12 @@ int modificaIndirizzo(int clientSocket, char **output)
   if (recv(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0) < 1)
     generazioneErrore("Record non ricevuto o non valido \n");
 
+  if (normalizzaRecord(&recordDaModificare) == ESITO_NEGATIVO)
+  {
+    *output = "Record Formattato Scorrettamente \n";
+    return ESITO_NEGATIVO;
+  }
+
   printf("Record da modificare: %s, %s, %s, %s \n", recordDaModificare.nome, recordDaModificare.cognome, recordDaModificare.indirizzo, recordDaModificare.telefono);
 
   long int posizioneRecordDaModificare = ricercaRecord(&recordDaModificare);
@@ -626,7 +636,7 @@ int modificaIndirizzo(int clientSocket, char **output)
 
   printf("Nuovo Indirizzo: %s \n", indirizzoNuovo);
 
-  if (modificaCampo(posizioneRecordDaModificare, 3, indirizzoNuovo) == 0)
+  if (modificaCampo(posizioneRecordDaModificare, 3, indirizzoNuovo) < 1)
   {
     *output = "Indirizzo non modificato \n";
     return ESITO_NEGATIVO;
@@ -649,6 +659,12 @@ int modificaTelefono(int clientSocket, char **output)
 
   if (recv(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0) < 1)
     generazioneErrore("Record non ricevuto o non valido \n");
+
+  if (normalizzaRecord(&recordDaModificare) == ESITO_NEGATIVO)
+  {
+    *output = "Record Formattato Scorrettamente \n";
+    return ESITO_NEGATIVO;
+  }
 
   printf("Record da modificare: %s, %s, %s, %s \n", recordDaModificare.nome, recordDaModificare.cognome, recordDaModificare.indirizzo, recordDaModificare.telefono);
 
