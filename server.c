@@ -235,7 +235,8 @@ int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota
   long int posizioneFinale = ftell(rubrica);
   if (posizioneFinale == 0)
   {
-    strcat(*output, "La rubrica al momento è vuota \n");
+    *output = "La rubrica al momento è vuota \n";
+    return ESITO_NEGATIVO;
   }
   return posizioneFinale;
 }
@@ -418,14 +419,13 @@ void visualizzaRubrica(char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConCognome(int clientSocket, char **output)
 {
-
-  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-    return;
-
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
 
   printf("In attesa del cognome da ricercare... \n");
   riceviCampoDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido \n");
+
+  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
+    return;
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato;
@@ -473,10 +473,6 @@ void ricercaRecordConCognome(int clientSocket, char **output)
 /* Casi di errore: Record non Trovato*/
 void ricercaRecordConNomeCognome(int clientSocket, char **output)
 {
-
-  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-    return;
-
   char nomeDaRicercare[MAX_LUNG_CAMPO];
   char cognomeDaRicercare[MAX_LUNG_CAMPO];
 
@@ -485,6 +481,9 @@ void ricercaRecordConNomeCognome(int clientSocket, char **output)
 
   printf("In attesa del cognome da ricercare... \n");
   riceviCampoDaClient(clientSocket, cognomeDaRicercare, sizeof(cognomeDaRicercare), "Cognome non ricevuto o non valido \n");
+
+  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
+    return;
 
   fseek(rubrica, 0, SEEK_SET); // il puntatore del file viene spostato all'inizio
   int recordTrovato = 0;
@@ -573,14 +572,15 @@ int aggiungiRecord(int clientSocket, char **output)
   Gestire il ricompattamento del file dopo l'eliminazione del record*/
 int rimuoviRecord(int clientSocket, char **output)
 {
-
-  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-    return ESITO_NEGATIVO;
-
   recordRub recordDaRimuovere;
 
   printf("In attesa del record da rimuovere... \n");
   riceviRecordDaClient(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), "Record non ricevuto o non valido \n");
+
+  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
+  { 
+    return ESITO_NEGATIVO;
+  }
 
   if (normalizzaRecord(&recordDaRimuovere) == ESITO_NEGATIVO)
   {
@@ -615,16 +615,18 @@ int rimuoviRecord(int clientSocket, char **output)
 
 int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
 {
-
-  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-    return ESITO_NEGATIVO;
-
   recordRub recordDaModificare;
+  char nuovoValore[MAX_LUNG_CAMPO];
+  char *messaggioDiErrore = "Errore nella ricezione del nuovo valore";
 
   printf("In attesa del record da modificare... \n");
 
-  if (recv(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0) < 1)
-    generazioneErrore("Record non ricevuto o non valido \n");
+  riceviRecordDaClient(clientSocket,&recordDaModificare, sizeof(recordDaModificare), "Record non ricevuto o non valido \n");
+
+  riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
+
+  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
+    return ESITO_NEGATIVO;
 
   if (normalizzaRecord(&recordDaModificare) == ESITO_NEGATIVO)
   {
@@ -642,11 +644,6 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
   }
 
   printf("Record da modificare presente in rubrica \n");
-
-  char nuovoValore[MAX_LUNG_CAMPO];
-  char *messaggioDiErrore = "Errore nella ricezione del nuovo valore";
-
-  riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
 
   char nomeCampo[10];
   switch (campoScelto)
