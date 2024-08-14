@@ -202,16 +202,19 @@ void inserimentoDatiRecord(recordRub *record)
     scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->nome);
     strcpy(recordStr, (char *)record->nome);
+    strcat(recordStr, " ");
 
     printf("Inserire Cognome: ");
     scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->cognome);
     strcat(recordStr, (char *)record->cognome);
+    strcat(recordStr, " ");
 
     printf("Inserire Indirizzo: ");
     scanf("%c", &supporto);
     scanf("%[^'\n']s", (char *)record->indirizzo);
     strcat(recordStr, (char *)record->indirizzo);
+    strcat(recordStr, " ");
 
     printf("Inserire Telefono: ");
     scanf("%c", &supporto);

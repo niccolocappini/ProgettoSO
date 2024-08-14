@@ -250,7 +250,7 @@ int normalizzaNomeCognome(char campo[MAX_LUNG_CAMPO])
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) 
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -277,7 +277,7 @@ int normalizzaIndirizzo(char campo[MAX_LUNG_CAMPO])
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0) 
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -313,27 +313,27 @@ int normalizzaTelefono(char campo[MAX_LUNG_CAMPO])
 }
 
 int normalizzaRecord(recordRub *record)
-{  
+{
   int risultato = normalizzaNomeCognome((*record).nome);
-  if(risultato == ESITO_NEGATIVO)
+  if (risultato == ESITO_NEGATIVO)
   {
     return ESITO_NEGATIVO;
   }
 
   risultato = normalizzaNomeCognome((*record).cognome);
-  if(risultato == ESITO_NEGATIVO)
+  if (risultato == ESITO_NEGATIVO)
   {
     return ESITO_NEGATIVO;
   }
 
   risultato = normalizzaIndirizzo((*record).indirizzo);
-  if(risultato == ESITO_NEGATIVO)
+  if (risultato == ESITO_NEGATIVO)
   {
     return ESITO_NEGATIVO;
   }
 
   risultato = normalizzaTelefono((*record).telefono);
-  if(risultato == ESITO_NEGATIVO)
+  if (risultato == ESITO_NEGATIVO)
   {
     return ESITO_NEGATIVO;
   }
@@ -615,20 +615,6 @@ int rimuoviRecord(int clientSocket, char **output)
 
 int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
 {
-  char nomeCampo[10];
-  switch (campoScelto)
-  {
-  case 3:
-    strcpy(nomeCampo, "Indirizzo");
-    break;
-
-  case 4:
-    strcpy(nomeCampo, "Telefono");
-    break;
-
-  default:
-    generazioneErrore("Campo scelto non valido \n");
-  }
 
   if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
     return ESITO_NEGATIVO;
@@ -658,27 +644,35 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
   printf("Record da modificare presente in rubrica \n");
 
   char nuovoValore[MAX_LUNG_CAMPO];
-  char messaggioDiErrore[MAX_LUNG_MESSAGGIO] = "Errore nella ricezione del nuovo";
-  strcat(messaggioDiErrore, nomeCampo);
-  strcat(messaggioDiErrore, " \n");
+  char *messaggioDiErrore = "Errore nella ricezione del nuovo valore";
 
   riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
 
-  if(campoScelto == 3)
+  char nomeCampo[10];
+  switch (campoScelto)
   {
+  case 3:
     if (normalizzaIndirizzo(nuovoValore) == ESITO_NEGATIVO)
     {
       *output = "Record Formattato Scorrettamente \n";
       return ESITO_NEGATIVO;
     }
-  }
-  else
-  {
+    strcpy(nomeCampo, "Indirizzo");
+    
+    break;
+
+  case 4:
     if (normalizzaTelefono(nuovoValore) == ESITO_NEGATIVO)
     {
       *output = "Record Formattato Scorrettamente \n";
       return ESITO_NEGATIVO;
     }
+    strcpy(nomeCampo, "Telefono");
+    
+    break;
+
+  default:
+    generazioneErrore("Campo scelto non valido \n");
   }
 
   printf("Nuovo %s: %s \n", nomeCampo, nuovoValore);
@@ -690,7 +684,7 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
     return ESITO_NEGATIVO;
   }
 
-  *output = "Modifica Telefono andata a buon fine \n";
+  *output = "Modifica andata a buon fine \n";
   return 0;
 }
 
