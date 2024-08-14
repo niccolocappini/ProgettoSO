@@ -8,15 +8,15 @@ void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dim
 int controlloRubricaVuota(char **output);
 int normalizzaRecord(recordRub *recordDaAggiungere);
 long int ricercaRecord(recordRub *recordDaRicercare);
-// long int ricercaPosizioneRecordConSingoloCampo(char *valoreDaRicercare, int campoScelto);
-int modificaCampo(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);
+int modificaCampoRubrica(int clientSocket, char **output, int campoScelto);
+int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);
 
 /* Questi metodi restituiranno una stringa contenente ciò che è stato richiesto*/
 void visualizzaRubrica(char **output);
 void ricercaRecordConCognome(int clientSocket, char **output);
 void ricercaRecordConNomeCognome(int clientSocket, char **output);
 
-/* Questi metodi restituiranno un intero (codice) che in caso di successo sarà 1 altrimenti 0*/
+/* Questi metodi restituiranno un intero (codice) che in caso di successo sarà 0 altrimenti -1*/
 int aggiungiRecord(int clientSocket, char **output);
 int rimuoviRecord(int clientSocket, char **output);
 int modificaTelefono(int clientSocket, char **output);

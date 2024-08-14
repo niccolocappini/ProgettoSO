@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         send(clientSocket, password, sizeof(password), 0);
         char rispostaPassword[MAX_LUNG_MESSAGGIO];
         recv(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
-        if (strcmp(rispostaPassword, "Password Errata") == 0)
+        if (strcmp(rispostaPassword, "Password Errata \n") == 0)
         {
             generazioneErrore(rispostaPassword);
         }
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
         break;
 
     default:
-        generazioneErrore("Richiesta non valida\n");
+        generazioneErrore("Richiesta non valida \n");
         break;
     }
 
@@ -222,31 +222,30 @@ void inserimentodatiRecord(recordRub *record)
     fflush(stdin);
 }
 
+void invioRecord(int clientSocket)
+{
+    recordRub recordDaInviare;
+    inserimentodatiRecord(&recordDaInviare);
+    if (send(clientSocket, &recordDaInviare, sizeof(recordDaInviare), 0) < 0)
+        generazioneErrore("Invio del record fallito \n");
+}
+
 void aggiungiRecord(int clientSocket)
 {
-    recordRub recordDaAggiungere;
-
-    inserimentodatiRecord(&recordDaAggiungere);
-    send(clientSocket, &recordDaAggiungere, sizeof(recordDaAggiungere), 0);
-    printf("Dati del record inviati al server per l'inserimento\n");
+    invioRecord(clientSocket);
+    printf("Dati del record inviati al server per l'inserimento \n");
 }
 
 void rimuoviRecord(int clientSocket)
 {
-    recordRub recordDaRimuovere;
-
-    inserimentodatiRecord(&recordDaRimuovere);
-    send(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), 0);
-    printf("Dati del record inviati al server per la rimozione\n");
+    invioRecord(clientSocket);
+    printf("Dati del record inviati al server per la rimozione \n");
 }
 
 void modificaIndirizzo(int clientSocket)
 {
-    recordRub recordDaModificare;
-
-    inserimentodatiRecord(&recordDaModificare);
-    send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
-    printf("Dati del record inviati al server per l'inserimento\n");
+    invioRecord(clientSocket);
+    printf("Dati del record inviati al server per la modifica \n");
 
     char nuovoIndirizzo[MAX_LUNG_CAMPO];
     char supporto;
@@ -261,11 +260,8 @@ void modificaIndirizzo(int clientSocket)
 
 void modificaTelefono(int clientSocket)
 {
-    recordRub recordDaModificare;
-
-    inserimentodatiRecord(&recordDaModificare);
-    send(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0);
-    printf("Dati del record inviati al server per la modifica\n");
+    invioRecord(clientSocket);
+    printf("Dati del record inviati al server per la modifica \n");
 
     char nuovoTelefono[MAX_LUNG_CAMPO];
     char supporto;

@@ -250,7 +250,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -272,7 +272,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -294,7 +294,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
     {
       break;
     }
-    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0) // ???
+    if (isalpha(carattere) == 0 && isspace(carattere) == 0 && isdigit(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -316,7 +316,7 @@ int normalizzaRecord(recordRub *recordDaAggiungere)
     {
       break;
     }
-    if (isdigit(carattere) == 0) // ???
+    if (isdigit(carattere) == 0)
     {
       return ESITO_NEGATIVO;
     }
@@ -361,10 +361,7 @@ long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricer
     }
 
     if (recordTrovato == 4)
-    {
-      printf("Il record trovato è il %ldesimo \n", posizioneRecord / (4 * MAX_LUNG_CAMPO) + 1);
       return posizioneRecord;
-    }
   }
   return ESITO_NEGATIVO; // si ritorna -1 se il record non è presente, altrimenti la posizione del record
 }
@@ -600,9 +597,22 @@ int rimuoviRecord(int clientSocket, char **output)
   return 0;
 }
 
-/* Casi di errore: vecchioIndirizzo non trovato, modifica non riuscita*/
-int modificaIndirizzo(int clientSocket, char **output)
+int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
 {
+  char nomeCampo[10];
+  switch (campoScelto)
+  {
+  case 3:
+    strcpy(nomeCampo, "Indirizzo");
+    break;
+
+  case 4:
+    strcpy(nomeCampo, "Telefono");
+    break;
+
+  default:
+    generazioneErrore("Campo scelto non valido \n");
+  }
 
   if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
     return ESITO_NEGATIVO;
@@ -629,62 +639,21 @@ int modificaIndirizzo(int clientSocket, char **output)
     return ESITO_NEGATIVO;
   }
 
-  printf("Il record da modificare è il %ldesimo \n", posizioneRecordDaModificare / (4 * MAX_LUNG_CAMPO) + 1);
+  printf("Record da modificare presente in rubrica \n");
 
-  char indirizzoNuovo[MAX_LUNG_CAMPO];
-  riceviCampoDaClient(clientSocket, indirizzoNuovo, sizeof(indirizzoNuovo), "Errore nella ricezione del nuovo indirizzo \n");
+  char nuovoValore[MAX_LUNG_CAMPO];
+  char messaggioDiErrore[MAX_LUNG_MESSAGGIO] = "Errore nella ricezione del nuovo";
+  strcat(messaggioDiErrore, nomeCampo);
+  strcat(messaggioDiErrore, " \n");
 
-  printf("Nuovo Indirizzo: %s \n", indirizzoNuovo);
+  riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
 
-  if (modificaCampo(posizioneRecordDaModificare, 3, indirizzoNuovo) < 1)
+  printf("Nuovo %s: %s \n", nomeCampo, nuovoValore);
+
+  if (modificaCampoRecord(posizioneRecordDaModificare, campoScelto, nuovoValore) < 1)
   {
-    *output = "Indirizzo non modificato \n";
-    return ESITO_NEGATIVO;
-  }
-
-  *output = "Modifica Indirizzo andata a buon fine \n";
-  return 0;
-}
-
-/* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
-int modificaTelefono(int clientSocket, char **output)
-{
-
-  if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-    return ESITO_NEGATIVO;
-
-  recordRub recordDaModificare;
-
-  printf("In attesa del record da modificare... \n");
-
-  if (recv(clientSocket, &recordDaModificare, sizeof(recordDaModificare), 0) < 1)
-    generazioneErrore("Record non ricevuto o non valido \n");
-
-  if (normalizzaRecord(&recordDaModificare) == ESITO_NEGATIVO)
-  {
-    *output = "Record Formattato Scorrettamente \n";
-    return ESITO_NEGATIVO;
-  }
-
-  printf("Record da modificare: %s, %s, %s, %s \n", recordDaModificare.nome, recordDaModificare.cognome, recordDaModificare.indirizzo, recordDaModificare.telefono);
-
-  long int posizioneRecordDaModificare = ricercaRecord(&recordDaModificare);
-  if (posizioneRecordDaModificare < 0)
-  {
-    *output = "Record non trovato \n";
-    return ESITO_NEGATIVO;
-  }
-
-  printf("Il record da modificare è il %ldesimo \n", posizioneRecordDaModificare / (4 * MAX_LUNG_CAMPO) + 1);
-
-  char telefonoNuovo[MAX_LUNG_CAMPO];
-  riceviCampoDaClient(clientSocket, telefonoNuovo, sizeof(telefonoNuovo), "Errore nella ricezione del nuovo numero di telefono \n");
-
-  printf("Nuovo Telefono: %s \n", telefonoNuovo);
-
-  if (modificaCampo(posizioneRecordDaModificare, 4, telefonoNuovo) < 1)
-  {
-    *output = "Telefono non modificato \n";
+    strcat(*output, nomeCampo);
+    strcat(*output, " non modificato \n");
     return ESITO_NEGATIVO;
   }
 
@@ -692,7 +661,19 @@ int modificaTelefono(int clientSocket, char **output)
   return 0;
 }
 
-int modificaCampo(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore)
+/* Casi di errore: vecchioIndirizzo non trovato, modifica non riuscita*/
+int modificaIndirizzo(int clientSocket, char **output)
+{
+  return modificaCampoRubrica(clientSocket, output, 3);
+}
+
+/* Casi di errore: vecchioTelefono non trovato, modifica non riuscita*/
+int modificaTelefono(int clientSocket, char **output)
+{
+  return modificaCampoRubrica(clientSocket, output, 4);
+}
+
+int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore)
 {
   fseek(rubrica, posizioneRecordDaModificare + (campoScelto - 1) * MAX_LUNG_CAMPO, SEEK_SET);
   return fwrite(nuovoValore, MAX_LUNG_CAMPO, 1, rubrica);
