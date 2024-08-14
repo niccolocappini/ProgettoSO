@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
         printf("Nome: %s \n", rubrica[i].nome);
         printf("Cognome: %s \n", rubrica[i].cognome);
         printf("Indirizzo: %s \n", rubrica[i].indirizzo);
-        printf("Telefono %s \n", rubrica[i].telefono);
+        printf("Telefono: %s \n", rubrica[i].telefono);
         printf("------------------------------------------------------------- \n");
     }
 
