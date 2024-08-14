@@ -192,7 +192,7 @@ void ricercaRecordNomeCognome(int clientSocket)
     fflush(stdin);
 }
 
-void inserimentodatiRecord(recordRub *record)
+void inserimentoDatiRecord(recordRub *record)
 {
     char recordStr[4 * MAX_LUNG_CAMPO];
     char supporto;
