@@ -25,12 +25,6 @@ Operazioni Richieste da Client:
     Elimina Record dato N. Telefono
     Visualizza tutti i Record
 
-Modalità Visualizzazione Record per Client
-    Telefono_Cresc 1
-    Telefono_Dec 2
-    Cognome_Cresc 3
-    Cognome_Dec 4
-
 Gestione Conflitti Client (la coda delle richieste è gestita automaticamente da accept() ):
     1 richiesta Client per volta viene soddisfatta dal server
     Le richieste vengono soddisfatte dal server nell'ordine di arrivo
@@ -69,7 +63,7 @@ DOPO:
 
 Idee:
 - Il client non ha accesso alla rubrica, solo il server può accedervi
-- Nel cliet, all'interno delle funzioni avviene l'invio parametri al server, la stampa del risultato inoltrato dal server   avviene al di fuori dello switch
+- Nel client, all'interno delle funzioni avviene l'invio parametri al server, la stampa del risultato inoltrato dal server   avviene al di fuori dello switch
 - Nel caso di aggiungiRecord(), lato server viene operata una normalizzazione del record da inserire. Ovvero ogni stringa che compone il record, che non sia il numero di telefono o il civico della via, inizierà con la lettera maiuscola
 
 
