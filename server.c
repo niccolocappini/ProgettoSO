@@ -164,7 +164,7 @@ int main()
       close(clientSocket);
     }
 
-    printf("La connessione si è conclusa \n");
+    printf("La connessione si è conclusa \n\n");
   }
 
   return 0;
