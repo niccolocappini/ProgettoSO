@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <sys/wait.h>
 
 #include "definizioniComuni.h"
 #include "funzioniServer.h"
@@ -160,8 +161,10 @@ int main()
     }
     else
     {
+      int status = 0;
       printf("Sono il processo che continua ad accettare richieste \n");
       close(clientSocket);
+      wait(&status);
     }
 
     printf("La connessione si è conclusa \n");
