@@ -16,10 +16,9 @@
 #define PASSWORD "ProgettoSO"
 
 static FILE *rubrica = NULL;
-static int recordContenuti = NUM_RECORD_RUBRICA;
+static int recordContenuti = NUM_RECORD_RUBRICA; // OK perché è obbligatorio avviare generatoreRubrica prima di accettare le richieste
 /*
 
-void handle_sigint(int sig);
 void handle_death_signal_from_admin(int sig);
 void handle_death_signal_from_user(int sig);
 
@@ -153,7 +152,7 @@ int main()
       while (write(clientSocket, output, strlen(output) + 1) < 0)
       {
       }
-      printf("Risposta inviata: \n%s \n", output); // da rimuovere (forse) prima della consegna
+      printf("Risposta inviata: \n%s \n", output); // da rimuovere prima della consegna
       printf("Richiesta eseguita: terminazione di questo figlio \n\n");
       close(clientSocket);
 
@@ -704,4 +703,9 @@ int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *
 {
   fseek(rubrica, posizioneRecordDaModificare + (campoScelto - 1) * MAX_LUNG_CAMPO, SEEK_SET);
   return fwrite(nuovoValore, MAX_LUNG_CAMPO, 1, rubrica);
+}
+
+void handle_sigint(int sig){ // da modificare
+  printf("Segnale di interruzione rilevato: arresto dell'esecuzione \n");
+
 }

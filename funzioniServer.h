@@ -14,15 +14,18 @@ long int ricercaRecord(recordRub *recordDaRicercare);
 int modificaCampoRubrica(int clientSocket, char **output, int campoScelto);
 int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *nuovoValore);
 
-/* Questi metodi restituiranno una stringa contenente ciò che è stato richiesto*/
+// Questi metodi restituiranno una stringa contenente ciò che è stato richiesto
 void visualizzaRubrica(char **output);
 void ricercaRecordConCognome(int clientSocket, char **output);
 void ricercaRecordConNomeCognome(int clientSocket, char **output);
 
-/* Questi metodi restituiranno un intero (codice) che in caso di successo sarà 0 altrimenti -1*/
+// Questi metodi restituiranno un intero (codice) che in caso di successo sarà 0 altrimenti -1
 int aggiungiRecord(int clientSocket, char **output);
 int rimuoviRecord(int clientSocket, char **output);
 int modificaTelefono(int clientSocket, char **output);
 int modificaIndirizzo(int clientSocket, char **output);
+
+//Gestione segnali
+void handle_sigint(int sig);
 
 #endif

@@ -276,3 +276,8 @@ void modificaTelefono(int clientSocket)
     send(clientSocket, nuovoTelefono, sizeof(nuovoTelefono), 0);
     fflush(stdin);
 }
+
+void handle_sigint(int sig){
+    printf("Segnale di interruzione rilevato: arresto dell'esecuzione \n");
+    
+}

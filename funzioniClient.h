@@ -15,4 +15,6 @@ void rimuoviRecord(int clientSocket);
 void modificaTelefono(int clientSocket);
 void modificaIndirizzo(int clientSocket);
 
+void handle_sigint(int sig);
+
 #endif
