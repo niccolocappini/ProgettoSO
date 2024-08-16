@@ -158,9 +158,10 @@ int main()
 
       // Invio della risposta al client
 
-      /* problematico se per esempio si esegue il server, si esegue il client, si fa CTRL+C e poi si richiede VisualizzaRubrica dal client --> non viene stampato "Rubrica vuota"
-      if(continuaEsecuzione == 0)
-         strcat(output, "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n"); */
+      // problematico se per esempio si esegue il server, si esegue il client, si fa CTRL+C e poi si richiede VisualizzaRubrica dal client --> non viene stampato "Rubrica vuota"
+      /*if(continuaEsecuzione == 0)
+        output = "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n"; */
+
       while (write(clientSocket, output, strlen(output) + 1) < 0)
       {
       }
@@ -722,11 +723,9 @@ void handle_sigint(int sig) // da modificare
 {
   continuaEsecuzione = 0;
   if(idProcessoPadre == getpid())
-    printf("Segnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
+    printf("\nSegnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
   
   else
-    printf("Segnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
-  
-  
+    printf("\nSegnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
   
 }
