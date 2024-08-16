@@ -59,7 +59,7 @@ int main()
     generazioneErrore("Rubrica non aperta correttamente \n");
 
   printf("Menù delle operazioni che possono essere richieste dal client: \n"
-         "1) Visualizzazzione tutti i record della rubrica \n"
+         "1) Visualizzazione tutti i record della rubrica \n"
          "2) Ricerca record tramite cognome \n"
          "3) Ricerca record tramite coppia nome-cognome \n"
          "4) Aggiunta Record \n"
@@ -158,10 +158,15 @@ int main()
 
       // Invio della risposta al client
 
-      /* problematico se per esempio si esegue il server, si esegue il client, si fa CTRL+C e poi si richiede VisualizzaRubrica dal client --> non viene stampato "Rubrica vuota"
-      if(continuaEsecuzione == 0)
-         strcat(output, "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n"); */
       while (write(clientSocket, output, strlen(output) + 1) < 0)
+      {
+      }
+      char statoServer[MAX_LUNG_MESSAGGIO];
+      if(continuaEsecuzione == 0)
+        strcpy(statoServer, "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n");
+      else
+        strcpy(statoServer, "Server in esecuzione: in attesa di ulteriori richieste \n");
+      while (write(clientSocket, statoServer, strlen(statoServer) + 1) < 0)
       {
       }
       printf("Risposta inviata: \n%s \n", output); // da rimuovere prima della consegna
@@ -721,12 +726,8 @@ int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *
 void handle_sigint(int sig) // da modificare
 {
   continuaEsecuzione = 0;
-  if(idProcessoPadre == getpid())
-    printf("Segnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
-  
+  if (idProcessoPadre == getpid())
+    printf("\nSegnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
   else
-    printf("Segnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
-  
-  
-  
+    printf("\nSegnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
 }

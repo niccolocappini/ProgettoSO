@@ -6,13 +6,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <signal.h>
 
 #include "funzioniClient.h"
 
 int main(int argc, char *argv[])
-{
+{   
+    signal(SIGINT, handle_sigint);
+
     printf("Menù delle operazione che possono essere richieste dal client: \n"
-           "1) Visualizzazzione tutti i record della rubrica \n"
+           "1) Visualizzazione tutti i record della rubrica \n"
            "2) Ricerca record tramite cognome \n"
            "3) Ricerca record tramite coppia nome-cognome \n"
            "4) Aggiunta Record \n"
@@ -131,7 +134,10 @@ int main(int argc, char *argv[])
         break;
     }
 
-    // Fase di stampa dei Riusultati
+    // Fase di stampa dei Risultati
+    stampaOutputDalServer(clientSocket);
+
+    // Fase di stampa dello stato del server
     stampaOutputDalServer(clientSocket);
 
     // Chiusura della connessione con il Server
@@ -278,6 +284,6 @@ void modificaTelefono(int clientSocket)
 }
 
 void handle_sigint(int sig){
-    printf("Segnale di interruzione rilevato: arresto dell'esecuzione \n");
-    
+    printf("\nSegnale di interruzione rilevato: arresto dell'esecuzione \n");
+    exit(EXIT_FAILURE);
 }
