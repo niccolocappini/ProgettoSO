@@ -17,6 +17,10 @@
 
 static FILE *rubrica = NULL;
 static int recordContenuti = NUM_RECORD_RUBRICA; // OK perché è obbligatorio avviare generatoreRubrica prima di accettare le richieste
+
+static int continuaEsecuzione;
+static int idProcessoPadre;
+
 /*
 
 void handle_death_signal_from_admin(int sig);
@@ -27,9 +31,8 @@ void handle_errno(int errorCode, char* errorMessage);
 
 int main()
 {
-  rubrica = fopen("RubricaDB", "w+");
-  if (rubrica == NULL)
-    generazioneErrore("Rubrica non aperta correttamente \n");
+  signal(SIGINT, handle_sigint);
+  idProcessoPadre = getpid();
 
   int serverSocket, clientSocket;
   struct sockaddr_in indirizzo;
@@ -51,6 +54,10 @@ int main()
 
   listen(serverSocket, 10);
 
+  rubrica = fopen("RubricaDB", "w+");
+  if (rubrica == NULL)
+    generazioneErrore("Rubrica non aperta correttamente \n");
+
   printf("Menù delle operazioni che possono essere richieste dal client: \n"
          "1) Visualizzazzione tutti i record della rubrica \n"
          "2) Ricerca record tramite cognome \n"
@@ -60,7 +67,8 @@ int main()
          "6) Modifica Indirizzo \n"
          "7) Modifica Numero di Telefono \n\n");
 
-  while (1)
+  continuaEsecuzione = 1;
+  while (continuaEsecuzione == 1)
   {
 
     printf("Server in ascolto sulla porta %d \n", PORTA);
@@ -149,6 +157,10 @@ int main()
       }
 
       // Invio della risposta al client
+
+      /* problematico se per esempio si esegue il server, si esegue il client, si fa CTRL+C e poi si richiede VisualizzaRubrica dal client --> non viene stampato "Rubrica vuota"
+      if(continuaEsecuzione == 0)
+         strcat(output, "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n"); */
       while (write(clientSocket, output, strlen(output) + 1) < 0)
       {
       }
@@ -169,6 +181,7 @@ int main()
     printf("La connessione si è conclusa \n\n");
   }
 
+  printf("Esecuzione terminata \n");
   return 0;
 }
 
@@ -580,7 +593,7 @@ int rimuoviRecord(int clientSocket, char **output)
   riceviRecordDaClient(clientSocket, &recordDaRimuovere, sizeof(recordDaRimuovere), "Record non ricevuto o non valido \n");
 
   if (controlloRubricaVuota(output) == ESITO_NEGATIVO)
-  { 
+  {
     return ESITO_NEGATIVO;
   }
 
@@ -623,7 +636,7 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
 
   printf("In attesa del record da modificare... \n");
 
-  riceviRecordDaClient(clientSocket,&recordDaModificare, sizeof(recordDaModificare), "Record non ricevuto o non valido \n");
+  riceviRecordDaClient(clientSocket, &recordDaModificare, sizeof(recordDaModificare), "Record non ricevuto o non valido \n");
 
   riceviCampoDaClient(clientSocket, nuovoValore, sizeof(nuovoValore), messaggioDiErrore);
 
@@ -657,7 +670,7 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
       return ESITO_NEGATIVO;
     }
     strcpy(nomeCampo, "Indirizzo");
-    
+
     break;
 
   case 4:
@@ -667,7 +680,7 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
       return ESITO_NEGATIVO;
     }
     strcpy(nomeCampo, "Telefono");
-    
+
     break;
 
   default:
@@ -705,7 +718,15 @@ int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *
   return fwrite(nuovoValore, MAX_LUNG_CAMPO, 1, rubrica);
 }
 
-void handle_sigint(int sig){ // da modificare
-  printf("Segnale di interruzione rilevato: arresto dell'esecuzione \n");
-
+void handle_sigint(int sig) // da modificare
+{
+  continuaEsecuzione = 0;
+  if(idProcessoPadre == getpid())
+    printf("Segnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
+  
+  else
+    printf("Segnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
+  
+  
+  
 }
