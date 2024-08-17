@@ -46,7 +46,7 @@ int main()
 
   listen(serverSocket, 10);
 
-  rubrica = fopen(NOME_FILE_RUBRICA, "w+");
+  rubrica = fopen("RubricaDB", "w+");
   if (rubrica == NULL)
     generazioneErrore("Rubrica non aperta correttamente \n");
 
