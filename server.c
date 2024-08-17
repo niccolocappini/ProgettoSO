@@ -16,18 +16,10 @@
 #define PASSWORD "ProgettoSO"
 
 static FILE *rubrica = NULL;
-static int recordContenuti = NUM_RECORD_RUBRICA; // OK perché è obbligatorio avviare generatoreRubrica prima di accettare le richieste
+static int recordContenuti = NUM_RECORD_RUBRICA; // è obbligatorio avviare generatoreRubrica prima di accettare le richieste
 
 static int continuaEsecuzione;
 static int idProcessoPadre;
-
-/*
-
-void handle_death_signal_from_admin(int sig);
-void handle_death_signal_from_user(int sig);
-
-void handle_errno(int errorCode, char* errorMessage);
-*/
 
 int main()
 {
@@ -727,7 +719,7 @@ void handle_sigint(int sig) // da modificare
 {
   continuaEsecuzione = 0;
   if (idProcessoPadre == getpid())
-    printf("\nSegnale di interruzione rilevato dal processo padre: attesa della terminazione del figlio \n");
+    printf("\nSegnale di interruzione rilevato dal processo padre: il processo terminerà dopo l'esecuzione di un'ultima richiesta \n");
   else
     printf("\nSegnale di interruzione rilevato dal processo figlio: arresto dell'esecuzione al termine della gestione della richiesta attuale \n");
 }
