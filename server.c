@@ -631,7 +631,7 @@ int modificaCampoRubrica(int clientSocket, char **output, int campoScelto)
 {
   recordRub recordDaModificare;
   char nuovoValore[MAX_LUNG_CAMPO];
-  char *messaggioDiErrore = "Errore nella ricezione del nuovo valore";
+  char *messaggioDiErrore = "Errore nella ricezione del nuovo valore \n";
 
   printf("In attesa del record da modificare... \n");
 
