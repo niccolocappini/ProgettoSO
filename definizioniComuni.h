@@ -17,6 +17,8 @@
 
 #define ESITO_NEGATIVO -1
 
+#define NOME_FILE_RUBRICA "RubricaDB"
+
 typedef struct
 {
     char nome[MAX_LUNG_CAMPO];
