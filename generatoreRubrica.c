@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
         generatoreTelefono(rubrica[i].telefono);
     }
 
-    FILE *RubricaDB = fopen(NOME_FILE_RUBRICA, "w+");
+    FILE *RubricaDB = fopen("RubricaDB", "w+");
     if (RubricaDB == NULL)
     {
         generazioneErrore("Il file RubricaDB non è stato aperto \n");
