@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
         char password[MAX_LUNG_PASSWORD];
         printf("Inserisci Password: \n");
         scanf("%s", password);
-        printf("Password Inserita: %s \n", password);
         send(clientSocket, password, sizeof(password), 0);
         char rispostaPassword[MAX_LUNG_MESSAGGIO];
         recv(clientSocket, rispostaPassword, sizeof(rispostaPassword), 0);
