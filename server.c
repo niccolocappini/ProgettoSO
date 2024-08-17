@@ -161,11 +161,13 @@ int main()
       while (write(clientSocket, output, strlen(output) + 1) < 0)
       {
       }
+
       char statoServer[MAX_LUNG_MESSAGGIO];
       if(continuaEsecuzione == 0)
         strcpy(statoServer, "Esecuzione del server interrotta: ulteriori richieste non verranno soddisfatte \n");
       else
         strcpy(statoServer, "Server in esecuzione: in attesa di ulteriori richieste \n");
+
       while (write(clientSocket, statoServer, strlen(statoServer) + 1) < 0)
       {
       }
@@ -723,7 +725,7 @@ int modificaCampoRecord(int posizioneRecordDaModificare, int campoScelto, char *
   return fwrite(nuovoValore, MAX_LUNG_CAMPO, 1, rubrica);
 }
 
-void handle_sigint(int sig) // da modificare
+void handle_sigint(int sig) 
 {
   continuaEsecuzione = 0;
   if (idProcessoPadre == getpid())
