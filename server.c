@@ -71,7 +71,7 @@ int main()
 
     printf("Accettata connessione da un client \n");
 
-    // Gestione richiesta tramite fork
+    // Gestione richiesta tramite fork()
     int pid = fork();
 
     if (pid == 0)
@@ -163,7 +163,7 @@ int main()
       while (write(clientSocket, statoServer, strlen(statoServer) + 1) < 0)
       {
       }
-      printf("Risposta inviata: \n%s \n", output); // da rimuovere prima della consegna
+      printf("Risposta inviata \n"); 
       printf("Richiesta eseguita: terminazione di questo figlio \n\n");
       close(clientSocket);
 
@@ -243,7 +243,7 @@ void riceviRecordDaClient(int clientSocket, recordRub *recordDaRicevere, int dim
   }
 }
 
-int controlloRubricaVuota(char **output) // restituisce 0 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
+int controlloRubricaVuota(char **output) // restituisce -1 se la rubrica è vuota e in tal caso scrive già in output la stringa corretta
 {
   fseek(rubrica, 0, SEEK_END);
   long int posizioneFinale = ftell(rubrica);
@@ -356,7 +356,7 @@ int normalizzaRecord(recordRub *record)
   return 0;
 }
 
-long int ricercaRecord(recordRub *recordDaRicercare) // metodo generale di ricerca record da usare nelle ricerche settoriali
+long int ricercaRecord(recordRub *recordDaRicercare)
 {
   long int posizioneRecord;
 
@@ -582,8 +582,7 @@ int aggiungiRecord(int clientSocket, char **output)
   return 0;
 }
 
-/* Casi di errore: Eliminazione non riuscita
-  Gestire il ricompattamento del file dopo l'eliminazione del record*/
+/* Casi di errore: Eliminazione non riuscita*/
 int rimuoviRecord(int clientSocket, char **output)
 {
   recordRub recordDaRimuovere;

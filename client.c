@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
     printf("Connessione con Server andata a buon fine \n\n");
 
-    // Fase in cui il client determina l'operazione da richiedere la server
+    // Fase in cui il client determina l'operazione da richiedere al server
     int richiesta = 0;
     printf("Inserisci il codice dell'operazione da effettuare: \n");
     scanf("%d", &richiesta);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         generazioneErrore("Scrittura su socket fallita \n");
     }
 
-    // Fase in cui il client riceve l'eventuale richiesta di password
+    // Fase in cui il client eventualmente inoltra la password
     if (richiesta >= 4 && richiesta <= 7)
     {
         char password[MAX_LUNG_PASSWORD];
