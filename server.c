@@ -85,7 +85,7 @@ int main()
 
       printf("Lettura effettuata: %d \n", richiesta);
 
-      char *output;                                                                                                 // stringa che contterrà ciò che verrà inviato al client
+      char *output;                                                                                                 // stringa che conterrà ciò che verrà inviato al client
       int dimensioneMassima = recordContenuti * 4 * MAX_LUNG_CAMPO + 4 * recordContenuti * 2 + recordContenuti * 2; // nel caso pessimo si devono stampare tutti i record
       int risultato;
       switch (richiesta)
